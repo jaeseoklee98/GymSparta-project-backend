@@ -3,6 +3,7 @@ package com.sparta.fltpleprojectbackend.review.controller;
 import com.sparta.fltpleprojectbackend.review.dto.ReviewRequest;
 import com.sparta.fltpleprojectbackend.review.dto.ReviewResponse;
 import com.sparta.fltpleprojectbackend.review.service.ReviewService;
+import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class ReviewController {
      */
     @PostMapping()
     public ReviewResponse createReview(@RequestBody ReviewRequest reviewRequest, @PathVariable Long storeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return reviewService.createReview(reviewRequest, storeId, userDetails.getUserId());
+        return reviewService.createReview(reviewRequest, storeId, userDetails.getUser());
     }
 
     /*
@@ -28,7 +29,7 @@ public class ReviewController {
      */
     @PutMapping("/{reviewId}")
     public ReviewResponse updateReview(@PathVariable Long reviewId, @RequestBody ReviewRequest reviewRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return reviewService.updateReview(reviewId, reviewRequest, userDetails.getUserId());
+        return reviewService.updateReview(reviewId, reviewRequest, userDetails.getUser());
     }
 
     /*
@@ -38,7 +39,7 @@ public class ReviewController {
      */
     @DeleteMapping("/{reviewId}")
     public void deleteReview(@PathVariable Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        reviewService.deleteReview(reviewId, userDetails.getUserId());
+        reviewService.deleteReview(reviewId, userDetails.getUser());
     }
 
 }
