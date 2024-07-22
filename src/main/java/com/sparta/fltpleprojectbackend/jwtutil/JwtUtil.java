@@ -6,6 +6,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Component
@@ -79,5 +81,20 @@ public class JwtUtil {
     } catch (Exception e) {
       return false;
     }
+  }
+
+  /**
+   * 토큰 만료일자 가져오기
+   * @param token JWT 토큰
+   * @return 토큰 만료일자
+   */
+  public LocalDateTime getExpiryDate(String token) {
+    Date expiration = Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build()
+        .parseClaimsJws(token)
+        .getBody()
+        .getExpiration();
+    return expiration.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
   }
 }
