@@ -2,7 +2,7 @@ package com.sparta.fltpleprojectbackend.config;
 
 import com.sparta.fltpleprojectbackend.jwtutil.JwtAuthenticationEntryPoint;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtAuthenticationFilter;
-import com.sparta.fltpleprojectbackend.security.UserDetailsService;
+import com.sparta.fltpleprojectbackend.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,14 +20,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 @EnableWebSecurity
 public class SecurityConfig {
 
-  private final UserDetailsService userDetailsService;
+  private final UserDetailsServiceImpl userDetailsServiceImpl;
   private final JwtAuthenticationEntryPoint unauthorizedHandler;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  public SecurityConfig(UserDetailsService userDetailsService,
+  public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,
       JwtAuthenticationEntryPoint unauthorizedHandler,
       JwtAuthenticationFilter jwtAuthenticationFilter) {
-    this.userDetailsService = userDetailsService;
+    this.userDetailsServiceImpl = userDetailsServiceImpl;
     this.unauthorizedHandler = unauthorizedHandler;
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
   }
@@ -42,7 +42,9 @@ public class SecurityConfig {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
             .requestMatchers("/login", "/user/signup", "/owner/signup").permitAll()
-            .anyRequest().authenticated());
+            .anyRequest().authenticated())
+        .requiresChannel(requiresChannel ->
+            requiresChannel.anyRequest().requiresSecure());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
