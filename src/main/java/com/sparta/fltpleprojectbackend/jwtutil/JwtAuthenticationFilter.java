@@ -1,6 +1,6 @@
 package com.sparta.fltpleprojectbackend.jwtutil;
 
-import com.sparta.fltpleprojectbackend.security.UserDetailsService;
+import com.sparta.fltpleprojectbackend.security.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private JwtUtil jwtUtil;
 
   @Autowired
-  private UserDetailsService userDetailsService;
+  private UserDetailsServiceImpl userDetailsServiceImpl;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if (jwt != null && jwtUtil.validateToken(jwt)) {
       String username = jwtUtil.getUsername(jwt);
 
-      UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+      UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
       JwtAuthenticationToken authentication = new JwtAuthenticationToken(userDetails, null, userDetails.getAuthorities());
       authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
