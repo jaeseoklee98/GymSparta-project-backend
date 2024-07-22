@@ -51,4 +51,12 @@ public class RefreshTokenService {
     Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
     return refreshToken.isPresent() && jwtUtil.validateToken(token);
   }
+
+  /**
+   * 사용자와 관련된 모든 리프레시 토큰 삭제
+   * @param username 사용자 이름
+   */
+  public void deleteByUsername(String username) {
+    refreshTokenRepository.deleteByUsername(username);
+  }
 }

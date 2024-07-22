@@ -38,5 +38,7 @@ public class User {
 
   private LocalDateTime updatedAt;
 
-  private LocalDateTime deletedAt;
+  private LocalDateTime deletedAt;  // 소프트 삭제를 위한 필드
+
+  private LocalDateTime scheduledDeletionDate; // 완전 삭제를 위한 필드
 }
