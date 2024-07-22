@@ -43,4 +43,17 @@ public class ReviewService {
 
         return new ReviewResponse(review);
     }
+
+    @Transactional
+    public void deleteReview(Long reviewId, Long userId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new IllegalArgumentException("리뷰가 존재하지 않습니다.")
+        );
+
+        if (!review.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("리뷰 작성자만 삭제 가능합니다.");
+        }
+
+        reviewRepository.delete(review);
+    }
 }
