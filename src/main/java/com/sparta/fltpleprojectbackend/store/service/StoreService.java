@@ -39,10 +39,20 @@ public class StoreService {
    */
   @Transactional
   public StoreResponse updateStore(Long storeId, StoreRequest request) {
-    Store store = storeRepository.findById(storeId)
-        .orElseThrow(() -> new IllegalArgumentException("해당 매장이 없습니다."));
+    Store store = findStoreById(storeId);
 
     store.update(request);
     return new StoreResponse(store);
+  }
+
+  public void deleteStore(Long storeId) {
+    Store store = findStoreById(storeId);
+
+    storeRepository.delete(store);
+  }
+
+  private Store findStoreById(long id) {
+    return storeRepository.findById(id)
+        .orElseThrow(()-> new IllegalArgumentException("해당 매장이 존재하지 않습니다."));
   }
 }

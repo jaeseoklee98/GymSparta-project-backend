@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,5 +58,13 @@ public class StoreController {
     CommonResponse<StoreResponse> response = new CommonResponse<>(
         HttpStatus.OK.value(), "매장 수정 완료", storeResponse);
     return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/admin/{storeId}")
+  public ResponseEntity<CommonResponse<StoreResponse>> deleteStore(
+      @PathVariable Long storeId
+  ) {
+    storeService.deleteStore(storeId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }
