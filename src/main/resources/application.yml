@@ -15,6 +15,15 @@ spring:
 #          timeout: 5000
 #          writetimeout: 5000
 #        auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30?
+
+  server:
+    port: 8443
+    ssl:
+      key-store: classpath:keystore.p12
+      key-store-password: qwer1234
+      key-store-type: PKCS12
+      key-alias: myapp
+
   datasource:
     url: jdbc:mysql://localhost:3306/fitple_project
     username:
