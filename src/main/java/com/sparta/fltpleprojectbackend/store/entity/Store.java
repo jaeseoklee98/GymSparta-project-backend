@@ -11,8 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Store 엔티티 클래스.
- * 매장 정보를 데이터베이스에 저장하기 위한 클래스.
+ * Store 엔티티 클래스. 매장 정보를 데이터베이스에 저장하기 위한 클래스.
  */
 @Getter
 @Entity
@@ -50,6 +49,21 @@ public class Store extends TimeStamped {
    * @param request 매장 생성에 필요한 정보를 담고 있는 StoreRequest 객체.
    */
   public Store(StoreRequest request) {
+    this.storeName = request.getStoreName();
+    this.address = request.getAddress();
+    this.streetAddress = request.getStreetAddress();
+    this.postalCode = request.getPostalCode();
+    this.storeInfo = request.getStoreInfo();
+    this.storeHour = request.getStoreHour();
+    this.storeTel = request.getStoreTel();
+  }
+
+  /**
+   * StoreRequest 객체를 사용하여 기존 Store 엔티티의 정보를 업데이트합니다.
+   *
+   * @param request 매장 정보 수정에 필요한 정보를 담고 있는 StoreRequest 객체.
+   */
+  public void update(StoreRequest request) {
     this.storeName = request.getStoreName();
     this.address = request.getAddress();
     this.streetAddress = request.getStreetAddress();
