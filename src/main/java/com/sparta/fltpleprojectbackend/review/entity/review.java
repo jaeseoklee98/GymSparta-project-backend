@@ -51,11 +51,16 @@ public class Review extends Timestamped {
     @Column
     private String comment;
 
-    public Review(ReviewRequest reviewRequest, Long storeId, User user) {
+    public Review(ReviewRequest reviewRequest,User user) {
         this.comment = reviewRequest.getComment();
         this.rating = reviewRequest.getRating();
         this.user = user;
         this.orders = orders;
         this.store = store;
+    }
+
+    public void update(ReviewRequest reviewRequest) {
+        this.comment = reviewRequest.getComment();
+        this.rating = reviewRequest.getRating();
     }
 }

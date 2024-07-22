@@ -9,11 +9,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/store/users")
+@RequestMapping("/store/users/{storeId}/reviews")
 public class ReviewController {
     private final ReviewService reviewService;
-    @PostMapping("/{storeId}/reviews")
+    @PostMapping()
     public ReviewResponse createReview(@RequestBody ReviewRequest reviewRequest, @PathVariable Long storeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return reviewService.createReview(reviewRequest, storeId, userDetails.getUserId());
+    }
+
+    @PutMapping("/{reviewId}")
+    public ReviewResponse updateReview(@PathVariable Long reviewId, @RequestBody ReviewRequest reviewRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return reviewService.updateReview(reviewId, reviewRequest, userDetails.getUserId());
     }
 }
