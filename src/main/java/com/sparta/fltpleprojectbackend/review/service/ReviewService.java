@@ -26,7 +26,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewResponse updateProduct(Long reviewId, ReviewRequest reviewRequest) {
+    public ReviewResponse updateReview(Long reviewId, ReviewRequest reviewRequest) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
                 new IllegalArgumentException( //추후에 커스텀 or 통일된 예외 처리로 변경
                         "리뷰가 존재하지 않습니다."

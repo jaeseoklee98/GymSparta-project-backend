@@ -36,7 +36,7 @@ public class ReviewController {
      * 리뷰 작성한 사용자만 리뷰 삭제 가능
      * 관리자 권한으로 부적절한 리뷰 삭제는 별도의 기능으로 구현
      */
-    @GetMapping()
+    @DeleteMapping("/{reviewId}")
     public void deleteReview(@PathVariable Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         reviewService.deleteReview(reviewId, userDetails.getUserId());
     }
