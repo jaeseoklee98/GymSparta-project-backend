@@ -2,9 +2,12 @@ package com.sparta.fltpleprojectbackend.store.service;
 
 import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
 import com.sparta.fltpleprojectbackend.store.dto.StoreResponse;
+import com.sparta.fltpleprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.fltpleprojectbackend.store.entity.Store;
 import com.sparta.fltpleprojectbackend.store.repository.StoreRepository;
 import com.sparta.fltpleprojectbackend.user.entity.User;
+import java.util.Comparator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +62,28 @@ public class StoreService {
     validateUser(store, user);
 
     storeRepository.delete(store);
+  }
+
+  public List<StoreSimpleResponse> findAll() {
+    List<Store> storeList = storeRepository.findAll();
+    return storeList.stream()
+        .sorted(Comparator.comparing(Store::getCreatedAt))
+        .map(StoreSimpleResponse::new)
+        .toList();
+  }
+
+  public StoreResponse findById(Long storeId) {
+    Store store = findStoreById(storeId);
+
+    return new StoreResponse(store);
+  }
+
+  public List<StoreSimpleResponse> findAllAdmin(Long userId) {
+    List<Store> storeList = storeRepository.findAllByUserId(userId);
+    return storeList.stream()
+        .sorted(Comparator.comparing(Store::getCreatedAt))
+        .map(StoreSimpleResponse::new)
+        .toList();
   }
 
   private Store findStoreById(long id) {
