@@ -26,7 +26,7 @@ public class UserDetailsImpl implements UserDetails {
   }
 
   @Override
-  public String getUsername() {
+  public String getUsername() { // 여기서 username을 accountId로 변경합니다.
     return user.getAccountId();
   }
 

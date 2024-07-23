@@ -31,6 +31,27 @@ public class SecurityConfig {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
   }
 
+
+// Https 설정
+//  @Bean
+//  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//    http
+//        .csrf(csrf -> csrf.disable())
+//        .exceptionHandling(exceptionHandling -> exceptionHandling
+//            .authenticationEntryPoint(unauthorizedHandler))
+//        .sessionManagement(sessionManagement -> sessionManagement
+//            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//        .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+//            .requestMatchers("/login", "/user/signup", "/owner/signup").permitAll()
+//            .anyRequest().authenticated())
+//        .requiresChannel(requiresChannel ->
+//            requiresChannel.anyRequest().requiresSecure());
+//
+//    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//    return http.build();
+//  }
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
@@ -41,9 +62,7 @@ public class SecurityConfig {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
             .requestMatchers("/login", "/user/signup", "/owner/signup").permitAll()
-            .anyRequest().authenticated())
-        .requiresChannel(requiresChannel ->
-            requiresChannel.anyRequest().requiresSecure());
+            .anyRequest().authenticated());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

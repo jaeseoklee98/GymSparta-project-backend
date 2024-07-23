@@ -1,6 +1,8 @@
 package com.sparta.fltpleprojectbackend.user.entity;
 
+import com.sparta.fltpleprojectbackend.enums.Role;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,7 +22,7 @@ public class User {
   private String foreignerRegistrationNumber;
 
   @Column(nullable = false)
-  private Boolean isForeigner;
+  private Boolean isForeigner = false;
 
   @Column(nullable = false, length = 15, unique = true)
   private String accountId;
@@ -28,29 +30,29 @@ public class User {
   @Column(nullable = false, length = 255)
   private String password;
 
-  @Column(nullable = false, length = 10)
-  private String nickname;
+  @Column(length = 10)
+  private String nickname = "";
 
   @Column(nullable = false, length = 255)
   private String email;
 
   @Column(length = 255)
-  private String userPicture;
+  private String userPicture = "";
 
   @Column(nullable = false, length = 10)
-  private String status;
+  private String status = "ACTIVE";
 
-  @Column(nullable = false, length = 10)
-  private String zipcode;
+  @Column(length = 10)
+  private String zipcode = "";
 
-  @Column(nullable = false, length = 255)
-  private String mainAddress;
+  @Column(length = 255)
+  private String mainAddress = "";
 
-  @Column(nullable = false, length = 255)
-  private String detailedAddress;
+  @Column(length = 255)
+  private String detailedAddress = "";
 
-  @Column(nullable = false, length = 15)
-  private String phoneNumber;
+  @Column(length = 15)
+  private String phoneNumber = "";
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -79,17 +81,17 @@ public class User {
     this.userName = userName;
     this.residentRegistrationNumber = residentRegistrationNumber;
     this.foreignerRegistrationNumber = foreignerRegistrationNumber;
-    this.isForeigner = isForeigner;
+    this.isForeigner = isForeigner != null ? isForeigner : false;
     this.accountId = accountId;
     this.password = password;
-    this.nickname = nickname;
+    this.nickname = nickname != null ? nickname : "";
     this.email = email;
-    this.userPicture = userPicture;
-    this.status = status;
-    this.zipcode = zipcode;
-    this.mainAddress = mainAddress;
-    this.detailedAddress = detailedAddress;
-    this.phoneNumber = phoneNumber;
+    this.userPicture = userPicture != null ? userPicture : "";
+    this.status = status != null ? status : "ACTIVE";
+    this.zipcode = zipcode != null ? zipcode : "";
+    this.mainAddress = mainAddress != null ? mainAddress : "";
+    this.detailedAddress = detailedAddress != null ? detailedAddress : "";
+    this.phoneNumber = phoneNumber != null ? phoneNumber : "";
     this.role = role;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
@@ -98,156 +100,16 @@ public class User {
   }
 
   // Getters and Setters
-  public Long getId() {
-    return id;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public String getResidentRegistrationNumber() {
-    return residentRegistrationNumber;
-  }
-
-  public void setResidentRegistrationNumber(String residentRegistrationNumber) {
-    this.residentRegistrationNumber = residentRegistrationNumber;
-  }
-
-  public String getForeignerRegistrationNumber() {
-    return foreignerRegistrationNumber;
-  }
-
-  public void setForeignerRegistrationNumber(String foreignerRegistrationNumber) {
-    this.foreignerRegistrationNumber = foreignerRegistrationNumber;
-  }
-
-  public Boolean getIsForeigner() {
-    return isForeigner;
-  }
-
-  public void setIsForeigner(Boolean isForeigner) {
-    this.isForeigner = isForeigner;
-  }
-
   public String getAccountId() {
     return accountId;
-  }
-
-  public void setAccountId(String accountId) {
-    this.accountId = accountId;
   }
 
   public String getPassword() {
     return password;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getNickname() {
-    return nickname;
-  }
-
-  public void setNickname(String nickname) {
-    this.nickname = nickname;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getUserPicture() {
-    return userPicture;
-  }
-
-  public void setUserPicture(String userPicture) {
-    this.userPicture = userPicture;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  public String getZipcode() {
-    return zipcode;
-  }
-
-  public void setZipcode(String zipcode) {
-    this.zipcode = zipcode;
-  }
-
-  public String getMainAddress() {
-    return mainAddress;
-  }
-
-  public void setMainAddress(String mainAddress) {
-    this.mainAddress = mainAddress;
-  }
-
-  public String getDetailedAddress() {
-    return detailedAddress;
-  }
-
-  public void setDetailedAddress(String detailedAddress) {
-    this.detailedAddress = detailedAddress;
-  }
-
-  public String getPhoneNumber() {
-    return phoneNumber;
-  }
-
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
-
-  public Role getRole() {
-    return role;
-  }
-
-  public void setRole(Role role) {
-    this.role = role;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(LocalDateTime updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
-  public LocalDateTime getDeletedAt() {
-    return deletedAt;
-  }
-
   public void setDeletedAt(LocalDateTime deletedAt) {
     this.deletedAt = deletedAt;
-  }
-
-  public LocalDateTime getScheduledDeletionDate() {
-    return scheduledDeletionDate;
   }
 
   public void setScheduledDeletionDate(LocalDateTime scheduledDeletionDate) {
