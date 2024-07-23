@@ -1,20 +1,24 @@
 package com.sparta.fltpleprojectbackend.user.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 public class ResponseMessage<T> {
-  private int statusCode;
+  private String result;
   private String message;
-  private T data;
 
-  public static <T> ResponseMessage<T> success(String message, T data) {
-    return new ResponseMessage<>(200, message, data);
+  public ResponseMessage(String result, String message) {
+    this.result = result;
+    this.message = message;
   }
 
-  public static <T> ResponseMessage<T> error(String message, T data) {
-    return new ResponseMessage<>(400, message, data);
+  public static <T> ResponseMessage<T> success(String message) {
+    return new ResponseMessage<>("SUCCESS", message);
+  }
+
+  public static <T> ResponseMessage<T> error(String message) {
+    return new ResponseMessage<>("ERROR", message);
   }
 }
