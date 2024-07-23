@@ -1,44 +1,118 @@
 package com.sparta.fltpleprojectbackend.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.sparta.fltpleprojectbackend.enums.Role;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String username;
+  @Column(nullable = false, length = 10)
+  private String userName;
 
+  @Column(length = 13)
+  private String residentRegistrationNumber;
+
+  @Column(length = 13)
+  private String foreignerRegistrationNumber;
+
+  @Column(nullable = false)
+  private Boolean isForeigner = false;
+
+  @Column(nullable = false, length = 15, unique = true)
+  private String accountId;
+
+  @Column(nullable = false, length = 255)
   private String password;
 
+  @Column(length = 10)
+  private String nickname = "";
+
+  @Column(nullable = false, length = 255)
   private String email;
 
-  private String phoneNumber;
+  @Column(length = 255)
+  private String userPicture = "";
 
-  private String name;
+  @Column(nullable = false, length = 10)
+  private String status = "ACTIVE";
 
-  private String role;
+  @Column(length = 10)
+  private String zipcode = "";
 
+  @Column(length = 255)
+  private String mainAddress = "";
+
+  @Column(length = 255)
+  private String detailedAddress = "";
+
+  @Column(length = 15)
+  private String phoneNumber = "";
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Role role;
+
+  @Column(nullable = false)
   private LocalDateTime createdAt;
 
+  @Column
   private LocalDateTime updatedAt;
 
-  private LocalDateTime deletedAt;  // 소프트 삭제를 위한 필드
+  @Column
+  private LocalDateTime deletedAt;
 
-  private LocalDateTime scheduledDeletionDate; // 완전 삭제를 위한 필드
+  @Column
+  private LocalDateTime scheduledDeletionDate;
+
+  // 기본 생성자
+  public User() {}
+
+  // 모든 필드를 포함한 생성자
+  public User(String userName, String residentRegistrationNumber, String foreignerRegistrationNumber, Boolean isForeigner,
+      String accountId, String password, String nickname, String email, String userPicture, String status,
+      String zipcode, String mainAddress, String detailedAddress, String phoneNumber, Role role,
+      LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt, LocalDateTime scheduledDeletionDate) {
+    this.userName = userName;
+    this.residentRegistrationNumber = residentRegistrationNumber;
+    this.foreignerRegistrationNumber = foreignerRegistrationNumber;
+    this.isForeigner = isForeigner != null ? isForeigner : false;
+    this.accountId = accountId;
+    this.password = password;
+    this.nickname = nickname != null ? nickname : "";
+    this.email = email;
+    this.userPicture = userPicture != null ? userPicture : "";
+    this.status = status != null ? status : "ACTIVE";
+    this.zipcode = zipcode != null ? zipcode : "";
+    this.mainAddress = mainAddress != null ? mainAddress : "";
+    this.detailedAddress = detailedAddress != null ? detailedAddress : "";
+    this.phoneNumber = phoneNumber != null ? phoneNumber : "";
+    this.role = role;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.deletedAt = deletedAt;
+    this.scheduledDeletionDate = scheduledDeletionDate;
+  }
+
+  // Getters and Setters
+  public String getAccountId() {
+    return accountId;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setDeletedAt(LocalDateTime deletedAt) {
+    this.deletedAt = deletedAt;
+  }
+
+  public void setScheduledDeletionDate(LocalDateTime scheduledDeletionDate) {
+    this.scheduledDeletionDate = scheduledDeletionDate;
+  }
 }
