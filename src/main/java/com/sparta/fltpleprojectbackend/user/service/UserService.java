@@ -1,9 +1,10 @@
 package com.sparta.fltpleprojectbackend.user.service;
 
-import com.sparta.fltpleprojectbackend.security.RefreshTokenService;
 import com.sparta.fltpleprojectbackend.user.dto.UserSignupRequest;
+import com.sparta.fltpleprojectbackend.user.entity.Role;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
+import com.sparta.fltpleprojectbackend.security.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,8 @@ public class UserService {
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
-    userRepository.findByUsername(request.getUsername()).ifPresent(user -> {
-      throw new IllegalArgumentException("이미 존재하는 사용자 이름입니다.");
+    userRepository.findByAccountId(request.getUsername()).ifPresent(user -> {
+      throw new IllegalArgumentException("이미 존재하는 사용자 아이디입니다.");
     });
 
     userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
@@ -48,15 +49,27 @@ public class UserService {
       throw new IllegalArgumentException("이미 존재하는 전화번호입니다.");
     });
 
-    User user = User.builder()
-        .username(request.getUsername())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .email(request.getEmail())
-        .phoneNumber(request.getPhoneNumber())
-        .name(request.getName())
-        .role("USER")
-        .createdAt(LocalDateTime.now())
-        .build();
+    User user = new User(
+        request.getUserName(),
+        request.getResidentRegistrationNumber(),
+        request.getForeignerRegistrationNumber(),
+        request.getIsForeigner(),
+        request.getUsername(),
+        passwordEncoder.encode(request.getPassword()),
+        request.getNickname(),
+        request.getEmail(),
+        request.getUserPicture(),
+        "ACTIVE",
+        request.getZipcode(),
+        request.getMainAddress(),
+        request.getDetailedAddress(),
+        request.getPhoneNumber(),
+        Role.USER,
+        LocalDateTime.now(),
+        null,
+        null,
+        null
+    );
 
     return userRepository.save(user);
   }
@@ -67,7 +80,7 @@ public class UserService {
    * @throws IllegalArgumentException 사용자 정보가 없을 경우 예외 발생
    */
   public void deleteUser(String username) {
-    Optional<User> userOptional = userRepository.findByUsername(username);
+    Optional<User> userOptional = userRepository.findByAccountId(username);
     User user = userOptional.orElseThrow(() -> new IllegalArgumentException("User not found with username: " + username));
 
     // 소프트 삭제 처리 및 30일 후 삭제 일자 설정

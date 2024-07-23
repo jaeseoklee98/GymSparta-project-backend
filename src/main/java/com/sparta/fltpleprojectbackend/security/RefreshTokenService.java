@@ -2,44 +2,40 @@ package com.sparta.fltpleprojectbackend.security;
 
 import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RefreshTokenService {
 
-  private final RefreshTokenRepository refreshTokenRepository;
+  private final RedisTemplate<String, String> redisTemplate;
   private final JwtUtil jwtUtil;
 
   @Autowired
-  public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil) {
-    this.refreshTokenRepository = refreshTokenRepository;
+  public RefreshTokenService(RedisTemplate<String, String> redisTemplate, JwtUtil jwtUtil) {
+    this.redisTemplate = redisTemplate;
     this.jwtUtil = jwtUtil;
   }
 
   /**
-   * 리프레시 토큰 생성 및 저장
+   * 리프레시 토큰 저장
    * @param username 사용자 이름
    * @return 저장된 리프레시 토큰
    */
-  public RefreshToken createRefreshToken(String username) {
+  public String createRefreshToken(String username) {
     String token = jwtUtil.generateRefreshToken(username);
-    RefreshToken refreshToken = RefreshToken.builder()
-        .token(token)
-        .username(username)
-        .expiryDate(jwtUtil.getExpiryDate(token))
-        .build();
-    return refreshTokenRepository.save(refreshToken);
+    redisTemplate.opsForValue().set(username, token, jwtUtil.getRefreshTokenValidity(), TimeUnit.MILLISECONDS);
+    return token;
   }
 
   /**
    * 리프레시 토큰 삭제
-   * @param token 삭제할 리프레시 토큰
+   * @param username 사용자 이름
    */
-  public void deleteByToken(String token) {
-    refreshTokenRepository.deleteByToken(token);
+  public void deleteByUsername(String username) {
+    redisTemplate.delete(username);
   }
 
   /**
@@ -48,15 +44,8 @@ public class RefreshTokenService {
    * @return 유효한 토큰인지 여부
    */
   public boolean isRefreshTokenValid(String token) {
-    Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
-    return refreshToken.isPresent() && jwtUtil.validateToken(token);
-  }
-
-  /**
-   * 사용자와 관련된 모든 리프레시 토큰 삭제
-   * @param username 사용자 이름
-   */
-  public void deleteByUsername(String username) {
-    refreshTokenRepository.deleteByUsername(username);
+    String username = jwtUtil.getUsername(token);
+    String storedToken = redisTemplate.opsForValue().get(username);
+    return token.equals(storedToken) && jwtUtil.validateToken(token);
   }
 }

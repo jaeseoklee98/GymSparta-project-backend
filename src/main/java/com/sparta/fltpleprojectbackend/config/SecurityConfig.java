@@ -40,7 +40,7 @@ public class SecurityConfig {
         .sessionManagement(sessionManagement -> sessionManagement
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-            .requestMatchers("/auth/login", "/user/signup", "/owner/signup").permitAll()
+            .requestMatchers("/login", "/user/signup", "/owner/signup").permitAll()
             .anyRequest().authenticated())
         .requiresChannel(requiresChannel ->
             requiresChannel.anyRequest().requiresSecure());

@@ -1,6 +1,5 @@
-package com.sparta.fltpleprojectbackend.controller;
+package com.sparta.fltpleprojectbackend.user.controller;
 
-import com.sparta.fltpleprojectbackend.security.RefreshToken;
 import com.sparta.fltpleprojectbackend.user.dto.LoginRequest;
 import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
@@ -48,16 +47,16 @@ public class AuthController {
     // 인증된 사용자 정보 로드
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-    // JWT 액세스 토큰 생성
+    // JWT 토큰 생성
     String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
 
     // 리프레시 토큰 생성 및 저장
-    RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
+    String refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
 
     // 토큰을 Map에 담아 반환
     Map<String, String> tokens = new HashMap<>();
     tokens.put("accessToken", accessToken);
-    tokens.put("refreshToken", refreshToken.getToken());
+    tokens.put("refreshToken", refreshToken);
 
     // 응답 메시지 생성
     ResponseMessage<Map<String, String>> response = ResponseMessage.success("로그인 성공", tokens);
@@ -74,7 +73,8 @@ public class AuthController {
     String authHeader = request.getHeader("Authorization");
     if (authHeader != null && authHeader.startsWith("Bearer ")) {
       String token = authHeader.substring(7);
-      refreshTokenService.deleteByToken(token);
+      String username = jwtUtil.getUsername(token);
+      refreshTokenService.deleteByUsername(username);
     }
 
     ResponseMessage<String> response = ResponseMessage.success("로그아웃 성공", null);

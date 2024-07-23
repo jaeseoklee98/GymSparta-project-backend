@@ -2,14 +2,15 @@ package com.sparta.fltpleprojectbackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableScheduling
+@EntityScan(basePackages = {"com.sparta.fltpleprojectbackend.review.entity", "com.sparta.fltpleprojectbackend.user.entity"})
+@EnableJpaRepositories(basePackages = {"com.sparta.fltpleprojectbackend.review.repository", "com.sparta.fltpleprojectbackend.user.repository"})
 public class FltpleProjectBackendApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(FltpleProjectBackendApplication.class, args);
   }
-
 }

@@ -6,8 +6,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 @Component
@@ -16,8 +14,8 @@ public class JwtUtil {
   @Value("${jwt.secret}")
   private String secretKey;
 
-  private final long ACCESS_TOKEN_VALIDITY = 1800000; // 30분
-  private final long REFRESH_TOKEN_VALIDITY = 3600000; // 1시간
+  private final long accessTokenValidity = 1800000; // 30분
+  private final long refreshTokenValidity = 3600000; // 1시간
 
   /**
    * JWT 액세스 토큰 생성
@@ -27,7 +25,7 @@ public class JwtUtil {
   public String generateAccessToken(String username) {
     Claims claims = Jwts.claims().setSubject(username);
     Date now = new Date();
-    Date validity = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY);
+    Date validity = new Date(now.getTime() + accessTokenValidity);
 
     return Jwts.builder()
         .setClaims(claims)
@@ -45,7 +43,7 @@ public class JwtUtil {
   public String generateRefreshToken(String username) {
     Claims claims = Jwts.claims().setSubject(username);
     Date now = new Date();
-    Date validity = new Date(now.getTime() + REFRESH_TOKEN_VALIDITY);
+    Date validity = new Date(now.getTime() + refreshTokenValidity);
 
     return Jwts.builder()
         .setClaims(claims)
@@ -84,17 +82,10 @@ public class JwtUtil {
   }
 
   /**
-   * 토큰 만료일자 가져오기
-   * @param token JWT 토큰
-   * @return 토큰 만료일자
+   * 리프레시 토큰 유효기간 반환
+   * @return 리프레시 토큰 유효기간 (밀리초)
    */
-  public LocalDateTime getExpiryDate(String token) {
-    Date expiration = Jwts.parserBuilder()
-        .setSigningKey(secretKey)
-        .build()
-        .parseClaimsJws(token)
-        .getBody()
-        .getExpiration();
-    return expiration.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+  public long getRefreshTokenValidity() {
+    return refreshTokenValidity;
   }
 }
