@@ -4,6 +4,7 @@ import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
 import com.sparta.fltpleprojectbackend.store.dto.StoreResponse;
 import com.sparta.fltpleprojectbackend.store.entity.Store;
 import com.sparta.fltpleprojectbackend.store.repository.StoreRepository;
+import com.sparta.fltpleprojectbackend.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,9 @@ public class StoreService {
    * @param request 등록할 매장의 세부 정보
    * @return 등록된 매장의 세부 정보를 포함하는 응답 객체
    */
-  public StoreResponse createStore(StoreRequest request) {
+  public StoreResponse createStore(StoreRequest request, User user) {
 
-    Store store = new Store(request);
+    Store store = new Store(request, user);
     storeRepository.save(store);
     return new StoreResponse(store);
   }
@@ -38,8 +39,10 @@ public class StoreService {
    * @return 수정된 매장의 세부 정보를 포함하는 응답 객체
    */
   @Transactional
-  public StoreResponse updateStore(Long storeId, StoreRequest request) {
+  public StoreResponse updateStore(Long storeId, StoreRequest request, User user) {
     Store store = findStoreById(storeId);
+
+    validateUser(store, user);
 
     store.update(request);
     return new StoreResponse(store);
@@ -50,8 +53,10 @@ public class StoreService {
    *
    * @param storeId 삭제하려는 매장의 id 값
    */
-  public void deleteStore(Long storeId) {
+  public void deleteStore(Long storeId, User user) {
     Store store = findStoreById(storeId);
+
+    validateUser(store, user);
 
     storeRepository.delete(store);
   }
@@ -59,5 +64,11 @@ public class StoreService {
   private Store findStoreById(long id) {
     return storeRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("해당 매장이 존재하지 않습니다."));
+  }
+
+  private void validateUser(Store store, User user) {
+    if (!store.getUser().getUsername().equals(user.getUsername())) {
+      throw new IllegalArgumentException("본인이 작성한 게시물이 아닙니다.");
+    }
   }
 }

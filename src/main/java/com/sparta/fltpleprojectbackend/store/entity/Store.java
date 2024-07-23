@@ -2,11 +2,15 @@ package com.sparta.fltpleprojectbackend.store.entity;
 
 import com.sparta.fltpleprojectbackend.common.TimeStamped;
 import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
+import com.sparta.fltpleprojectbackend.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +35,7 @@ public class Store extends TimeStamped {
   @Column(nullable = false)
   private String streetAddress;
 
-  @Column(unique = true, nullable = false)
+  @Column(nullable = false)
   private String postalCode;
 
   @Column(nullable = false)
@@ -43,12 +47,17 @@ public class Store extends TimeStamped {
   @Column(nullable = false)
   private String storeTel;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
+
   /**
    * StoreRequest 객체를 사용하여 Store 엔티티를 생성하는 생성자.
    *
    * @param request 매장 생성에 필요한 정보를 담고 있는 StoreRequest 객체.
    */
-  public Store(StoreRequest request) {
+  public Store(StoreRequest request, User user) {
+    this.user = user;
     this.storeName = request.getStoreName();
     this.address = request.getAddress();
     this.streetAddress = request.getStreetAddress();
