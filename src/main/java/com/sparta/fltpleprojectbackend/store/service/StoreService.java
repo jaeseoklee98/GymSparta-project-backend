@@ -45,6 +45,11 @@ public class StoreService {
     return new StoreResponse(store);
   }
 
+  /**
+   * 3. 매장 삭제
+   *
+   * @param storeId 삭제하려는 매장의 id 값
+   */
   public void deleteStore(Long storeId) {
     Store store = findStoreById(storeId);
 
@@ -53,6 +58,6 @@ public class StoreService {
 
   private Store findStoreById(long id) {
     return storeRepository.findById(id)
-        .orElseThrow(()-> new IllegalArgumentException("해당 매장이 존재하지 않습니다."));
+        .orElseThrow(() -> new IllegalArgumentException("해당 매장이 존재하지 않습니다."));
   }
 }
