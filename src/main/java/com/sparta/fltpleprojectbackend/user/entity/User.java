@@ -28,11 +28,17 @@ public class User {
 
   private String email;
 
+  private String phoneNumber;
+
+  private String name;
+
   private String role;
 
   private LocalDateTime createdAt;
 
   private LocalDateTime updatedAt;
 
-  private LocalDateTime deletedAt;
+  private LocalDateTime deletedAt;  // 소프트 삭제를 위한 필드
+
+  private LocalDateTime scheduledDeletionDate; // 완전 삭제를 위한 필드
 }

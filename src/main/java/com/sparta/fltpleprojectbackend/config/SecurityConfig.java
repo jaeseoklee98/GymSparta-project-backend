@@ -2,7 +2,7 @@ package com.sparta.fltpleprojectbackend.config;
 
 import com.sparta.fltpleprojectbackend.jwtutil.JwtAuthenticationEntryPoint;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtAuthenticationFilter;
-import com.sparta.fltpleprojectbackend.security.UserDetailsService;
+import com.sparta.fltpleprojectbackend.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,20 +14,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-  private final UserDetailsService userDetailsService;
+  private final UserDetailsServiceImpl userDetailsServiceImpl;
   private final JwtAuthenticationEntryPoint unauthorizedHandler;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  public SecurityConfig(UserDetailsService userDetailsService,
+  public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,
       JwtAuthenticationEntryPoint unauthorizedHandler,
       JwtAuthenticationFilter jwtAuthenticationFilter) {
-    this.userDetailsService = userDetailsService;
+    this.userDetailsServiceImpl = userDetailsServiceImpl;
     this.unauthorizedHandler = unauthorizedHandler;
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
   }
@@ -35,14 +34,16 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .csrf(AbstractHttpConfigurer::disable)
+        .csrf(csrf -> csrf.disable())
         .exceptionHandling(exceptionHandling -> exceptionHandling
             .authenticationEntryPoint(unauthorizedHandler))
         .sessionManagement(sessionManagement -> sessionManagement
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-            .requestMatchers("/login", "/user/signup", "/owner/signup").permitAll()
-            .anyRequest().authenticated());
+            .requestMatchers("/auth/login", "/user/signup", "/owner/signup").permitAll()
+            .anyRequest().authenticated())
+        .requiresChannel(requiresChannel ->
+            requiresChannel.anyRequest().requiresSecure());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
