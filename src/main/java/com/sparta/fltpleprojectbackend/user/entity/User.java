@@ -2,9 +2,13 @@ package com.sparta.fltpleprojectbackend.user.entity;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
 public class User {
 
@@ -73,7 +77,7 @@ public class User {
   // 기본 생성자
   public User() {}
 
-  // 모든 필드를 포함한 생성자
+  // 모든 필드를 포함하는 생성자
   public User(String userName, String residentRegistrationNumber, String foreignerRegistrationNumber, Boolean isForeigner,
       String accountId, String password, String nickname, String email, String userPicture, String status,
       String zipcode, String mainAddress, String detailedAddress, String phoneNumber, Role role,
@@ -97,38 +101,5 @@ public class User {
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
     this.scheduledDeletionDate = scheduledDeletionDate;
-  }
-
-  // Getters and Setters
-  public String getAccountId() {
-    return accountId;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public void setDeletedAt(LocalDateTime deletedAt) {
-    this.deletedAt = deletedAt;
-  }
-
-  public void setScheduledDeletionDate(LocalDateTime scheduledDeletionDate) {
-    this.scheduledDeletionDate = scheduledDeletionDate;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setUpdatedAt(LocalDateTime updatedAt) {
-    this.updatedAt = updatedAt;
   }
 }

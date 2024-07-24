@@ -1,12 +1,16 @@
 package com.sparta.fltpleprojectbackend.user.controller;
 
+import com.sparta.fltpleprojectbackend.enums.Role;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
-import com.sparta.fltpleprojectbackend.security.RefreshTokenService;
+import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fltpleprojectbackend.user.dto.LoginRequest;
 import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
 import com.sparta.fltpleprojectbackend.user.service.UserService;
+import com.sparta.fltpleprojectbackend.owner.repository.OwnerRepository;
+import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.owner.service.OwnerService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +41,13 @@ public class AuthController {
   private UserRepository userRepository;
 
   @Autowired
+  private OwnerRepository ownerRepository;
+
+  @Autowired
   private UserService userService;
+
+  @Autowired
+  private OwnerService ownerService;
 
   /**
    * 로그인 처리
@@ -49,7 +59,7 @@ public class AuthController {
     // 현재 로그인된 상태인지 확인
     Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
     if (currentAuth != null && currentAuth.isAuthenticated() &&
-        currentAuth.getName().equals(loginRequest.getAccountId())) {
+        !currentAuth.getName().equals("anonymousUser")) {
       return ResponseEntity.status(HttpStatus.CONFLICT)
           .body(ResponseMessage.error("이미 로그인된 상태입니다."));
     }
@@ -59,12 +69,21 @@ public class AuthController {
           new UsernamePasswordAuthenticationToken(loginRequest.getAccountId(), loginRequest.getPassword())
       );
 
-      UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-      // 사용자 상태 확인
-      Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE");
-      if (!userOptional.isPresent()) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(ResponseMessage.error("회원탈퇴된 사용자입니다."));
+      UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+      // 사용자 또는 점주 상태 확인
+      if (userDetails.getRole() == Role.USER) {
+        Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE");
+        if (!userOptional.isPresent()) {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+              .body(ResponseMessage.error("회원탈퇴된 사용자입니다."));
+        }
+      } else if (userDetails.getRole() == Role.OWNER) {
+        Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(userDetails.getUsername(), "ACTIVE");
+        if (!ownerOptional.isPresent()) {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+              .body(ResponseMessage.error("회원탈퇴된 점주입니다."));
+        }
       }
 
       String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
@@ -108,11 +127,14 @@ public class AuthController {
     }
 
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
-    if (!userOptional.isPresent()) {
+    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(username, "ACTIVE");
+
+    if (!userOptional.isPresent() && !ownerOptional.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body(ResponseMessage.error("이미 로그아웃된 상태입니다."));
     }
 
+    // 인증된 상태에서 로그아웃 처리
     SecurityContextHolder.clearContext();
     ResponseMessage response = ResponseMessage.success("로그아웃 성공");
     return ResponseEntity.ok(response);
