@@ -1,0 +1,38 @@
+### 회원가입
+POST http://localhost:8080/api/user/signup
+Content-Type: application/json
+
+{
+  "userName": "testuser",
+  "accountId": "testaccount",
+  "password": "testpassword",
+  "confirmPassword": "testpassword",
+  "email": "testuser@example.com"
+}
+
+
+### 로그인
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "accountId": "testaccount",
+  "password": "testpassword"
+}
+
+> {%
+  client.test("로그인 성공", function() {
+    var response = client.response;
+    var jsonResponse = JSON.parse(response.body);
+    var accessToken = response.headers["Authorization"].substring(7); // "Bearer " 제거
+    client.global.set("accessToken", accessToken);
+  });
+%}
+
+### 로그아웃
+POST http://localhost:8080/api/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
+
+### 회원탈퇴
+DELETE http://localhost:8080/api/profile/users/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
