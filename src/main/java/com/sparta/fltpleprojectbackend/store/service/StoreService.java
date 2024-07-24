@@ -1,11 +1,13 @@
 package com.sparta.fltpleprojectbackend.store.service;
 
+import com.sparta.fltpleprojectbackend.enums.ErrorType;
 import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
 import com.sparta.fltpleprojectbackend.store.dto.StoreResponse;
 import com.sparta.fltpleprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.fltpleprojectbackend.store.entity.Store;
 import com.sparta.fltpleprojectbackend.store.repository.StoreRepository;
 import com.sparta.fltpleprojectbackend.user.entity.User;
+import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -42,10 +44,10 @@ public class StoreService {
    * @return 수정된 매장의 세부 정보를 포함하는 응답 객체
    */
   @Transactional
-  public StoreResponse updateStore(Long storeId, StoreRequest request, User user) {
+  public StoreResponse updateStore(Long storeId, StoreRequest request, String accountId) {
     Store store = findStoreById(storeId);
 
-    validateUser(store, user);
+    validateUser(store, accountId);
 
     store.update(request);
     return new StoreResponse(store);
@@ -56,10 +58,10 @@ public class StoreService {
    *
    * @param storeId 삭제하려는 매장의 id 값
    */
-  public void deleteStore(Long storeId, User user) {
+  public void deleteStore(Long storeId, String accountId) {
     Store store = findStoreById(storeId);
 
-    validateUser(store, user);
+    validateUser(store, accountId);
 
     storeRepository.delete(store);
   }
@@ -78,22 +80,30 @@ public class StoreService {
     return new StoreResponse(store);
   }
 
-  public List<StoreSimpleResponse> findAllAdmin(Long userId) {
-    List<Store> storeList = storeRepository.findAllByUserId(userId);
+  public List<StoreSimpleResponse> findAllAdmin(String accountId) {
+    List<Store> storeList = storeRepository.findAllByUserAccountId(accountId);
     return storeList.stream()
         .sorted(Comparator.comparing(Store::getCreatedAt))
         .map(StoreSimpleResponse::new)
         .toList();
   }
 
-  private Store findStoreById(long id) {
-    return storeRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("해당 매장이 존재하지 않습니다."));
+  public StoreResponse findAdminById(String accountId, Long storeId) {
+    Store store = findStoreById(storeId);
+
+    validateUser(store, accountId);
+
+    return new StoreResponse(store);
   }
 
-  private void validateUser(Store store, User user) {
-    if (!store.getUser().getUsername().equals(user.getUsername())) {
-      throw new IllegalArgumentException("본인이 작성한 게시물이 아닙니다.");
+  private Store findStoreById(long id) {
+    return storeRepository.findById(id)
+        .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_STORE));
+  }
+
+  private void validateUser(Store store, String accountId) {
+    if (!store.getUser().getAccountId().equals(accountId)) {
+      throw new UserException(ErrorType.INVALID_USER);
     }
   }
 }

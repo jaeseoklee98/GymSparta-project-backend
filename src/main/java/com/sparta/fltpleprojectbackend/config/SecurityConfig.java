@@ -61,7 +61,8 @@ public class SecurityConfig {
         .sessionManagement(sessionManagement -> sessionManagement
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-            .requestMatchers("/login", "/user/signup", "/owner/signup").permitAll()
+            .requestMatchers("/login", "/user/signup", "/owner/signup", "/api/stores/**").permitAll()
+            .requestMatchers("/api/stores/admin/**").authenticated()
             .anyRequest().authenticated());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
