@@ -108,11 +108,27 @@ public class User {
     return password;
   }
 
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
   public void setDeletedAt(LocalDateTime deletedAt) {
     this.deletedAt = deletedAt;
   }
 
   public void setScheduledDeletionDate(LocalDateTime scheduledDeletionDate) {
     this.scheduledDeletionDate = scheduledDeletionDate;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setUpdatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
   }
 }

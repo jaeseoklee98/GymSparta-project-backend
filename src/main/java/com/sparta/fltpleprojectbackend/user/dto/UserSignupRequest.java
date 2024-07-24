@@ -11,4 +11,7 @@ public class UserSignupRequest {
   private String password;
   private String confirmPassword;
   private String email;
+  private String phoneNumber;  // 전화번호 추가
+  private String residentRegistrationNumber; // 주민등록번호 추가
+  private String foreignerRegistrationNumber; // 외국인등록번호 추가
 }

@@ -53,4 +53,17 @@ public class UserDetailsImpl implements UserDetails {
   public User getUser() {
     return user;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof UserDetailsImpl) {
+      return this.getUsername().equals(((UserDetailsImpl) obj).getUsername());
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getUsername().hashCode();
+  }
 }
