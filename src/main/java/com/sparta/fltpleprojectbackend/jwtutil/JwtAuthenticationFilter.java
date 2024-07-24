@@ -23,8 +23,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Autowired
   private UserDetailsService userDetailsService;
 
-  @Autowired
-  private BlacklistTokenService blacklistTokenService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -41,12 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-      // 블랙리스트에 있는지 확인
-      if (!jwtUtil.validateToken(jwt) || blacklistTokenService.isTokenBlacklisted(jwt)) {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        return;
-      }
 
       if (jwtUtil.validateToken(jwt)) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

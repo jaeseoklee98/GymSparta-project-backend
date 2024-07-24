@@ -1,0 +1,8 @@
+###
+POST http://127.0.0.1:8080/store/users/1/reviews
+Content-Type: application/json
+
+{
+  "rating": 0,
+  "comment": "ㅁㄴㅇㅁㄴㅇ"
+}
