@@ -5,9 +5,9 @@ import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
 import com.sparta.fltpleprojectbackend.store.dto.StoreResponse;
 import com.sparta.fltpleprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.fltpleprojectbackend.store.entity.Store;
+import com.sparta.fltpleprojectbackend.store.exception.StoreException;
 import com.sparta.fltpleprojectbackend.store.repository.StoreRepository;
 import com.sparta.fltpleprojectbackend.user.entity.User;
-import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -98,12 +98,12 @@ public class StoreService {
 
   private Store findStoreById(long id) {
     return storeRepository.findById(id)
-        .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_STORE));
+        .orElseThrow(() -> new StoreException(ErrorType.NOT_FOUND_STORE));
   }
 
   private void validateUser(Store store, String accountId) {
     if (!store.getUser().getAccountId().equals(accountId)) {
-      throw new UserException(ErrorType.INVALID_USER);
+      throw new StoreException(ErrorType.INVALID_USER);
     }
   }
 }
