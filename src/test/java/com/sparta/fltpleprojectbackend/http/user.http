@@ -25,14 +25,14 @@ Content-Type: application/json
 ### 유저 프로필 변경
 PUT http://localhost:8080/api/profile/user
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjEiLCJpYXQiOjE3MjE5MTU1OTIsImV4cCI6MTcyMTkxNzM5Mn0.gbifv7mNlUdpiLe7-OUV3upY1LQR8M0_INNyAYUGAgc
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjEiLCJpYXQiOjE3MjE5MTc1MTIsImV4cCI6MTcyMTkxOTMxMn0.2odEeK-PP4AqJ2KHRSUudyio_JvvKqI6hOCmoU4ejC4
 
 {
-  "nickname": "아에리",
-  "zipcode": "우편번호",
-  "mainAddress": "메인주소",
-  "detailedAddress": "디테일주소",
-  "userPicture": "사진인데",
+  "nickname": "아에링",
+  "zipcode": "우편번호임",
+  "mainAddress": "메인주소임",
+  "detailedAddress": "디테일주소임",
+  "userPicture": "사진인데임",
   "password": "ael121667"
 }
 
