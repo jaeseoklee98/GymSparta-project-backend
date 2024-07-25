@@ -1,0 +1,47 @@
+### 유저 회원가입
+POST http://localhost:8080/api/user/signup
+Content-Type: application/json
+
+{
+  "userName": "손아엘",
+  "accountId": "ael121",
+  "password": "ael121667",
+  "confirmPassword": "ael121667",
+  "email": "ael121@naver.com",
+  "phoneNumber": "01012345678",
+  "residentRegistrationNumber": "123456789123",
+  "foreignerRegistrationNumber": "123456789123"
+}
+
+### 유저 로그인
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "accountId": "ael121",
+  "password": "ael121667"
+}
+
+### 유저 프로필 변경
+PUT http://localhost:8080/api/profile/user
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjEiLCJpYXQiOjE3MjE5MTU1OTIsImV4cCI6MTcyMTkxNzM5Mn0.gbifv7mNlUdpiLe7-OUV3upY1LQR8M0_INNyAYUGAgc
+
+{
+  "nickname": "아에리",
+  "zipcode": "우편번호",
+  "mainAddress": "메인주소",
+  "detailedAddress": "디테일주소",
+  "userPicture": "사진인데",
+  "password": "ael121667"
+}
+
+### 유저 비번 변경
+PUT http://localhost:8080/api/profile/users/password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiLslYTsnbTrlJQiLCJpYXQiOjE3MjE4MzI2NjQsImV4cCI6MTcyMTgzNDQ2NH0.IdUkhoYwZgWzluz8a4AWkcGNsbmEpF0x4_nlBog4gck
+
+{
+  "oldPassword": "비밀번호바꿈",
+  "newPassword": "심재훈"
+}

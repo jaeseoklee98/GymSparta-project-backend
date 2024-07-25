@@ -3,10 +3,14 @@ package com.sparta.fltpleprojectbackend.user.service;
 import com.sparta.fltpleprojectbackend.enums.ErrorType;
 import com.sparta.fltpleprojectbackend.enums.Role;
 import com.sparta.fltpleprojectbackend.exception.CustomException;
+import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fltpleprojectbackend.user.dto.UpdatePasswordRequest;
+import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UserSignupRequest;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -89,5 +93,43 @@ public class UserService {
     user.setDeletedAt(LocalDateTime.now());
     user.setScheduledDeletionDate(LocalDateTime.now().plusDays(30));
     userRepository.save(user);
+  }
+
+  /**.
+   * 유저 프로필 변경
+   *
+   * @param userDetails 유저 정보
+   * @param userRequest 새 프로필 정보
+   * @throws UserException 유저를 찾을 수 없는 경우 발생
+   */
+  @Transactional
+  public void updateUserProfile(UpdateUserProfileRequest userRequest, UserDetailsImpl userDetails) {
+    Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE");
+    User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
+
+    if (!passwordEncoder.matches(userRequest.getPassword(), user.getPassword())) {
+      throw new UserException(ErrorType.INVALID_PASSWORD);
+    }
+
+    user.updateUserProfile(userRequest);
+  }
+
+  /**.
+   * 유저 비밀번호 변경
+   *
+   * @param userDetails 유저 정보
+   * @param userRequest 구, 새 비밀번호 정보
+   * @throws UserException 유저를 찾을 수 없는 경우 발생
+   */
+  @Transactional
+  public void updateUserPassword(UpdatePasswordRequest userRequest, UserDetailsImpl userDetails) {
+    Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE");
+    User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
+
+    if (!passwordEncoder.matches(userRequest.getOldPassword(), user.getPassword())) {
+      throw new UserException(ErrorType.INVALID_PASSWORD);
+    }
+
+    user.updatePassword(passwordEncoder.encode(userRequest.getNewPassword()));
   }
 }
