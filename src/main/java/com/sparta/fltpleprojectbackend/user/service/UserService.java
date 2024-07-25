@@ -7,6 +7,7 @@ import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fltpleprojectbackend.user.dto.UpdatePasswordRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UserSignupRequest;
+import com.sparta.fltpleprojectbackend.user.dto.ReadUserResponse;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
@@ -131,5 +132,16 @@ public class UserService {
     }
 
     user.updatePassword(passwordEncoder.encode(userRequest.getNewPassword()));
+  }
+
+  /**.
+   * 유저 프로필 조회
+   *
+   * @param userDetails 유저 정보
+   */
+  public ReadUserResponse readUserProfile(UserDetailsImpl userDetails) {
+    Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE");
+    User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
+    return new ReadUserResponse(user);
   }
 }
