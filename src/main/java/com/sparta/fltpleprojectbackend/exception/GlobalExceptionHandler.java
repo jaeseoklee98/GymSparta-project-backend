@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(CustomException.class)
-  public ResponseEntity<?> handleScheduleException(CustomException e) {
+  public ResponseEntity<?> handleCustomException(CustomException e) {
     log.error("에러 메세지: ", e);
     return ResponseEntity.status(e.getErrorType().getHttpStatus()).body(new ExceptionDto(e.getErrorType()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<?> handleException(MethodArgumentNotValidException e){
+  public ResponseEntity<?> handleException(MethodArgumentNotValidException e) {
     log.error("에러 메세지: ", e);
     BindingResult bindingResult = e.getBindingResult();
     StringBuilder builder = new StringBuilder();

@@ -1,8 +1,11 @@
 package com.sparta.fltpleprojectbackend.user.service;
 
-import com.sparta.fltpleprojectbackend.security.RefreshTokenService;
+import com.sparta.fltpleprojectbackend.enums.ErrorType;
+import com.sparta.fltpleprojectbackend.enums.Role;
+import com.sparta.fltpleprojectbackend.exception.CustomException;
 import com.sparta.fltpleprojectbackend.user.dto.UserSignupRequest;
 import com.sparta.fltpleprojectbackend.user.entity.User;
+import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,66 +19,75 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final RefreshTokenService refreshTokenService;
 
   @Autowired
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
-    this.refreshTokenService = refreshTokenService;
   }
 
-  /**
-   * 유저 회원가입 처리
-   * @param request 회원가입 요청 정보 (아이디, 비밀번호, 이메일, 전화번호, 이름)
-   * @return User 생성된 유저 객체
-   * @throws IllegalArgumentException 비밀번호 불일치 또는 이미 존재하는 사용자
-   */
   public User signup(UserSignupRequest request) {
-    if (!request.getPassword().equals(request.getConfirmPassword())) {
-      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    Optional<User> existingUserByUsername = userRepository.findByAccountIdAndStatus(
+        request.getAccountId(), "ACTIVE");
+    Optional<User> existingUserByEmail = userRepository.findByEmailAndStatus(request.getEmail(),
+        "ACTIVE");
+    Optional<User> existingUserByPhoneNumber = userRepository.findByPhoneNumberAndStatus(
+        request.getPhoneNumber(), "ACTIVE");
+
+    if (existingUserByUsername.isPresent()) {
+      throw new CustomException(ErrorType.DUPLICATE_USERNAME, "주민등록번호 또는 외국인등록번호 중 하나는 필수 항목입니다.");
+    }
+    if (existingUserByEmail.isPresent()) {
+      throw new CustomException(ErrorType.DUPLICATE_EMAIL, "주민등록번호 또는 외국인등록번호 중 하나는 필수 항목입니다.");
+    }
+    if (existingUserByPhoneNumber.isPresent()) {
+      throw new CustomException(ErrorType.DUPLICATE_USER, "주민등록번호 또는 외국인등록번호 중 하나는 필수 항목입니다.");
     }
 
-    userRepository.findByUsername(request.getUsername()).ifPresent(user -> {
-      throw new IllegalArgumentException("이미 존재하는 사용자 이름입니다.");
-    });
+    Optional<User> deletedUserByUsername = userRepository.findByAccountIdAndStatus(
+        request.getAccountId(), "DELETED");
+    if (deletedUserByUsername.isPresent()) {
+      User user = deletedUserByUsername.get();
+      user.setStatus("ACTIVE");
+      user.setDeletedAt(null);
+      user.setScheduledDeletionDate(null);
+      user.setPassword(passwordEncoder.encode(request.getPassword()));
+      user.setUpdatedAt(LocalDateTime.now());
+      return userRepository.save(user);
+    }
 
-    userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
-      throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-    });
+    User newUser = new User(
+        request.getUserName(),
+        request.getResidentRegistrationNumber(),
+        request.getForeignerRegistrationNumber(),
+        false,
+        request.getAccountId(),
+        passwordEncoder.encode(request.getPassword()),
+        "",
+        request.getEmail(),
+        "",
+        "ACTIVE",
+        "",
+        "",
+        "",
+        request.getPhoneNumber(),
+        Role.USER,
+        LocalDateTime.now(),
+        null,
+        null,
+        null
+    );
 
-    userRepository.findByPhoneNumber(request.getPhoneNumber()).ifPresent(user -> {
-      throw new IllegalArgumentException("이미 존재하는 전화번호입니다.");
-    });
-
-    User user = User.builder()
-        .username(request.getUsername())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .email(request.getEmail())
-        .phoneNumber(request.getPhoneNumber())
-        .name(request.getName())
-        .role("USER")
-        .createdAt(LocalDateTime.now())
-        .build();
-
-    return userRepository.save(user);
+    return userRepository.save(newUser);
   }
 
-  /**
-   * 회원탈퇴 처리
-   * @param username 탈퇴할 사용자 이름
-   * @throws IllegalArgumentException 사용자 정보가 없을 경우 예외 발생
-   */
   public void deleteUser(String username) {
-    Optional<User> userOptional = userRepository.findByUsername(username);
-    User user = userOptional.orElseThrow(() -> new IllegalArgumentException("User not found with username: " + username));
+    Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
+    User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
 
-    // 소프트 삭제 처리 및 30일 후 삭제 일자 설정
+    user.setStatus("DELETED");
     user.setDeletedAt(LocalDateTime.now());
     user.setScheduledDeletionDate(LocalDateTime.now().plusDays(30));
     userRepository.save(user);
-
-    // 사용자와 관련된 리프레시 토큰 삭제
-    refreshTokenService.deleteByUsername(username);
   }
 }

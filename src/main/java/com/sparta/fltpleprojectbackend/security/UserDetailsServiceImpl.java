@@ -1,5 +1,7 @@
 package com.sparta.fltpleprojectbackend.security;
 
+import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.owner.repository.OwnerRepository;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +17,21 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
   @Autowired
   private UserRepository userRepository;
 
-  /**
-   * 유저 이름을 통해 사용자 정보 로드
-   * @param username 유저 이름
-   * @return UserDetails 사용자 정보
-   * @throws UsernameNotFoundException 유저가 없을 때 발생
-   */
+  @Autowired
+  private OwnerRepository ownerRepository;
+
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Optional<User> userOptional = userRepository.findByUsername(username);
-    User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-    return new UserDetailsImpl(user);
+  public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
+    Optional<User> userOptional = userRepository.findByAccountId(accountId);
+    if (userOptional.isPresent()) {
+      return new UserDetailsImpl(userOptional.get());
+    }
+
+    Optional<Owner> ownerOptional = ownerRepository.findByAccountId(accountId);
+    if (ownerOptional.isPresent()) {
+      return new UserDetailsImpl(ownerOptional.get());
+    }
+
+    throw new UsernameNotFoundException("User or Owner not found with accountId: " + accountId);
   }
 }
