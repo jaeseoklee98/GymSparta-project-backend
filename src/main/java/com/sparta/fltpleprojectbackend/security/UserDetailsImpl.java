@@ -14,17 +14,23 @@ public class UserDetailsImpl implements UserDetails {
   private final String accountId;
   private final String password;
   private final Role role;
+  private final User user;
+  private final Owner owner;
 
   public UserDetailsImpl(User user) {
     this.accountId = user.getAccountId();
     this.password = user.getPassword();
     this.role = user.getRole();
+    this.user = user;
+    this.owner = null;
   }
 
   public UserDetailsImpl(Owner owner) {
     this.accountId = owner.getAccountId();
     this.password = owner.getPassword();
     this.role = owner.getRole();
+    this.user = null;
+    this.owner = owner;
   }
 
   @Override
@@ -65,4 +71,8 @@ public class UserDetailsImpl implements UserDetails {
   public Role getRole() {
     return role;
   }
+
+  public User getUser() { return  user; }
+
+  public Owner getOwner() { return owner; }
 }

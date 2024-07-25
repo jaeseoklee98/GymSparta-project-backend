@@ -6,7 +6,7 @@ import com.sparta.fltpleprojectbackend.exception.CustomException;
 public class StoreException extends CustomException {
 
   public StoreException(ErrorType errorType) {
-    super(errorType);
+    super(errorType, errorType.getMessage());
   }
 
 }

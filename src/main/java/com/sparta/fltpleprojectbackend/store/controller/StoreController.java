@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,12 +39,13 @@ public class StoreController {
    * @param request     매장 등록에 필요한 정보를 담고 있는 DTO
    * @return HTTP 상태 코드, 응답 메시지, 응답 데이터(매장 명, 매장 정보 등 매장 상세 정보)
    */
-  @PostMapping("/admin")
+  @PreAuthorize("hasAnyAuthority('OWNER')")
+  @PostMapping("/owners")
   public ResponseEntity<CommonResponse<StoreResponse>> createStore(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @Valid @RequestBody StoreRequest request
   ) {
-    StoreResponse storeResponse = storeService.createStore(request, userDetails.getUser());
+    StoreResponse storeResponse = storeService.createStore(request, userDetails.getOwner());
     CommonResponse<StoreResponse> response = new CommonResponse<>(
         HttpStatus.CREATED.value(), "매장 등록 완료", storeResponse);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -57,13 +59,15 @@ public class StoreController {
    * @param request     매장 정보 수정에 필요한 정보를 담고 있는 DTO
    * @return HTTP 상태코드, 응답 메시지, 응답 데이터(매장 명, 매장 정보 등 매장 상세 정보)
    */
-  @PutMapping("/admin/{storeId}")
+  @PreAuthorize("hasAnyAuthority('OWNER')")
+  @PutMapping("/owners/{storeId}")
   public ResponseEntity<CommonResponse<StoreResponse>> updateStore(
       @PathVariable Long storeId,
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @Valid @RequestBody StoreRequest request
   ) {
-    StoreResponse storeResponse = storeService.updateStore(storeId, request, userDetails.getUser().getAccountId());
+    StoreResponse storeResponse = storeService.updateStore(
+        storeId, request, userDetails.getOwner().getAccountId());
     CommonResponse<StoreResponse> response = new CommonResponse<>(
         HttpStatus.OK.value(), "매장 수정 완료", storeResponse);
     return new ResponseEntity<>(response, HttpStatus.OK);
@@ -76,12 +80,13 @@ public class StoreController {
    * @param storeId     삭제할 매장의 ID
    * @return HTTP 상태 코드
    */
-  @DeleteMapping("/admin/{storeId}")
+  @PreAuthorize("hasAnyAuthority('OWNER')")
+  @DeleteMapping("/owners/{storeId}")
   public ResponseEntity<CommonResponse<StoreResponse>> deleteStore(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long storeId
   ) {
-    storeService.deleteStore(storeId, userDetails.getUser().getAccountId());
+    storeService.deleteStore(storeId, userDetails.getOwner().getAccountId());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -122,22 +127,33 @@ public class StoreController {
    * @param userDetails 조회하고자 하는 점주의 사용자 정보
    * @return HTTP 상태 코드, 응답 메시지, 응답 데이터(해당 점주가 등록한 매장의 ID와 이름)
    */
-  @GetMapping("/admin")
+  @PreAuthorize("hasAnyAuthority('OWNER')")
+  @GetMapping("/owners")
   public ResponseEntity<CommonResponse<List<StoreSimpleResponse>>> findAllAdminStore(
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    List<StoreSimpleResponse> stores = storeService.findAllAdmin(userDetails.getUser().getAccountId());
+    List<StoreSimpleResponse> stores = storeService.findAllAdmin(
+        userDetails.getOwner().getAccountId());
 
     CommonResponse<List<StoreSimpleResponse>> response = new CommonResponse<>(
         HttpStatus.OK.value(), "점주 매장 조회 완료", stores);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @GetMapping("/admin/{storeId}")
-  public ResponseEntity<CommonResponse<StoreResponse >> findAdminStore(
+  /**
+   * 7. 점주가 등록한 매장 상세 조회
+   *
+   * @param userDetails 조회하고자 하는 점주의 사용자 정보
+   * @param storeId     조회하고자 하는 매장 ID
+   * @return HTTP 상태 코드, 응답 메시지, 응답 데이터(조회된 매장의 상세 정보)
+   */
+  @PreAuthorize("hasAnyAuthority('OWNER')")
+  @GetMapping("/owners/{storeId}")
+  public ResponseEntity<CommonResponse<StoreResponse>> findAdminStore(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long storeId
   ) {
-    StoreResponse storeResponse = storeService.findAdminById(userDetails.getUser().getAccountId(), storeId);
+    StoreResponse storeResponse = storeService.findAdminById(
+        userDetails.getOwner().getAccountId(), storeId);
 
     CommonResponse<StoreResponse> response = new CommonResponse<>(
         HttpStatus.OK.value(), "점주 매장 상세 조회 완료", storeResponse);

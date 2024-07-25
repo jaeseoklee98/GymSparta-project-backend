@@ -48,7 +48,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
             .requestMatchers("/api/login", "/api/user/signup", "/api/owners/signup", "/api/logout", "/api/profile/users/signout", "/api/profile/owners/signout", "/error").permitAll()
             .requestMatchers("/api/stores/**").permitAll()
-            .requestMatchers("/api/stores/admin/**").authenticated()
+            .requestMatchers("/api/stores/admin/**").hasAuthority("OWNER")
             .anyRequest().authenticated());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

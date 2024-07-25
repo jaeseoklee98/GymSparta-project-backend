@@ -1,8 +1,8 @@
 package com.sparta.fltpleprojectbackend.store.entity;
 
 import com.sparta.fltpleprojectbackend.common.TimeStamped;
+import com.sparta.fltpleprojectbackend.owner.entity.Owner;
 import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
-import com.sparta.fltpleprojectbackend.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,16 +48,16 @@ public class Store extends TimeStamped {
   private String storeTel;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  @JoinColumn(name = "owner_id", nullable = false)
+  private Owner owner;
 
   /**
    * StoreRequest 객체를 사용하여 Store 엔티티를 생성하는 생성자.
    *
    * @param request 매장 생성에 필요한 정보를 담고 있는 StoreRequest 객체.
    */
-  public Store(StoreRequest request, User user) {
-    this.user = user;
+  public Store(StoreRequest request, Owner owner) {
+    this.owner = owner;
     this.storeName = request.getStoreName();
     this.address = request.getAddress();
     this.streetAddress = request.getStreetAddress();
