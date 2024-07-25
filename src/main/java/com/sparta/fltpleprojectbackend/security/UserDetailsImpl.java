@@ -1,5 +1,7 @@
 package com.sparta.fltpleprojectbackend.security;
 
+import com.sparta.fltpleprojectbackend.enums.Role;
+import com.sparta.fltpleprojectbackend.owner.entity.Owner;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,10 +11,20 @@ import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
-  private final User user;
+  private final String accountId;
+  private final String password;
+  private final Role role;
 
   public UserDetailsImpl(User user) {
-    this.user = user;
+    this.accountId = user.getAccountId();
+    this.password = user.getPassword();
+    this.role = user.getRole();
+  }
+
+  public UserDetailsImpl(Owner owner) {
+    this.accountId = owner.getAccountId();
+    this.password = owner.getPassword();
+    this.role = owner.getRole();
   }
 
   @Override
@@ -22,12 +34,12 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public String getPassword() {
-    return user.getPassword();
+    return password;
   }
 
   @Override
-  public String getUsername() { // 여기서 username을 accountId로 변경합니다.
-    return user.getAccountId();
+  public String getUsername() {
+    return accountId;
   }
 
   @Override
@@ -50,7 +62,7 @@ public class UserDetailsImpl implements UserDetails {
     return true;
   }
 
-  public User getUser() {
-    return user;
+  public Role getRole() {
+    return role;
   }
 }

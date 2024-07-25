@@ -2,7 +2,9 @@ package com.sparta.fltpleprojectbackend.config;
 
 import com.sparta.fltpleprojectbackend.jwtutil.JwtAuthenticationEntryPoint;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtAuthenticationFilter;
+import com.sparta.fltpleprojectbackend.security.CustomSessionExpiredStrategy;
 import com.sparta.fltpleprojectbackend.security.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,34 +25,14 @@ public class SecurityConfig {
   private final JwtAuthenticationEntryPoint unauthorizedHandler;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,
+  public SecurityConfig(
+      @Qualifier("userDetailsServiceImpl") UserDetailsServiceImpl userDetailsServiceImpl,
       JwtAuthenticationEntryPoint unauthorizedHandler,
       JwtAuthenticationFilter jwtAuthenticationFilter) {
     this.userDetailsServiceImpl = userDetailsServiceImpl;
     this.unauthorizedHandler = unauthorizedHandler;
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
   }
-
-
-// Https 설정
-//  @Bean
-//  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//    http
-//        .csrf(csrf -> csrf.disable())
-//        .exceptionHandling(exceptionHandling -> exceptionHandling
-//            .authenticationEntryPoint(unauthorizedHandler))
-//        .sessionManagement(sessionManagement -> sessionManagement
-//            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//        .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-//            .requestMatchers("/login", "/user/signup", "/owner/signup").permitAll()
-//            .anyRequest().authenticated())
-//        .requiresChannel(requiresChannel ->
-//            requiresChannel.anyRequest().requiresSecure());
-//
-//    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//    return http.build();
-//  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -59,9 +41,13 @@ public class SecurityConfig {
         .exceptionHandling(exceptionHandling -> exceptionHandling
             .authenticationEntryPoint(unauthorizedHandler))
         .sessionManagement(sessionManagement -> sessionManagement
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .maximumSessions(1)
+            .expiredSessionStrategy(new CustomSessionExpiredStrategy())
+            .maxSessionsPreventsLogin(false))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-            .requestMatchers("/login", "/user/signup", "/owner/signup", "/api/stores/**").permitAll()
+            .requestMatchers("/api/login", "/api/user/signup", "/api/owners/signup", "/api/logout", "/api/profile/users/signout", "/api/profile/owners/signout", "/error").permitAll()
+            .requestMatchers("/api/stores/**").permitAll()
             .requestMatchers("/api/stores/admin/**").authenticated()
             .anyRequest().authenticated());
 

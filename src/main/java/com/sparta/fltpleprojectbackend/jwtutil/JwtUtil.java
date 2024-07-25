@@ -1,6 +1,7 @@
 package com.sparta.fltpleprojectbackend.jwtutil;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +18,7 @@ public class JwtUtil {
   private final long accessTokenValidity = 1800000; // 30분
   private final long refreshTokenValidity = 3600000; // 1시간
 
-  /**
-   * JWT 액세스 토큰 생성
-   * @param username 유저 이름
-   * @return 생성된 JWT 액세스 토큰
-   */
+  // JWT 액세스 토큰 생성
   public String generateAccessToken(String username) {
     Claims claims = Jwts.claims().setSubject(username);
     Date now = new Date();
@@ -35,11 +32,7 @@ public class JwtUtil {
         .compact();
   }
 
-  /**
-   * JWT 리프레시 토큰 생성
-   * @param username 유저 이름
-   * @return 생성된 JWT 리프레시 토큰
-   */
+  // JWT 리프레시 토큰 생성
   public String generateRefreshToken(String username) {
     Claims claims = Jwts.claims().setSubject(username);
     Date now = new Date();
@@ -53,25 +46,22 @@ public class JwtUtil {
         .compact();
   }
 
-  /**
-   * 토큰에서 유저 이름 추출
-   * @param token JWT 토큰
-   * @return 유저 이름
-   */
+  // 토큰에서 유저 이름 추출
   public String getUsername(String token) {
-    return Jwts.parserBuilder()
-        .setSigningKey(secretKey)
-        .build()
-        .parseClaimsJws(token)
-        .getBody()
-        .getSubject();
+    try {
+      return Jwts.parserBuilder()
+          .setSigningKey(secretKey)
+          .build()
+          .parseClaimsJws(token)
+          .getBody()
+          .getSubject();
+    } catch (JwtException | IllegalArgumentException e) {
+      System.out.println("Invalid JWT token: " + e.getMessage());
+      return null;
+    }
   }
 
-  /**
-   * 토큰 유효성 검증
-   * @param token JWT 토큰
-   * @return 유효한 토큰인지 여부
-   */
+  // 토큰 유효성 검증
   public boolean validateToken(String token) {
     try {
       Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
@@ -81,10 +71,7 @@ public class JwtUtil {
     }
   }
 
-  /**
-   * 리프레시 토큰 유효기간 반환
-   * @return 리프레시 토큰 유효기간 (밀리초)
-   */
+  // 리프레시 토큰 유효기간 반환
   public long getRefreshTokenValidity() {
     return refreshTokenValidity;
   }
