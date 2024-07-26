@@ -20,4 +20,5 @@ public class ExceptionDto {
     this.result = "ERROR";
     this.message = message;
   }
+
 }
