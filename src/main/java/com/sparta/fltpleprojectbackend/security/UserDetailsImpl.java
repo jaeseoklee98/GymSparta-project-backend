@@ -4,12 +4,14 @@ import com.sparta.fltpleprojectbackend.enums.Role;
 import com.sparta.fltpleprojectbackend.owner.entity.Owner;
 import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fltpleprojectbackend.user.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
 
+@Getter
 public class UserDetailsImpl implements UserDetails {
 
   private final String accountId;
@@ -17,6 +19,7 @@ public class UserDetailsImpl implements UserDetails {
   private final Role role;
   private final User user;
   private final Owner owner;
+  private final Trainer trainer;
 
   public UserDetailsImpl(User user) {
     this.accountId = user.getAccountId();
@@ -24,6 +27,7 @@ public class UserDetailsImpl implements UserDetails {
     this.role = user.getRole();
     this.user = user;
     this.owner = null;
+    this.trainer = null;
   }
 
   public UserDetailsImpl(Owner owner) {
@@ -32,12 +36,16 @@ public class UserDetailsImpl implements UserDetails {
     this.role = owner.getRole();
     this.user = null;
     this.owner = owner;
+    this.trainer = null;
   }
 
   public UserDetailsImpl(Trainer trainer) {
     this.accountId = trainer.getAccountId();
     this.password = trainer.getPassword();
     this.role = trainer.getRole();
+    this.user = null;
+    this.owner = null;
+    this.trainer = trainer;
   }
 
   @Override
@@ -74,12 +82,4 @@ public class UserDetailsImpl implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
-
-  public Role getRole() {
-    return role;
-  }
-
-  public User getUser() { return  user; }
-
-  public Owner getOwner() { return owner; }
 }
