@@ -54,7 +54,6 @@ public class SecurityConfig {
             .requestMatchers("/api/stores/admin/**").hasAuthority("OWNER")
             .anyRequest().authenticated());
 
-
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();

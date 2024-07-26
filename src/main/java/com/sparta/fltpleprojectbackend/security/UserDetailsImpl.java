@@ -2,6 +2,7 @@ package com.sparta.fltpleprojectbackend.security;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
 import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +32,12 @@ public class UserDetailsImpl implements UserDetails {
     this.role = owner.getRole();
     this.user = null;
     this.owner = owner;
+  }
+
+  public UserDetailsImpl(Trainer trainer) {
+    this.accountId = trainer.getAccountId();
+    this.password = trainer.getPassword();
+    this.role = trainer.getRole();
   }
 
   @Override
