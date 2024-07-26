@@ -1,11 +1,13 @@
 package com.sparta.fltpleprojectbackend.user.controller;
 
+import com.sparta.fltpleprojectbackend.common.CommonResponse;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
 import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
 import com.sparta.fltpleprojectbackend.user.dto.UpdatePasswordRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UserSignupRequest;
+import com.sparta.fltpleprojectbackend.user.dto.ReadUserResponse;
 import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import com.sparta.fltpleprojectbackend.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -108,5 +110,19 @@ public class UserController {
     userService.updateUserPassword(userRequest, userDetails);
 
     return ResponseEntity.ok("비밀번호 변경 완료");
+  }
+
+  /**.
+   * 유저 프로필 조회
+   *
+   * @param userDetails 유저 정보
+   * @return 상태코드, 응답 메시지, 응답 데이터
+   */
+  @GetMapping("/profile/user")
+  public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
+    CommonResponse<ReadUserResponse> response = new CommonResponse<>(
+      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
+    return new  ResponseEntity<>(response, HttpStatus.OK);
   }
 }

@@ -25,10 +25,10 @@ Content-Type: application/json
 ### 유저 프로필 변경
 PUT http://localhost:8080/api/profile/user
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjEiLCJpYXQiOjE3MjE5MTc1MTIsImV4cCI6MTcyMTkxOTMxMn0.2odEeK-PP4AqJ2KHRSUudyio_JvvKqI6hOCmoU4ejC4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjEiLCJpYXQiOjE3MjE5MzE2NzksImV4cCI6MTcyMTkzMzQ3OX0.bz2-E8Ncejw2Hmizs2E4ZC0X4vRSCpTLwdnFlzkE8qI
 
 {
-  "nickname": "아에링",
+  "nickname": "아에링링",
   "zipcode": "우편번호임",
   "mainAddress": "메인주소임",
   "detailedAddress": "디테일주소임",
@@ -44,4 +44,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiLslYTsnbTrlJQiLCJpYXQiOjE3M
 {
   "oldPassword": "비밀번호바꿈",
   "newPassword": "심재훈"
+}
+
+### 유저 프로필 조회
+GET http://localhost:8080/api/profile/user
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjEiLCJpYXQiOjE3MjE5MzE2NzksImV4cCI6MTcyMTkzMzQ3OX0.bz2-E8Ncejw2Hmizs2E4ZC0X4vRSCpTLwdnFlzkE8qI
+
+{
+
 }

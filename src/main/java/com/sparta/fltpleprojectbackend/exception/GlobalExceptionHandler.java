@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<?> handleException(MethodArgumentNotValidException e){
+  public ResponseEntity<?> handleException(MethodArgumentNotValidException e) {
+
     log.error("에러 메세지: ", e);
     BindingResult bindingResult = e.getBindingResult();
     StringBuilder builder = new StringBuilder();
@@ -30,5 +31,4 @@ public class GlobalExceptionHandler {
     }
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDto(builder.toString()));
   }
-
 }

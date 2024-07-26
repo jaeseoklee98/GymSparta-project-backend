@@ -10,6 +10,7 @@ Content-Type: application/json
   "email": "testuser@example.com"
 }
 
+
 ### 점주 회원가입
 POST http://localhost:8080/api/owners/signup
 Content-Type: application/json
@@ -21,6 +22,7 @@ Content-Type: application/json
 "isForeigner": false,
 "accountId": "testowner",
 "password": "password123",
+"confirmPassword": "password123",
 "nickname": "owner123",
 "email": "testowner@example.com",
 "businessRegistrationNumber": "1234567890",
@@ -74,15 +76,18 @@ POST http://localhost:8080/api/logout
 ### 점주 로그아웃
 POST http://localhost:8080/api/logout
 
+### 점주 회원탈퇴
+DELETE http://localhost:8080/api/profile/owners/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
+
 ### 회원탈퇴
 DELETE http://localhost:8080/api/profile/users/signout
 
 ### 점주 회원탈퇴
 DELETE http://localhost:8080/api/profile/owners/signout
 
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
+### 회원탈퇴
+DELETE http://localhost:8080/api/profile/users/signout
 
 ### 회원탈퇴
 DELETE http://localhost:8080/api/profile/users/signout
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
-
