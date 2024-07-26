@@ -1,6 +1,7 @@
 package com.sparta.fltpleprojectbackend.owner.entity;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
+import com.sparta.fltpleprojectbackend.owner.dto.UpdateOwnerProfileRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -121,5 +122,31 @@ public class Owner {
         ", deletedAt=" + deletedAt +
         ", scheduledDeletionDate=" + scheduledDeletionDate +
         '}';
+  }
+
+  /**.
+   * 프로필 변경
+   *
+   * @param ownerRequest 새 프로필 정보
+   */
+  public void updateOwnerProfile(UpdateOwnerProfileRequest ownerRequest) {
+    this.nickname = ownerRequest.getNickname();
+    this.email = ownerRequest.getEmail();
+    this.ownerPicture = ownerRequest.getOwnerPicture();
+    this.zipcode = ownerRequest.getZipcode();
+    this.mainAddress  = ownerRequest.getMainAddress();
+    this.detailedAddress  = ownerRequest.getDetailedAddress();
+    this.ownerPhoneNumber = ownerRequest.getOwnerPhoneNumber();
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**.
+   * 비밀번호 변경
+   *
+   * @param newPassword 새 비밀번호 정보
+   */
+  public void updatePassword(String newPassword) {
+    this.password = newPassword;
+    this.updatedAt = LocalDateTime.now();
   }
 }

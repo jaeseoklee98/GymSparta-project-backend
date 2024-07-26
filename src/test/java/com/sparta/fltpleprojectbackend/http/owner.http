@@ -26,3 +26,29 @@ Content-Type: application/json
   "accountId": "ael12111",
   "password": "ael121667"
 }
+
+### 점주 프로필 변경
+PUT http://localhost:8080/api/profile/owner
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjExMSIsImlhdCI6MTcyMTk5MDcyOCwiZXhwIjoxNzIxOTkyNTI4fQ.345K5UslnBgyBOhMqJD7z6pVpBgK3x7wStCcxvn3t04
+
+{
+  "nickname": "점아에링링",
+  "email":"sss@naver.com",
+  "ownerPicture": "점사진인데임",
+  "zipcode": "점우편번호임",
+  "mainAddress": "점메인주소임",
+  "detailedAddress": "점디테일주소임",
+  "ownerPhoneNumber": "01099998888",
+  "password": "ael121667"
+}
+
+### 점주 비번 변경
+PUT http://localhost:8080/api/profile/owner/password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjExMSIsImlhdCI6MTcyMTk5MDcyOCwiZXhwIjoxNzIxOTkyNTI4fQ.345K5UslnBgyBOhMqJD7z6pVpBgK3x7wStCcxvn3t04
+
+{
+  "oldPassword": "ael121667",
+  "newPassword": "심재훈"
+}
