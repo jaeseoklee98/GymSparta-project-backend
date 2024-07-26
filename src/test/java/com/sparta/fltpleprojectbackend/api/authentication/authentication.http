@@ -30,7 +30,6 @@ Content-Type: application/json
 "ownerPhoneNumber": "010-1234-5678"
 }
 
-
 ### 로그인
 POST http://localhost:8080/api/login
 Content-Type: application/json
@@ -63,6 +62,7 @@ Content-Type: application/json
     var response = client.response;
     var jsonResponse = JSON.parse(response.body);
     var accessToken = response.headers["Authorization"].substring(7);
+    var accessToken = response.headers["Authorization"].substring(7); // "Bearer " 제거
     client.global.set("accessToken", accessToken);
   });
 %}
@@ -78,3 +78,8 @@ DELETE http://localhost:8080/api/profile/users/signout
 
 ### 점주 회원탈퇴
 DELETE http://localhost:8080/api/profile/owners/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
+
+### 회원탈퇴
+DELETE http://localhost:8080/api/profile/users/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
