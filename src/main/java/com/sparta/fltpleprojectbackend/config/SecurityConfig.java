@@ -50,6 +50,8 @@ public class SecurityConfig {
             .requestMatchers("/api/profile/users/**").hasRole("USER")
             .requestMatchers("/api/profile/trainers/**").hasRole("TRAINER")
             .requestMatchers("/api/profile/owners/**").hasRole("OWNER")
+            .requestMatchers("/api/stores/**").permitAll()
+            .requestMatchers("/api/stores/admin/**").hasAuthority("OWNER")
             .anyRequest().authenticated());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

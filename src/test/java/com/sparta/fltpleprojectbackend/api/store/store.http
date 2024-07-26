@@ -1,0 +1,86 @@
+###로그인
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "accountId": "testaccount",
+  "password": "testpassword"
+}
+
+> {%
+  client.test("로그인 성공", function() {
+    var response = client.global.response;
+    var accessToken = response.headers["authorization"].substring(7); // "Bearer " 제거
+    client.global.set("Authorization", 'Bearer ' + accessToken);
+  });
+%}
+
+### 점주 로그인
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "accountId": "testowner",
+  "password": "password123"
+}
+
+> {%
+  client.test("로그인 성공", function() {
+    var response = client.response;
+    var jsonResponse = JSON.parse(response.body);
+    var accessToken = response.headers["Authorization"].substring(7);
+    client.global.set("accessToken", accessToken);
+  });
+%}
+
+###매장 등록
+POST http://localhost:8080/api/stores/owners
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
+
+{
+  "storeName": "매장명42225",
+  "address": "주소",
+  "streetAddress": "상세 주소",
+  "postalCode": "우편 번호122",
+  "storeInfo": "매장 설명",
+  "storeHour": "운영 시간",
+  "storeTel": "매장 전화번호"
+}
+
+###매장 정보 수정
+PUT http://localhost:8080/api/stores/owners/13
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
+
+{
+  "storeName": "매장명 수정12",
+  "address": "주소",
+  "streetAddress": "상세 주소",
+  "postalCode": "우편 번호",
+  "storeInfo": "매장 설명",
+  "storeHour": "운영 시간",
+  "storeTel": "매장 전화번호"
+}
+
+###매장 삭제
+DELETE http://localhost:8080/api/stores/owners/13
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
+
+###매장 전체 조회
+GET http://localhost:8080/api/stores
+Content-Type: application/json
+
+###매장 상세 조회
+GET http://localhost:8080/api/stores/11
+Content-Type: application/json
+
+###점주 매장 조회
+GET http://localhost:8080/api/stores/owners
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
+
+###점주 매장 상세 조회
+GET http://localhost:8080/api/stores/owners/7
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
