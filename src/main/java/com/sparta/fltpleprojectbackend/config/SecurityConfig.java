@@ -47,9 +47,13 @@ public class SecurityConfig {
             .maxSessionsPreventsLogin(false))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
             .requestMatchers("/api/login", "/api/user/signup", "/api/owners/signup", "/api/logout", "/api/profile/users/signout", "/api/profile/owners/signout", "/error").permitAll()
+            .requestMatchers("/api/profile/users/**").hasRole("USER")
+            .requestMatchers("/api/profile/trainers/**").hasRole("TRAINER")
+            .requestMatchers("/api/profile/owners/**").hasRole("OWNER")
             .requestMatchers("/api/stores/**").permitAll()
             .requestMatchers("/api/stores/admin/**").hasAuthority("OWNER")
             .anyRequest().authenticated());
+
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
