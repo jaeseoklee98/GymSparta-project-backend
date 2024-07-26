@@ -1,6 +1,7 @@
 package com.sparta.fltpleprojectbackend.user.entity;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
+import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,46 +18,46 @@ public class User {
   private Long id;
 
   @Column(nullable = false, length = 10)
-  private String userName;
+  private String userName; //x
 
   @Column(length = 13)
-  private String residentRegistrationNumber;
+  private String residentRegistrationNumber; //x
 
   @Column(length = 13)
-  private String foreignerRegistrationNumber;
+  private String foreignerRegistrationNumber; //x
 
   @Column(nullable = false)
-  private Boolean isForeigner = false;
+  private Boolean isForeigner = false; //x
 
   @Column(nullable = false, length = 15, unique = true)
-  private String accountId;
+  private String accountId; //x
 
-  @Column(nullable = false, length = 255)
-  private String password;
+  @Column(nullable = false)
+  private String password; //0
 
   @Column(length = 10)
-  private String nickname = "";
+  private String nickname = ""; //0
 
   @Column(nullable = false, length = 255)
-  private String email;
+  private String email; //x
 
   @Column(length = 255)
-  private String userPicture = "";
+  private String userPicture = ""; //0
 
   @Column(nullable = false, length = 10)
   private String status = "ACTIVE";
 
   @Column(length = 10)
-  private String zipcode = "";
+  private String zipcode = ""; //0
 
   @Column(length = 255)
-  private String mainAddress = "";
+  private String mainAddress = ""; //0
 
   @Column(length = 255)
-  private String detailedAddress = "";
+  private String detailedAddress = ""; //0
 
   @Column(length = 15)
-  private String phoneNumber = "";
+  private String phoneNumber = ""; //x
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -101,5 +102,29 @@ public class User {
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
     this.scheduledDeletionDate = scheduledDeletionDate;
+  }
+
+  /**.
+   * 비밀번호 변경
+   *
+   * @param newPassword 새 비밀번호 정보
+   */
+  public void updatePassword(String newPassword) {
+    this.password = newPassword;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**.
+   * 프로필 변경
+   *
+   * @param userRequest 새 프로필 정보
+   */
+  public void updateUserProfile(UpdateUserProfileRequest userRequest) {
+    this.nickname = userRequest.getNickname();
+    this.zipcode = userRequest.getZipcode();
+    this.mainAddress = userRequest.getMainAddress();
+    this.detailedAddress = userRequest.getDetailedAddress();
+    this.userPicture = userRequest.getUserPicture();
+    this.updatedAt = LocalDateTime.now();
   }
 }

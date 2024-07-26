@@ -21,4 +21,3 @@ public class ExceptionDto {
     this.message = message;
   }
 }
-

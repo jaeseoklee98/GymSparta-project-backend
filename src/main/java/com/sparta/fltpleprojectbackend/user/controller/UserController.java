@@ -1,14 +1,21 @@
 package com.sparta.fltpleprojectbackend.user.controller;
 
+import com.sparta.fltpleprojectbackend.common.CommonResponse;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
+import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
+import com.sparta.fltpleprojectbackend.user.dto.UpdatePasswordRequest;
+import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UserSignupRequest;
+import com.sparta.fltpleprojectbackend.user.dto.ReadUserResponse;
 import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import com.sparta.fltpleprojectbackend.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,5 +76,53 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(ResponseMessage.error("회원탈퇴 실패: " + e.getMessage()));
     }
+  }
+
+  /**.
+   * 유저 프로필 변경
+   *
+   * @param userDetails 유저 정보
+   * @param userRequest 새 프로필 정보
+   * @return statusCode: 200, message: 프로필 변경 완료
+   */
+  @PutMapping("/profile/user")
+  public ResponseEntity<?> updateUserProfile (
+    @AuthenticationPrincipal UserDetailsImpl userDetails,
+    @Valid @RequestBody UpdateUserProfileRequest userRequest) {
+    // TODO: 리스폰 형식 컨벤션에 맞추기
+    userService.updateUserProfile(userRequest, userDetails);
+
+    return ResponseEntity.ok("프로필 변경 완료");
+  }
+
+  /**.
+   * 유저 비밀번호 변경
+   *
+   * @param userDetails 유저 정보
+   * @param userRequest 새 비밀번호 정보
+   * @return statusCode: 200, message: 변경 완료
+   */
+  @PutMapping("/profile/users/password")
+  public ResponseEntity<?> updateUserPassword (
+    @AuthenticationPrincipal UserDetailsImpl userDetails,
+    @Valid @RequestBody UpdatePasswordRequest userRequest) {
+    // TODO: 리스폰 형식 컨벤션에 맞추기
+    userService.updateUserPassword(userRequest, userDetails);
+
+    return ResponseEntity.ok("비밀번호 변경 완료");
+  }
+
+  /**.
+   * 유저 프로필 조회
+   *
+   * @param userDetails 유저 정보
+   * @return 상태코드, 응답 메시지, 응답 데이터
+   */
+  @GetMapping("/profile/user")
+  public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
+    CommonResponse<ReadUserResponse> response = new CommonResponse<>(
+      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
+    return new  ResponseEntity<>(response, HttpStatus.OK);
   }
 }
