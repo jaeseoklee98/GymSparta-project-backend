@@ -4,8 +4,15 @@ import com.sparta.fltpleprojectbackend.enums.ErrorType;
 import com.sparta.fltpleprojectbackend.enums.Role;
 import com.sparta.fltpleprojectbackend.exception.CustomException;
 import com.sparta.fltpleprojectbackend.owner.dto.OwnerSignupRequest;
+import com.sparta.fltpleprojectbackend.owner.dto.ReadOwnerResponse;
+import com.sparta.fltpleprojectbackend.owner.dto.UpdateOwnerPasswordRequest;
+import com.sparta.fltpleprojectbackend.owner.dto.UpdateOwnerProfileRequest;
 import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.owner.exception.OwnerException;
 import com.sparta.fltpleprojectbackend.owner.repository.OwnerRepository;
+import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fltpleprojectbackend.user.exception.UserException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -97,5 +104,54 @@ public class OwnerService {
     owner.setDeletedAt(LocalDateTime.now());
     owner.setScheduledDeletionDate(LocalDateTime.now().plusDays(30));
     ownerRepository.save(owner);
+  }
+
+  /**.
+   * 점주 프로필 조회
+   *
+   * @param userDetails 점주 정보
+   */
+  public ReadOwnerResponse readOwnerProfile(UserDetailsImpl userDetails) {
+    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(userDetails.getUsername(), "ACTIVE");
+    Owner owner = ownerOptional.orElseThrow(() -> new OwnerException(ErrorType.NOT_FOUND_OWNER));
+    return new ReadOwnerResponse(owner);
+  }
+
+  /**.
+   * 점주 프로필 변경
+   *
+   * @param userDetails 점주 정보
+   * @param ownerRequest 새 프로필 정보
+   * @throws OwnerException 점주를 찾을 수 없는 경우 발생, 비밀번호 확인이 맞지 않으면 발생
+   */
+  @Transactional
+  public void updateOwnerProfile(UpdateOwnerProfileRequest ownerRequest, UserDetailsImpl userDetails) {
+    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(userDetails.getUsername(), "ACTIVE");
+    Owner owner = ownerOptional.orElseThrow(() -> new OwnerException(ErrorType.NOT_FOUND_OWNER));
+
+    if (!passwordEncoder.matches(ownerRequest.getPassword(), owner.getPassword())) {
+      throw new OwnerException(ErrorType.INVALID_PASSWORD);
+    }
+
+    owner.updateOwnerProfile(ownerRequest);
+  }
+  /**.
+   * 유저 비밀번호 변경
+   *
+   * @param userDetails 점주 정보
+   * @param ownerRequest 새 비밀번호 정보
+   * @throws OwnerException 점주를 찾을 수 없는 경우 발생, 비밀번호 확인이 맞지 않으면 발생
+   */
+  @Transactional
+  public void updateOwnerPassword(UpdateOwnerPasswordRequest ownerRequest, UserDetailsImpl userDetails) {
+
+    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(userDetails.getUsername(), "ACTIVE");
+    Owner owner = ownerOptional.orElseThrow(() -> new OwnerException(ErrorType.NOT_FOUND_OWNER));
+
+    if (!passwordEncoder.matches(ownerRequest.getOldPassword(), owner.getPassword())) {
+      throw new OwnerException(ErrorType.INVALID_PASSWORD);
+    }
+
+    owner.updatePassword(passwordEncoder.encode(ownerRequest.getNewPassword()));
   }
 }

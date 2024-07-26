@@ -1,6 +1,5 @@
 package com.sparta.fltpleprojectbackend.common;
 
-
 import lombok.Getter;
 
 /**
