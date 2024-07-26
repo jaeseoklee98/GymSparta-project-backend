@@ -52,7 +52,6 @@ public class SecurityConfig {
             .requestMatchers("/api/profile/owners/**").hasRole("OWNER")
             .anyRequest().authenticated());
 
-
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();

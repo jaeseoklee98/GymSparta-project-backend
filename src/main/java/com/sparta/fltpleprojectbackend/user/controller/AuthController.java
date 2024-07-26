@@ -5,12 +5,14 @@ import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
 import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fltpleprojectbackend.user.dto.LoginRequest;
 import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
-import com.sparta.fltpleprojectbackend.user.entity.User;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
-import com.sparta.fltpleprojectbackend.user.service.UserService;
 import com.sparta.fltpleprojectbackend.owner.repository.OwnerRepository;
-import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.trainer.repository.TrainerRepository;
+import com.sparta.fltpleprojectbackend.user.service.UserService;
 import com.sparta.fltpleprojectbackend.owner.service.OwnerService;
+import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
+import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.user.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,9 @@ public class AuthController {
 
   @Autowired
   private OwnerRepository ownerRepository;
+
+  @Autowired
+  private TrainerRepository trainerRepository;
 
   @Autowired
   private UserService userService;
@@ -71,7 +75,7 @@ public class AuthController {
 
       UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-      // 사용자 또는 점주 상태 확인
+      // 사용자, 점주 또는 트레이너 상태 확인
       if (userDetails.getRole() == Role.USER) {
         Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE");
         if (!userOptional.isPresent()) {
@@ -83,6 +87,12 @@ public class AuthController {
         if (!ownerOptional.isPresent()) {
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
               .body(ResponseMessage.error("회원탈퇴된 점주입니다."));
+        }
+      } else if (userDetails.getRole() == Role.TRAINER) {
+        Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(userDetails.getUsername(), "ACTIVE");
+        if (!trainerOptional.isPresent()) {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+              .body(ResponseMessage.error("회원탈퇴된 트레이너입니다."));
         }
       }
 
@@ -128,8 +138,9 @@ public class AuthController {
 
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
     Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(username, "ACTIVE");
+    Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(username, "ACTIVE");
 
-    if (!userOptional.isPresent() && !ownerOptional.isPresent()) {
+    if (!userOptional.isPresent() && !ownerOptional.isPresent() && !trainerOptional.isPresent()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body(ResponseMessage.error("이미 로그아웃된 상태입니다."));
     }
