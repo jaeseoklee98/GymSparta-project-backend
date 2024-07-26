@@ -72,6 +72,7 @@ Content-Type: application/json
 ### 로그아웃
 POST http://localhost:8080/api/logout
 
+
 ### 점주 로그아웃
 POST http://localhost:8080/api/logout
 
@@ -84,6 +85,9 @@ DELETE http://localhost:8080/api/profile/users/signout
 
 ### 점주 회원탈퇴
 DELETE http://localhost:8080/api/profile/owners/signout
+
+### 회원탈퇴
+DELETE http://localhost:8080/api/profile/users/signout
 
 ### 회원탈퇴
 DELETE http://localhost:8080/api/profile/users/signout

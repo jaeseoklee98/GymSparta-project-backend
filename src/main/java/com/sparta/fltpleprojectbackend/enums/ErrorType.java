@@ -16,6 +16,7 @@ public enum ErrorType {
   INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력입니다."),
   FORBIDDEN_OPERATION(HttpStatus.FORBIDDEN, "매장 등록은 점주만 가능합니다.");
 
+
   private final HttpStatus httpStatus;
   private final String message;
 
@@ -23,4 +24,5 @@ public enum ErrorType {
     this.httpStatus = httpStatus;
     this.message = message;
   }
+
 }
