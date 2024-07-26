@@ -1,13 +1,18 @@
 package com.sparta.fltpleprojectbackend.owner.controller;
 
+import com.sparta.fltpleprojectbackend.common.CommonResponse;
 import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
 import com.sparta.fltpleprojectbackend.owner.dto.OwnerSignupRequest;
+import com.sparta.fltpleprojectbackend.owner.dto.ReadOwnerResponse;
 import com.sparta.fltpleprojectbackend.owner.service.OwnerService;
+import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fltpleprojectbackend.user.dto.ReadUserResponse;
 import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,5 +72,19 @@ public class OwnerController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(ResponseMessage.error("회원탈퇴 실패: " + e.getMessage()));
     }
+  }
+
+  /**.
+   * 오너 프로필 조회
+   *
+   * @param userDetails 오너 정보
+   * @return 상태코드, 응답 메시지, 응답 데이터
+   */
+  @GetMapping("/profile/owner")
+  public ResponseEntity<CommonResponse<ReadOwnerResponse>> readOwnerProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    ReadOwnerResponse ReadOwnerResponse = ownerService.readOwnerProfile(userDetails);
+    CommonResponse<ReadOwnerResponse> response = new CommonResponse<>(
+      HttpStatus.OK.value(), "프로필 조회 완료", ReadOwnerResponse);
+    return new  ResponseEntity<>(response, HttpStatus.OK);
   }
 }
