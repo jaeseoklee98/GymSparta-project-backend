@@ -23,4 +23,3 @@ public enum ErrorType {
     this.httpStatus = httpStatus;
     this.message = message;
   }
-}

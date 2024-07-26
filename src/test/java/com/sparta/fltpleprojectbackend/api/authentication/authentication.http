@@ -63,7 +63,7 @@ Content-Type: application/json
   client.test("로그인 성공", function() {
     var response = client.response;
     var jsonResponse = JSON.parse(response.body);
-    var accessToken = response.headers["Authorization"].substring(7);
+    var accessToken = response.headers["Authorization"].substring(7); // "Bearer " 제거
     client.global.set("accessToken", accessToken);
   });
 %}
@@ -79,3 +79,9 @@ DELETE http://localhost:8080/api/profile/users/signout
 
 ### 점주 회원탈퇴
 DELETE http://localhost:8080/api/profile/owners/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
+
+### 회원탈퇴
+DELETE http://localhost:8080/api/profile/users/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTgxNjgwMSwiZXhwIjoxNzIxODE4NjAxfQ.5f-ClM-xTVOvs--SumAsoap2nrUaAKXLDkWIs9h4w5M
+
