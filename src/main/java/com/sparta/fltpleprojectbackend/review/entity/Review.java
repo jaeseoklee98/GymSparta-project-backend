@@ -1,6 +1,7 @@
 package com.sparta.fltpleprojectbackend.review.entity;
 
 import com.sparta.fltpleprojectbackend.common.TimeStamped;
+import com.sparta.fltpleprojectbackend.orders.entity.Orders;
 import com.sparta.fltpleprojectbackend.review.dto.ReviewRequest;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import jakarta.persistence.*;
@@ -20,12 +21,11 @@ public class Review extends TimeStamped {
     private Long id;
 
 
-    /*
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id")
     private Orders orders;
-     */
 
 
 
@@ -33,15 +33,6 @@ public class Review extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-
-     /*
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
-     */
-
 
     @NotNull
     @Column
@@ -51,14 +42,11 @@ public class Review extends TimeStamped {
     @Column
     private String comment;
 
-    public Review(ReviewRequest reviewRequest
-    //        , User user
-    ) {
+    public Review(ReviewRequest reviewRequest, User user, Orders orders){
         this.comment = reviewRequest.getComment();
         this.rating = reviewRequest.getRating();
         this.user = user;
-        //this.orders = orders;
-        //this.store = store;
+        this.orders = orders;
     }
 
     public void update(ReviewRequest reviewRequest) {

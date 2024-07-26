@@ -25,9 +25,9 @@ public class GlobalExceptionHandler {
     BindingResult bindingResult = e.getBindingResult();
     StringBuilder builder = new StringBuilder();
 
-    for (FieldError fieldError : bindingResult.getFieldErrors()) {
-      builder.append(fieldError.getField()).append(" : ").append(fieldError.getDefaultMessage()).append("\n");
-    }
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDto(builder.toString()));
+      for (FieldError fieldError : bindingResult.getFieldErrors()) {
+          builder.append(fieldError.getField()).append(" : ").append(fieldError.getDefaultMessage()).append("\n");
+      }
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDto(builder.toString()));
   }
 }
