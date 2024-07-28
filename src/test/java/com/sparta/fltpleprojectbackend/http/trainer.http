@@ -51,3 +51,10 @@ Content-Type: application/json
 
 {
 }
+
+### 트레이너 조회
+GET http://localhost:8080/api/trainers/1
+Content-Type: application/json
+
+{
+}

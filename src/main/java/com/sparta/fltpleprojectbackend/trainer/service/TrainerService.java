@@ -2,6 +2,7 @@ package com.sparta.fltpleprojectbackend.trainer.service;
 
 import com.sparta.fltpleprojectbackend.enums.ErrorType;
 import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fltpleprojectbackend.trainer.dto.OneTrainerGetResponse;
 import com.sparta.fltpleprojectbackend.trainer.dto.ReadTrainerResponse;
 import com.sparta.fltpleprojectbackend.trainer.dto.TrainerGetResponse;
 import com.sparta.fltpleprojectbackend.trainer.dto.UpdateTrainerPasswordRequest;
@@ -24,6 +25,19 @@ public class TrainerService {
 
   private final TrainerRepository trainerRepository;
   private final PasswordEncoder passwordEncoder;
+
+  /**.
+   * 트레이너 조회
+   *
+   * @param trainerId 트레이너 아이디
+   * @throws TrainerException 트레이너를 찾을 수 없는 경우 발생
+   */
+  public OneTrainerGetResponse getTrainer(Long trainerId) {
+    Optional<Trainer> trainerOptional = trainerRepository.findById(trainerId);
+    Trainer trainer = trainerOptional.orElseThrow(() -> new TrainerException(ErrorType.NOT_FOUND_TRAINER));
+
+    return new OneTrainerGetResponse(trainer);
+  }
 
   /**.
    * 트레이너 전체 조회

@@ -2,10 +2,12 @@ package com.sparta.fltpleprojectbackend.trainer.controller;
 
 import com.sparta.fltpleprojectbackend.common.CommonResponse;
 import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fltpleprojectbackend.trainer.dto.OneTrainerGetResponse;
 import com.sparta.fltpleprojectbackend.trainer.dto.ReadTrainerResponse;
 import com.sparta.fltpleprojectbackend.trainer.dto.TrainerGetResponse;
 import com.sparta.fltpleprojectbackend.trainer.dto.UpdateTrainerPasswordRequest;
 import com.sparta.fltpleprojectbackend.trainer.dto.UpdateTrainerProfileRequest;
+import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fltpleprojectbackend.trainer.service.TrainerService;
 import com.sparta.fltpleprojectbackend.user.dto.ReadUserResponse;
 import com.sparta.fltpleprojectbackend.user.dto.UpdatePasswordRequest;
@@ -31,6 +33,17 @@ public class TrainerController {
   private final TrainerService trainerService;
 
   /**.
+   * 트레이너 조회
+   *
+   * @param trainerId 트레이너 아이디
+   * @return ok, 트레이너 정보
+   */
+  @GetMapping("/trainers/{trainerId}")
+  public ResponseEntity<OneTrainerGetResponse> getTrainer(@PathVariable Long trainerId) {
+    return ResponseEntity.ok(trainerService.getTrainer(trainerId));
+  }
+
+  /**.
    * 트레이너 전체 조회
    *
    * @return ok, 전체 트레이너 리스트
@@ -52,7 +65,7 @@ public class TrainerController {
   }
 
   /**.
-   * 트레이너 프로필 조회
+   * 트레이너 자신의 프로필 조회
    *
    * @param userDetails 트레이너 정보
    * @return 상태코드, 응답 메시지, 응답 데이터
