@@ -1,6 +1,8 @@
 package com.sparta.fltpleprojectbackend.trainer.entity;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
+import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.store.entity.Store;
 import com.sparta.fltpleprojectbackend.trainer.dto.UpdateTrainerProfileRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import jakarta.persistence.*;
@@ -57,6 +59,10 @@ public class Trainer {
 
   @Column
   private LocalDateTime deletedAt; // 삭제일
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "store_id", nullable = false)
+  private Store store;
 
   // 기본 생성자
   public Trainer() {}

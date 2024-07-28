@@ -38,6 +38,19 @@ public class TrainerService {
   }
 
   /**.
+   *  매장 트레이너 조회
+   *
+   * @param storeId 스토어 아이디
+   * @return 트레이너 리스트
+   * @throws TrainerException 트레이너를 찾을 수 없는 경우 발생
+   */
+  public List<TrainerGetResponse> getStoreTrainers(Long storeId) {
+    return trainerRepository.findByStoreIdAndTrainerStatus(storeId, "ACTIVE").stream()
+      .map(TrainerGetResponse::new)
+      .toList();
+  }
+
+  /**.
    * 트레이너 프로필 조회
    *
    * @param userDetails 트레이너 정보

@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,17 @@ public class TrainerController {
   @GetMapping("/trainers")
   public ResponseEntity<List<TrainerGetResponse>> getAllTrainers() {
     return ResponseEntity.ok(trainerService.getAllTrainers());
+  }
+
+  /**.
+   * 매장 트레이너 조회
+   *
+   * @param storeId 스토어 아이디
+   * @return ok, 전체 트레이너 리스트
+   */
+  @GetMapping("/stores/{storeId}/trainers")
+  public ResponseEntity<List<TrainerGetResponse>> getStoreTrainers(@PathVariable Long storeId) {
+    return ResponseEntity.ok(trainerService.getStoreTrainers(storeId));
   }
 
   /**.

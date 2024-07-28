@@ -5,10 +5,10 @@ Content-Type: application/json
 ### 트레이너 로그인
 POST http://localhost:8080/api/login
 Content-Type: application/json
-
+// ael121667   $2a$10$JNz1yY6dfKul4OAu9ij8/.CkBuTYC/TpMGxE1x0Kt.RYHfK7tS4t6
 {
   "accountId": "qwe",
-  "password": "심재훈"
+  "password": "ael121667"
 }
 
 ### 트레이너 프로필 변경
@@ -39,6 +39,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxd2UiLCJpYXQiOjE3MjIwNzgxN
 GET http://localhost:8080/api/profile/trainer
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxd2UiLCJpYXQiOjE3MjIwNzgxNjksImV4cCI6MTcyMjA3OTk2OX0.1Oq2NbDXZT83pRpHtE6u62vYDBM7kb4I3BbelQby0-s
+
+{
+}
+
+
+
+### 매장 트레이너 조회
+GET http://localhost:8080/api/stores/2/trainers
+Content-Type: application/json
 
 {
 }
