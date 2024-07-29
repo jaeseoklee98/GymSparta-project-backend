@@ -10,7 +10,6 @@ import com.sparta.fltpleprojectbackend.trainer.dto.UpdateTrainerProfileRequest;
 import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fltpleprojectbackend.trainer.exception.TrainerException;
 import com.sparta.fltpleprojectbackend.trainer.repository.TrainerRepository;
-import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;

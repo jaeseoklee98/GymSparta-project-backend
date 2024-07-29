@@ -3,6 +3,7 @@ package com.sparta.fltpleprojectbackend.store.entity;
 import com.sparta.fltpleprojectbackend.common.TimeStamped;
 import com.sparta.fltpleprojectbackend.owner.entity.Owner;
 import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
+import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -50,6 +53,10 @@ public class Store extends TimeStamped {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "owner_id", nullable = false)
   private Owner owner;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "store")
+  private List<Trainer> trainers;
+  
 
   /**
    * StoreRequest 객체를 사용하여 Store 엔티티를 생성하는 생성자.

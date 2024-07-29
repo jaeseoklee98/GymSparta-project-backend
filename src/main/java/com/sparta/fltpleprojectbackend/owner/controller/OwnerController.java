@@ -8,11 +8,14 @@ import com.sparta.fltpleprojectbackend.owner.dto.UpdateOwnerPasswordRequest;
 import com.sparta.fltpleprojectbackend.owner.dto.UpdateOwnerProfileRequest;
 import com.sparta.fltpleprojectbackend.owner.service.OwnerService;
 import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fltpleprojectbackend.trainer.dto.TrainerGetResponse;
+import com.sparta.fltpleprojectbackend.trainer.service.TrainerService;
 import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
 import com.sparta.fltpleprojectbackend.user.dto.UpdatePasswordRequest;
 import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +31,7 @@ public class OwnerController {
   private final JwtUtil jwtUtil;
 
   @Autowired
-  public OwnerController(OwnerService ownerService, JwtUtil jwtUtil) {
+  public OwnerController(OwnerService ownerService, JwtUtil jwtUtil, TrainerService trainerService) {
     this.ownerService = ownerService;
     this.jwtUtil = jwtUtil;
   }
@@ -76,6 +79,23 @@ public class OwnerController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(ResponseMessage.error("회원탈퇴 실패: " + e.getMessage()));
     }
+  }
+
+  /**.
+   * 자신의 매장의 트레이너 리스트
+   *
+   * @param userDetails 오너 정보
+   * @return 상태코드, 응답 메시지, 응답 데이터
+   */
+  @GetMapping("/trainer/myTrainer")
+  public ResponseEntity<CommonResponse<List<TrainerGetResponse>>> getMyTrainer (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    List<TrainerGetResponse> trainerList = ownerService.getAllMyTrainers(userDetails);
+
+    CommonResponse<List<TrainerGetResponse>> response = new CommonResponse<>(HttpStatus.OK.value(),
+      "모든 매장의 모든 트레이너 조회", trainerList);
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   /**.

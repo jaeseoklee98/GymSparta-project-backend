@@ -11,9 +11,16 @@ import com.sparta.fltpleprojectbackend.owner.entity.Owner;
 import com.sparta.fltpleprojectbackend.owner.exception.OwnerException;
 import com.sparta.fltpleprojectbackend.owner.repository.OwnerRepository;
 import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fltpleprojectbackend.trainer.dto.TrainerGetResponse;
+import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
+import com.sparta.fltpleprojectbackend.trainer.exception.TrainerException;
+import com.sparta.fltpleprojectbackend.trainer.repository.TrainerRepository;
 import com.sparta.fltpleprojectbackend.user.exception.UserException;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +32,14 @@ public class OwnerService {
 
   private final OwnerRepository ownerRepository;
   private final PasswordEncoder passwordEncoder;
+  private final TrainerRepository trainerRepository;
 
   @Autowired
-  public OwnerService(OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+  public OwnerService(OwnerRepository ownerRepository, PasswordEncoder passwordEncoder,
+    TrainerRepository trainerRepository) {
     this.ownerRepository = ownerRepository;
     this.passwordEncoder = passwordEncoder;
+    this.trainerRepository = trainerRepository;
   }
 
   // 점주 회원가입 로직
@@ -153,5 +163,20 @@ public class OwnerService {
     }
 
     owner.updatePassword(passwordEncoder.encode(ownerRequest.getNewPassword()));
+  }
+
+  /**.
+   * 점주의 모든 트레이너 조회
+   *
+   * @param userDetails 오너 정보
+   * @throws TrainerException 트레이너를 찾을 수 없는 경우 발생
+   */
+  public List<TrainerGetResponse> getAllMyTrainers(UserDetailsImpl userDetails) {
+
+    Long ownerId = userDetails.getOwner().getId();
+
+    return trainerRepository.findAllTrainersByOwnerId(ownerId).stream()
+      .map(TrainerGetResponse::new)
+      .toList();
   }
 }
