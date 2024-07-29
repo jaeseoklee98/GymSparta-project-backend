@@ -5,6 +5,7 @@ import com.sparta.fltpleprojectbackend.owner.dto.UpdateOwnerProfileRequest;
 import com.sparta.fltpleprojectbackend.store.entity.Store;
 import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,6 +65,9 @@ public class Owner {
 
   @Column(length = 15)
   private String ownerPhoneNumber = ""; // 전화번호
+
+  @Column(length = 255)
+  private String businessName; // 상호명(법인명)
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)

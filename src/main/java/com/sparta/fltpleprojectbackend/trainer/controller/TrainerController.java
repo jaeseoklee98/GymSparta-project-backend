@@ -39,8 +39,11 @@ public class TrainerController {
    * @return ok, 트레이너 정보
    */
   @GetMapping("/trainers/{trainerId}")
-  public ResponseEntity<OneTrainerGetResponse> getTrainer(@PathVariable Long trainerId) {
-    return ResponseEntity.ok(trainerService.getTrainer(trainerId));
+  public ResponseEntity<CommonResponse<OneTrainerGetResponse>> getTrainer(@PathVariable Long trainerId) {
+    OneTrainerGetResponse oneTrainerGetResponse = trainerService.getTrainer(trainerId);
+    CommonResponse<OneTrainerGetResponse> response = new CommonResponse<>(HttpStatus.OK.value(),
+      "조회 완료", oneTrainerGetResponse);
+    return new  ResponseEntity<>(response, HttpStatus.OK);
   }
 
   /**.
@@ -49,8 +52,11 @@ public class TrainerController {
    * @return ok, 전체 트레이너 리스트
    */
   @GetMapping("/trainers")
-  public ResponseEntity<List<TrainerGetResponse>> getAllTrainers() {
-    return ResponseEntity.ok(trainerService.getAllTrainers());
+  public ResponseEntity<CommonResponse<List<TrainerGetResponse>>> getAllTrainers() {
+    List<TrainerGetResponse> trainers = trainerService.getAllTrainers();
+    CommonResponse<List<TrainerGetResponse>> response = new CommonResponse<>(HttpStatus.OK.value(),
+      "조회 완료", trainers);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   /**.
@@ -60,8 +66,11 @@ public class TrainerController {
    * @return ok, 전체 트레이너 리스트
    */
   @GetMapping("/stores/{storeId}/trainers")
-  public ResponseEntity<List<TrainerGetResponse>> getStoreTrainers(@PathVariable Long storeId) {
-    return ResponseEntity.ok(trainerService.getStoreTrainers(storeId));
+  public ResponseEntity<CommonResponse<List<TrainerGetResponse>>> getStoreTrainers(@PathVariable Long storeId) {
+    List<TrainerGetResponse> trainers =trainerService.getStoreTrainers(storeId);
+    CommonResponse<List<TrainerGetResponse>> response = new CommonResponse<>(HttpStatus.OK.value(),
+      "조회 완료", trainers);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   /**.
