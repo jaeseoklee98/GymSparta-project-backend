@@ -6,6 +6,7 @@ import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fltpleprojectbackend.trainer.repository.TrainerRepository;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+
 public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
 
   private final UserRepository userRepository;
   private final OwnerRepository ownerRepository;
   private final TrainerRepository trainerRepository;
+
 
   public UserDetailsServiceImpl(UserRepository userRepository, OwnerRepository ownerRepository, TrainerRepository trainerRepository) {
     this.userRepository = userRepository;

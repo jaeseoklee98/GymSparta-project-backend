@@ -1,7 +1,7 @@
 package com.sparta.fltpleprojectbackend.orders.entity;
 
 import com.sparta.fltpleprojectbackend.common.TimeStamped;
-import com.sparta.fltpleprojectbackend.review.entity.Review;
+import com.sparta.fltpleprojectbackend.product.entity.Product;
 import com.sparta.fltpleprojectbackend.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -24,5 +24,9 @@ public class Orders extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
 }

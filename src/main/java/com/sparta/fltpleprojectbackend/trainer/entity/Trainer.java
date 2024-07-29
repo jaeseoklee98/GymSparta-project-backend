@@ -1,6 +1,7 @@
 package com.sparta.fltpleprojectbackend.trainer.entity;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
+import com.sparta.fltpleprojectbackend.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ public class Trainer {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long trainerId;
+  private Long id;
 
   @Column(length = 10)
   private String trainerName; // 트레이너 이름
@@ -56,12 +57,16 @@ public class Trainer {
   @Column
   private LocalDateTime deletedAt; // 삭제일
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "store_id", nullable = false)
+  private Store store;
+
   // 기본 생성자
   public Trainer() {}
 
   // 모든 필드를 포함한 생성자
   public Trainer(String trainerName, String trainerInfo, String accountId, String password, String nickname, String email, String trainerPicture, String trainerStatus,
-      String trainerPhoneNumber, Role role, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                 String trainerPhoneNumber, Role role, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt, Store store) {
     this.trainerName = trainerName;
     this.trainerInfo = trainerInfo;
     this.accountId = accountId;
@@ -75,12 +80,13 @@ public class Trainer {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
+    this.store = store;
   }
 
   @Override
   public String toString() {
     return "Trainer{" +
-        "trainerId=" + trainerId +
+        "trainerId=" + id +
         ", trainerName='" + trainerName + '\'' +
         ", trainerInfo='" + trainerInfo + '\'' +
         ", accountId='" + accountId + '\'' +

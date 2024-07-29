@@ -76,9 +76,9 @@ public class StoreService {
   public List<StoreSimpleResponse> findAll() {
     List<Store> storeList = storeRepository.findAll();
     return storeList.stream()
-        .sorted(Comparator.comparing(Store::getCreatedAt))
-        .map(StoreSimpleResponse::new)
-        .toList();
+            .sorted(Comparator.comparing(Store::getCreatedAt))
+            .map(StoreSimpleResponse::new)
+            .toList();
   }
 
   /**
@@ -102,9 +102,9 @@ public class StoreService {
   public List<StoreSimpleResponse> findAllAdmin(String accountId) {
     List<Store> storeList = storeRepository.findAllByOwnerAccountId(accountId);
     return storeList.stream()
-        .sorted(Comparator.comparing(Store::getCreatedAt))
-        .map(StoreSimpleResponse::new)
-        .toList();
+            .sorted(Comparator.comparing(Store::getCreatedAt))
+            .map(StoreSimpleResponse::new)
+            .toList();
   }
 
   /**
@@ -124,7 +124,7 @@ public class StoreService {
 
   private Store findStoreById(long id) {
     return storeRepository.findById(id)
-        .orElseThrow(() -> new StoreException(ErrorType.NOT_FOUND_STORE));
+            .orElseThrow(() -> new StoreException(ErrorType.NOT_FOUND_STORE));
   }
 
   private void validateUser(Store store, String accountId) {

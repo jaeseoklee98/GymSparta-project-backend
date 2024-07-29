@@ -1,6 +1,6 @@
-###리뷰 작성
-POST http://localhost:8080/api/orders/1/reviews
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTk4MTg3MywiZXhwIjoxNzIxOTgzNjczfQ.JDhHJ_5MJJmcmwA-ERYeHwHks18O-HYY08veUdctaDc
+###회원권 리뷰 작성
+POST http://localhost:8080/api/usermembership/1/reviews
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMjE4MjQ2MywiZXhwIjoxNzIyMTg0MjYzfQ.pU_w8smNeBTLHcUikbuRG8hKBA63IRAwvcGOmRbz5LU
 Content-Type: application/json
 
 {
@@ -8,20 +8,14 @@ Content-Type: application/json
   "comment": "123"
 }
 
-###주문 리뷰 조회
-GET http://localhost:8080/api/orders/1/reviews
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTk4MTg3MywiZXhwIjoxNzIxOTgzNjczfQ.JDhHJ_5MJJmcmwA-ERYeHwHks18O-HYY08veUdctaDc
+###회원권 유저 본인 작성 리뷰 조회
+GET http://localhost:8080/api/usermembership/1/reviews/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMjE4MjQ2MywiZXhwIjoxNzIyMTg0MjYzfQ.pU_w8smNeBTLHcUikbuRG8hKBA63IRAwvcGOmRbz5LU
 Content-Type: application/json
 
-###트레이너 리뷰 조회
-GET http://localhost:8080/api/orders/1/trainer/1/reviews
-
-###매장 리뷰 조회
-GET http://localhost:8080/api/orders/1/stores/1/reviews
-
-###리뷰 수정
-PUT http://localhost:8080/api/orders/1/reviews/2
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTk4MTg3MywiZXhwIjoxNzIxOTgzNjczfQ.JDhHJ_5MJJmcmwA-ERYeHwHks18O-HYY08veUdctaDc
+###회원권 리뷰 수정
+PUT http://localhost:8080/api/usermembership/1/reviews/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMjE4MjQ2MywiZXhwIjoxNzIyMTg0MjYzfQ.pU_w8smNeBTLHcUikbuRG8hKBA63IRAwvcGOmRbz5LU
 Content-Type: application/json
 
 {
@@ -29,7 +23,36 @@ Content-Type: application/json
   "comment": "1234"
 }
 
-###리뷰 삭제
-DELETE http://localhost:8080/api/orders/1/reviews/3
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMTk4MTg3MywiZXhwIjoxNzIxOTgzNjczfQ.JDhHJ_5MJJmcmwA-ERYeHwHks18O-HYY08veUdctaDc
+###PT 리뷰 작성
+POST http://localhost:8080/api/userpt/2/reviews
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMjIzMDMzMSwiZXhwIjoxNzIyMjMyMTMxfQ.mA3q_DXkTvmB0Zh2DzD9HAKvDqWLonvqKH5Ng67wRrU
 Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "1234"
+}
+
+###PT 리뷰 본인 작성 댓글 조회
+GET http://localhost:8080/api/userpt/2/reviews/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMjIzMDMzMSwiZXhwIjoxNzIyMjMyMTMxfQ.mA3q_DXkTvmB0Zh2DzD9HAKvDqWLonvqKH5Ng67wRrU
+Content-Type: application/json
+
+###매장에 속한 특정 트레이너 리뷰 조회
+GET http://localhost:8080/api/userpt/2/reviews/trainer
+Content-Type: application/json
+
+###매장 회원권 리뷰 조회
+GET http://localhost:8080/api/usermembership/1/reviews
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMjIzMDMzMSwiZXhwIjoxNzIyMjMyMTMxfQ.mA3q_DXkTvmB0Zh2DzD9HAKvDqWLonvqKH5Ng67wRrU
+Content-Type: application/json
+
+###PT 리뷰 수정
+PUT http://localhost:8080/api/userpt/2/reviews/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMjE4NjA0MywiZXhwIjoxNzIyMTg3ODQzfQ.DSjTrW4xCJiPDKzI3AhL5fAcjFTqDSL0ShQAfo7u_uA
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "12345"
+}

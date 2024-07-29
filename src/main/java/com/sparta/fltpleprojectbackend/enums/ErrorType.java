@@ -20,7 +20,10 @@ public enum ErrorType {
   INVALID_USER(HttpStatus.FORBIDDEN, "본인의 매장이 아닙니다."),
   INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력입니다."),
   INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 입력입니다."),
-  FORBIDDEN_OPERATION(HttpStatus.FORBIDDEN, "매장 등록은 점주만 가능합니다.");
+  FORBIDDEN_OPERATION(HttpStatus.FORBIDDEN, "매장 등록은 점주만 가능합니다."),
+  PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+  NOT_FOUND_USER_MEMBERSHIP(HttpStatus.NOT_FOUND, "회원권 정보를 찾을 수 없습니다."),
+  NOT_FOUND_USER_PT(HttpStatus.NOT_FOUND, "PT 정보를 찾을 수 없습니다.");
 
 
   private final HttpStatus httpStatus;
