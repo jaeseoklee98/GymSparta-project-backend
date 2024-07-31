@@ -2,7 +2,10 @@ package com.sparta.fltpleprojectbackend.owner.entity;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
 import com.sparta.fltpleprojectbackend.owner.dto.UpdateOwnerProfileRequest;
+import com.sparta.fltpleprojectbackend.store.entity.Store;
+import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -77,6 +80,9 @@ public class Owner {
 
   @Column
   private LocalDateTime scheduledDeletionDate; // 삭제 예정일
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+  private List<Store> stores;
 
   // 기본 생성자
   public Owner() {}

@@ -2,15 +2,18 @@ package com.sparta.fltpleprojectbackend.store.service;
 
 import com.sparta.fltpleprojectbackend.enums.ErrorType;
 import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fltpleprojectbackend.store.dto.StoreRequest;
 import com.sparta.fltpleprojectbackend.store.dto.StoreResponse;
 import com.sparta.fltpleprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.fltpleprojectbackend.store.entity.Store;
 import com.sparta.fltpleprojectbackend.store.exception.StoreException;
 import com.sparta.fltpleprojectbackend.store.repository.StoreRepository;
+import com.sparta.fltpleprojectbackend.trainer.exception.TrainerException;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

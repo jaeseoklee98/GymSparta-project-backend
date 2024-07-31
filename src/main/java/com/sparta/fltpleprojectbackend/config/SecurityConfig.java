@@ -51,6 +51,7 @@ public class SecurityConfig {
             .requestMatchers("/api/profile/trainers/**").hasRole("TRAINER")
             .requestMatchers("/api/profile/owners/**").hasRole("OWNER")
             .requestMatchers("/api/stores/**").permitAll()
+            .requestMatchers("/api/trainers/**").permitAll()
             .requestMatchers("/api/stores/admin/**").hasAuthority("OWNER")
             .anyRequest().authenticated());
 

@@ -1,6 +1,10 @@
 package com.sparta.fltpleprojectbackend.trainer.entity;
 
 import com.sparta.fltpleprojectbackend.enums.Role;
+import com.sparta.fltpleprojectbackend.owner.entity.Owner;
+import com.sparta.fltpleprojectbackend.store.entity.Store;
+import com.sparta.fltpleprojectbackend.trainer.dto.UpdateTrainerProfileRequest;
+import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,6 +60,10 @@ public class Trainer {
   @Column
   private LocalDateTime deletedAt; // 삭제일
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "store_id", nullable = false)
+  private Store store;
+
   // 기본 생성자
   public Trainer() {}
 
@@ -95,5 +103,29 @@ public class Trainer {
         ", updatedAt=" + updatedAt +
         ", deletedAt=" + deletedAt +
         '}';
+  }
+
+  /**.
+   * 프로필 변경
+   *
+   * @param TrainerRequest 새 프로필 정보
+   */
+  public void updateUserProfile(UpdateTrainerProfileRequest TrainerRequest) {
+    this.nickname = TrainerRequest.getNickname();
+    this.trainerInfo = TrainerRequest.getTrainerInfo();
+    this.email = TrainerRequest.getEmail();
+    this.trainerPhoneNumber = TrainerRequest.getTrainerPhoneNumber();
+    this.trainerPicture = TrainerRequest.getTrainerPicture();
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**.
+   * 비밀번호 변경
+   *
+   * @param newPassword 새 비밀번호 정보
+   */
+  public void updatePassword(String newPassword) {
+    this.password = newPassword;
+    this.updatedAt = LocalDateTime.now();
   }
 }

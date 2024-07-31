@@ -36,16 +36,16 @@ Content-Type: application/json
 ###매장 등록
 POST http://localhost:8080/api/stores/owners
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjExMSIsImlhdCI6MTcyMjI0MTgzNSwiZXhwIjoxNzIyMjQzNjM1fQ.HWsEQTX-6OelwgPWaLt2fAuFi1pjHhqGgXfCzeVfQhE
 
 {
-  "storeName": "매장명42225",
-  "address": "주소",
-  "streetAddress": "상세 주소",
-  "postalCode": "우편 번호122",
-  "storeInfo": "매장 설명",
-  "storeHour": "운영 시간",
-  "storeTel": "매장 전화번호"
+  "storeName": "매장명3",
+  "address": "주소3",
+  "streetAddress": "상세 주소3",
+  "postalCode": "우편 번호3",
+  "storeInfo": "매장 설명3",
+  "storeHour": "운영 시간3",
+  "storeTel": "매장 전화번호3"
 }
 
 ###매장 정보 수정
