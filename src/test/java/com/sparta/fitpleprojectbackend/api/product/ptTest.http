@@ -1,0 +1,51 @@
+### 로그인
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "accountId": "tryptophan204",
+  "password": "vitaminB6"
+}
+
+
+> {%
+  client.test("로그인 성공", function() {
+    var response = client.global.response;
+    var jsonResponse = JSON.parse(response.body);
+    var accessToken = response.headers["authorization"].substring(7);
+    client.global.set("accessToken", accessToken);
+  });
+%}
+
+### 응답에서 access_token을 추출하여 변수에 저장
+@access_token = your_access_token_here
+
+### 결제 요청 정보 임시 저장
+POST http://localhost:8080/api/ptpayments/test/paymentinformation
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzg1MzM4LCJleHAiOjE3MjIzODcxMzh9.0uQ6NJmkBQqnllAnxPmrmD_Tg4GNkojSkwChUcN0H6c
+
+{
+  "trainerId": 1,
+  "userId": 5445445,
+  "ptTimes": "TWENTY_TIMES"
+}
+
+### 트레이너와 유저 검증
+GET http://localhost:8080/api/ptpayments/test/validate/2/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzg3MzA5LCJleHAiOjE3MjIzODkxMDl9.9kNFutN3-xl2SnDfaOHbiEhpGJK04_bTEGKT3hNMOxc
+
+### 중복 PT 예약 체크
+POST http://localhost:8080/api/ptpayments/test/duplicatecheck
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzkwOTM3LCJleHAiOjE3MjIzOTI3Mzd9._aLnI1599PxHdSDjiXEYM36-VaFMPz2SXh2uwicrg1E
+
+{
+  "trainerId": 2,
+  "userId": 5
+}
+
+### 결제 페이지 조회
+GET http://localhost:8080/api/ptpayments/test/paymentpage/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzkwOTM3LCJleHAiOjE3MjIzOTI3Mzd9._aLnI1599PxHdSDjiXEYM36-VaFMPz2SXh2uwicrg1E
+
