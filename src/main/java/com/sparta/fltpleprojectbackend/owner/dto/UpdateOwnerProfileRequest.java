@@ -6,7 +6,6 @@ import lombok.Getter;
 public class UpdateOwnerProfileRequest {
   private String nickname;
   private String email;
-  private String ownerPicture;
   private String zipcode;
   private String mainAddress;
   private String detailedAddress;

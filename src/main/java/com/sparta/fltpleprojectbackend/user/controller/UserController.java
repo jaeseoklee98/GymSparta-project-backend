@@ -112,6 +112,20 @@ public class UserController {
     return ResponseEntity.ok("비밀번호 변경 완료");
   }
 
+//  /**.
+//   * 유저 프로필 조회
+//   *
+//   * @param userDetails 유저 정보
+//   * @return 상태코드, 응답 메시지, 응답 데이터
+//   */
+//  @GetMapping("/profile/user")
+//  public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+//    ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
+//    CommonResponse<ReadUserResponse> response = new CommonResponse<>(
+//      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
+//    return new  ResponseEntity<>(response, HttpStatus.OK);
+//  }
+
   /**.
    * 유저 프로필 조회
    *
@@ -119,10 +133,8 @@ public class UserController {
    * @return 상태코드, 응답 메시지, 응답 데이터
    */
   @GetMapping("/profile/user")
-  public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<ReadUserResponse> readUserProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
-    CommonResponse<ReadUserResponse> response = new CommonResponse<>(
-      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
-    return new  ResponseEntity<>(response, HttpStatus.OK);
+    return ResponseEntity.ok(readUserResponse);
   }
 }

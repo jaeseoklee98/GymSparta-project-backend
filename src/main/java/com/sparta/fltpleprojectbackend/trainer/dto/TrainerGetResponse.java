@@ -5,11 +5,14 @@ import lombok.Getter;
 
 @Getter
 public class TrainerGetResponse {
-  private String trainerName;
+  //TODO: location + price 추가해야함
+  private Long id;
+  private String name;
   private String trainerPicture;
 
   public TrainerGetResponse(Trainer trainer) {
-    this.trainerName = trainer.getTrainerName();
+    this.id = trainer.getTrainerId();
+    this.name = trainer.getTrainerName();
     this.trainerPicture = trainer.getTrainerPicture();
   }
 }

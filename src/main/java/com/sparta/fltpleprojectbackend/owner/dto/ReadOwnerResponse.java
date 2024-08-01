@@ -6,7 +6,6 @@ import lombok.Getter;
 @Getter
 public class ReadOwnerResponse {
   private String ownerName;
-  private String accountId;
   private String nickname;
   private String email;
   private String ownerPicture;
@@ -17,7 +16,6 @@ public class ReadOwnerResponse {
 
   public ReadOwnerResponse(Owner owner) {
     this.ownerName = owner.getOwnerName();
-    this.accountId = owner.getAccountId();
     this.nickname = owner.getNickname();
     this.email = owner.getEmail();
     this.ownerPicture = owner.getOwnerPicture();

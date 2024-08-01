@@ -142,7 +142,6 @@ public class Owner {
   public void updateOwnerProfile(UpdateOwnerProfileRequest ownerRequest) {
     this.nickname = ownerRequest.getNickname();
     this.email = ownerRequest.getEmail();
-    this.ownerPicture = ownerRequest.getOwnerPicture();
     this.zipcode = ownerRequest.getZipcode();
     this.mainAddress  = ownerRequest.getMainAddress();
     this.detailedAddress  = ownerRequest.getDetailedAddress();

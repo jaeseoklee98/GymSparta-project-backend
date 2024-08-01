@@ -98,6 +98,20 @@ public class OwnerController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+//  /**.
+//   * 오너 프로필 조회
+//   *
+//   * @param userDetails 오너 정보
+//   * @return 상태코드, 응답 메시지, 응답 데이터
+//   */
+//  @GetMapping("/profile/owner")
+//  public ResponseEntity<CommonResponse<ReadOwnerResponse>> readOwnerProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+//    ReadOwnerResponse ReadOwnerResponse = ownerService.readOwnerProfile(userDetails);
+//    CommonResponse<ReadOwnerResponse> response = new CommonResponse<>(
+//      HttpStatus.OK.value(), "프로필 조회 완료", ReadOwnerResponse);
+//    return new  ResponseEntity<>(response, HttpStatus.OK);
+//  }
+
   /**.
    * 오너 프로필 조회
    *
@@ -105,11 +119,9 @@ public class OwnerController {
    * @return 상태코드, 응답 메시지, 응답 데이터
    */
   @GetMapping("/profile/owner")
-  public ResponseEntity<CommonResponse<ReadOwnerResponse>> readOwnerProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<ReadOwnerResponse> readOwnerProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReadOwnerResponse ReadOwnerResponse = ownerService.readOwnerProfile(userDetails);
-    CommonResponse<ReadOwnerResponse> response = new CommonResponse<>(
-      HttpStatus.OK.value(), "프로필 조회 완료", ReadOwnerResponse);
-    return new  ResponseEntity<>(response, HttpStatus.OK);
+    return ResponseEntity.ok(ReadOwnerResponse);
   }
 
   /**.

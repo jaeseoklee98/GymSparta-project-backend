@@ -5,19 +5,19 @@ import lombok.Getter;
 
 @Getter
 public class OneTrainerGetResponse {
-  private Long trainerId;
-  private String trainerName;
-  private String trainerInfo;
+  private Long id;
+  private String name;
+  private String introduction;
   private String trainerEmail;
-  private String trainerPicture;
+  private String image;
   private String trainerPhoneNumber;
 
   public OneTrainerGetResponse(Trainer trainer) {
-    this.trainerId = trainer.getTrainerId();
-    this.trainerName = trainer.getTrainerName();
-    this.trainerInfo = trainer.getTrainerInfo();
+    this.id = trainer.getTrainerId();
+    this.name = trainer.getTrainerName();
+    this.introduction = trainer.getTrainerInfo();
     this.trainerEmail = trainer.getEmail();
-    this.trainerPicture = trainer.getTrainerPicture();
+    this.image = trainer.getTrainerPicture();
     this.trainerPhoneNumber = trainer.getTrainerPhoneNumber();
   }
 }

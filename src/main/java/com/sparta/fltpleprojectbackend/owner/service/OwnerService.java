@@ -146,7 +146,7 @@ public class OwnerService {
     owner.updateOwnerProfile(ownerRequest);
   }
   /**.
-   * 유저 비밀번호 변경
+   * 점주 비밀번호 변경
    *
    * @param userDetails 점주 정보
    * @param ownerRequest 새 비밀번호 정보

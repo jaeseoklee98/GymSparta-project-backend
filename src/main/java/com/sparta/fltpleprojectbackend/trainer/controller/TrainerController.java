@@ -32,6 +32,19 @@ public class TrainerController {
 
   private final TrainerService trainerService;
 
+//  /**.
+//   * 트레이너 조회
+//   *
+//   * @param trainerId 트레이너 아이디
+//   * @return ok, 트레이너 정보
+//   */
+//  @GetMapping("/trainers/{trainerId}")
+//  public ResponseEntity<CommonResponse<OneTrainerGetResponse>> getTrainer(@PathVariable Long trainerId) {
+//    OneTrainerGetResponse oneTrainerGetResponse = trainerService.getTrainer(trainerId);
+//    CommonResponse<OneTrainerGetResponse> response = new CommonResponse<>(HttpStatus.OK.value(),
+//      "조회 완료", oneTrainerGetResponse);
+//    return new  ResponseEntity<>(response, HttpStatus.OK);
+//  }
   /**.
    * 트레이너 조회
    *
@@ -39,12 +52,23 @@ public class TrainerController {
    * @return ok, 트레이너 정보
    */
   @GetMapping("/trainers/{trainerId}")
-  public ResponseEntity<CommonResponse<OneTrainerGetResponse>> getTrainer(@PathVariable Long trainerId) {
+  public ResponseEntity<OneTrainerGetResponse> getTrainer(@PathVariable Long trainerId) {
     OneTrainerGetResponse oneTrainerGetResponse = trainerService.getTrainer(trainerId);
-    CommonResponse<OneTrainerGetResponse> response = new CommonResponse<>(HttpStatus.OK.value(),
-      "조회 완료", oneTrainerGetResponse);
-    return new  ResponseEntity<>(response, HttpStatus.OK);
+    return ResponseEntity.ok(oneTrainerGetResponse);
   }
+
+//  /**.
+//   * 트레이너 전체 조회
+//   *
+//   * @return ok, 전체 트레이너 리스트
+//   */
+//  @GetMapping("/trainers")
+//  public ResponseEntity<CommonResponse<List<TrainerGetResponse>>> getAllTrainers() {
+//    List<TrainerGetResponse> trainers = trainerService.getAllTrainers();
+//    CommonResponse<List<TrainerGetResponse>> response = new CommonResponse<>(HttpStatus.OK.value(),
+//      "조회 완료", trainers);
+//    return new ResponseEntity<>(response, HttpStatus.OK);
+//  }
 
   /**.
    * 트레이너 전체 조회
@@ -52,11 +76,9 @@ public class TrainerController {
    * @return ok, 전체 트레이너 리스트
    */
   @GetMapping("/trainers")
-  public ResponseEntity<CommonResponse<List<TrainerGetResponse>>> getAllTrainers() {
+  public ResponseEntity<List<TrainerGetResponse>> getAllTrainers() {
     List<TrainerGetResponse> trainers = trainerService.getAllTrainers();
-    CommonResponse<List<TrainerGetResponse>> response = new CommonResponse<>(HttpStatus.OK.value(),
-      "조회 완료", trainers);
-    return new ResponseEntity<>(response, HttpStatus.OK);
+    return ResponseEntity.ok(trainers);
   }
 
   /**.

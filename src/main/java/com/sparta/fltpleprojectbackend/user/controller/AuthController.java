@@ -65,7 +65,7 @@ public class AuthController {
     if (currentAuth != null && currentAuth.isAuthenticated() &&
         !currentAuth.getName().equals("anonymousUser")) {
       return ResponseEntity.status(HttpStatus.CONFLICT)
-          .body(ResponseMessage.error("이미 로그인된 상태입니다."));
+          .body(ResponseMessage.error("이미 ad 상태입니다."));
     }
 
     try {
