@@ -111,6 +111,7 @@ public class Trainer {
    * @param TrainerRequest 새 프로필 정보
    */
   public void updateUserProfile(UpdateTrainerProfileRequest TrainerRequest) {
+    this.trainerName = TrainerRequest.getTrainerName();
     this.nickname = TrainerRequest.getNickname();
     this.trainerInfo = TrainerRequest.getTrainerInfo();
     this.email = TrainerRequest.getEmail();

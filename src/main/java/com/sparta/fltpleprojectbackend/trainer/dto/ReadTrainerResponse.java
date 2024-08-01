@@ -9,8 +9,6 @@ public class ReadTrainerResponse {
 
   private String trainerInfo;
 
-  private String accountId;
-
   private String nickname;
 
   private String email;
@@ -22,7 +20,6 @@ public class ReadTrainerResponse {
   public ReadTrainerResponse(Trainer trainer) {
     this.trainerName = trainer.getTrainerName();
     this.trainerInfo = trainer.getTrainerInfo();
-    this.accountId = trainer.getAccountId();
     this.nickname = trainer.getNickname();
     this.email = trainer.getEmail();
     this.trainerPicture = trainer.getTrainerPicture();

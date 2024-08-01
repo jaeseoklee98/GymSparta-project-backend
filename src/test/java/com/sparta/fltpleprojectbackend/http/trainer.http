@@ -2,10 +2,10 @@
 GET localhost:8080/api/trainers
 Content-Type: application/json
 
-### 트레이너 로그인
+### 트레이너 로그인  ael121667   $2a$10$JNz1yY6dfKul4OAu9ij8/.CkBuTYC/TpMGxE1x0Kt.RYHfK7tS4t6
 POST http://localhost:8080/api/login
 Content-Type: application/json
-// ael121667   $2a$10$JNz1yY6dfKul4OAu9ij8/.CkBuTYC/TpMGxE1x0Kt.RYHfK7tS4t6
+
 {
   "accountId": "qwe",
   "password": "ael121667"

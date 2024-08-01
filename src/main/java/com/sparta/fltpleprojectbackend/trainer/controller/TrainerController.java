@@ -95,6 +95,20 @@ public class TrainerController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+//  /**.
+//   * 트레이너 자신의 프로필 조회
+//   *
+//   * @param userDetails 트레이너 정보
+//   * @return 상태코드, 응답 메시지, 응답 데이터
+//   */
+//  @GetMapping("/profile/trainer")
+//  public ResponseEntity<CommonResponse<ReadTrainerResponse>> readTrainerProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+//    ReadTrainerResponse readTrainerProfile = trainerService.readTrainerProfile(userDetails);
+//    CommonResponse<ReadTrainerResponse> response = new CommonResponse<>(
+//      HttpStatus.OK.value(), "프로필 조회 완료", readTrainerProfile);
+//    return new  ResponseEntity<>(response, HttpStatus.OK);
+//  }
+
   /**.
    * 트레이너 자신의 프로필 조회
    *
@@ -102,11 +116,9 @@ public class TrainerController {
    * @return 상태코드, 응답 메시지, 응답 데이터
    */
   @GetMapping("/profile/trainer")
-  public ResponseEntity<CommonResponse<ReadTrainerResponse>> readTrainerProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<ReadTrainerResponse> readTrainerProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReadTrainerResponse readTrainerProfile = trainerService.readTrainerProfile(userDetails);
-    CommonResponse<ReadTrainerResponse> response = new CommonResponse<>(
-      HttpStatus.OK.value(), "프로필 조회 완료", readTrainerProfile);
-    return new  ResponseEntity<>(response, HttpStatus.OK);
+    return ResponseEntity.ok(readTrainerProfile);
   }
 
   /**.
