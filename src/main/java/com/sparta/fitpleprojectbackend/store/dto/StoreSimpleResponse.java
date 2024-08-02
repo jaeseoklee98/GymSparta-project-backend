@@ -10,6 +10,10 @@ public class StoreSimpleResponse {
 
   private String storeName;
 
+  private String storeAddress;
+
+  private String storePrice;
+
 
   /**
    * Store 엔티티를 기반으로 StoreResponse 객체를 생성.
@@ -19,5 +23,7 @@ public class StoreSimpleResponse {
   public StoreSimpleResponse(Store store) {
     this.storeId = store.getId();
     this.storeName = store.getStoreName();
+    this.storeAddress = store.getAddress();
+    this.storePrice = store.getPrice();
   }
 }
