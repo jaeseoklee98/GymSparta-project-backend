@@ -9,25 +9,25 @@ import lombok.Getter;
 @Getter
 public class PtPaymentResponse {
 
-  private Long id;
+  private final Long id;
 
-  private Long trainerId;
+  private final Long trainerId;
 
-  private Long userId;
+  private final Long userId;
 
-  private PtTimes ptTimes;
+  private final PtTimes ptTimes;
 
-  private PaymentType paymentType;
+  private final PaymentType paymentType;
 
-  private double amount;
+  private final double amount;
 
-  private PaymentStatus paymentStatus;
+  private final PaymentStatus paymentStatus;
 
-  private LocalDateTime paymentDate;
+  private final LocalDateTime paymentDate;
 
-  private LocalDateTime expiryDate;
+  private final LocalDateTime expiryDate;
 
-  private boolean isMembership;
+  private final boolean isMembership;
 
   public PtPaymentResponse(Long id, Long trainerId, Long userId, PtTimes ptTimes,
       PaymentType paymentType, double amount, PaymentStatus paymentStatus,

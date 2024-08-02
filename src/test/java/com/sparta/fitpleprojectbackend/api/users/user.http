@@ -13,23 +13,6 @@ Content-Type: application/json
   "foreignerRegistrationNumber": "123456789123"
 }
 
-### 유저 회원가입
-POST http://localhost:8080/api/user/signup
-Content-Type: application/json
-
-{
-  "userName": "세로토닌",
-  "balance": 19384,
-  "accountId": "tryptophan204",
-  "password": "vitaminB6",
-  "confirmPassword": "vitaminB6",
-  "email": "5HTP@naver.com",
-  "phoneNumber": "01011117678",
-  "residentRegistrationNumber": "123451189123",
-  "foreignerRegistrationNumber": ""
-}
-
-
 ### 유저 로그인
 POST http://localhost:8080/api/login
 Content-Type: application/json

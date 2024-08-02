@@ -49,7 +49,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/profile/trainers/**").hasRole("TRAINER")
                 .requestMatchers("/api/profile/owners/**").hasRole("OWNER")
                 .requestMatchers("/api/stores/**").permitAll().requestMatchers("/api/stores/admin/**")
-                .hasAuthority("OWNER").requestMatchers("/api/ptpayments/complete").authenticated()
+                .hasAuthority("OWNER")
+                .requestMatchers("/api/pt-payments/test/**").authenticated()
                 .anyRequest().authenticated());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

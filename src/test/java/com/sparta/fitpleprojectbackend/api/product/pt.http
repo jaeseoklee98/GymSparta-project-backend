@@ -1,3 +1,19 @@
+### 유저 회원가입
+POST http://localhost:8080/api/user/signup
+Content-Type: application/json
+
+{
+  "userName": "세로토닌",
+  "balance": 19384,
+  "accountId": "tryptophan204",
+  "password": "vitaminB6",
+  "confirmPassword": "vitaminB6",
+  "email": "5HTP@naver.com",
+  "phoneNumber": "01011117678",
+  "residentRegistrationNumber": "123451189123",
+  "foreignerRegistrationNumber": ""
+}
+
 ### 로그인
 POST http://localhost:8080/api/login
 Content-Type: application/json
@@ -7,7 +23,6 @@ Content-Type: application/json
   "password": "vitaminB6"
 }
 
-
 > {%
   client.test("로그인 성공", function() {
     var response = client.global.response;
@@ -16,14 +31,52 @@ Content-Type: application/json
   });
 %}
 
-
 ###  결제 요청
-POST http://localhost:8080/api/ptpayments/process
+POST http://localhost:8080/api/pt-payments/process
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzk0OTI3LCJleHAiOjE3MjIzOTY3Mjd9.MN9zf7PWW8gw70XLd-7v6nBbhw008vrfbQDnQGMOD6U
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDQ3Njc5LCJleHAiOjE3MjI0NDk0Nzl9.y-Dm7iTYKFwAex1Lo7vSv-eHCq280F80bs5h_8xg5_8
 
 {
   "trainerId": 2,
   "userId": 5,
   "ptTimes": "TWENTY_TIMES"
+}
+
+### PT 횟수 선택과 총액 계산 요청
+POST http://localhost:8080/api/pt-payments/select-PtTimes
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDQ3Njc5LCJleHAiOjE3MjI0NDk0Nzl9.y-Dm7iTYKFwAex1Lo7vSv-eHCq280F80bs5h_8xg5_8
+
+{
+  "selectedTimes": "TEN_TIMES",
+  "trainerPrice": 100000
+}
+
+### 결제 승인 및 상태 업데이트
+PUT http://localhost:8080/api/pt-payments/6?paymentType=CREDIT_CARD
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDYyODMxLCJleHAiOjE3MjI0NjQ2MzF9.Xs8KhVYCNSe4to1maBAuocNxJLXVfKgQ53nXjBxYt0E
+
+{
+  "trainer": {
+    "id": 2,
+    "trainerName": "노르에피네프린",
+    "email": "mao@naver.com",
+    "trainerStatus": "Active",
+    "phoneNumber": "010-4335-5590"
+  },
+  "user": {
+    "id": 5,
+    "userName": "세로토닌",
+    "email": "USER",
+    "status": "ACTIVE",
+    "zipcode": "19384"
+  },
+  "ptTimes": "SIXTY_TIMES",
+  "paymentType": "CREDIT_CARD",
+  "amount": 100.0,
+  "paymentStatus": "APPROVED",
+  "paymentDate": "2024-08-01 03:18:42.404000",
+  "expiryDate": "2024-08-03 03:18:42.404772",
+  "membership": true
 }

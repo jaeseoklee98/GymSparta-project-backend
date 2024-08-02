@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum PaymentType {
+  UNDEFINED("Undefined"),
   CREDIT_CARD("Credit Card"),
   DEBIT_CARD("Debit Card"),
   CASH("Cash");

@@ -1,3 +1,19 @@
+### 유저 회원가입
+POST http://localhost:8080/api/user/signup
+Content-Type: application/json
+
+{
+  "userName": "세로토닌",
+  "balance": 19384,
+  "accountId": "tryptophan204",
+  "password": "vitaminB6",
+  "confirmPassword": "vitaminB6",
+  "email": "5HTP@naver.com",
+  "phoneNumber": "01011117678",
+  "residentRegistrationNumber": "123451189123",
+  "foreignerRegistrationNumber": ""
+}
+
 ### 로그인
 POST http://localhost:8080/api/login
 Content-Type: application/json
@@ -6,7 +22,6 @@ Content-Type: application/json
   "accountId": "tryptophan204",
   "password": "vitaminB6"
 }
-
 
 > {%
   client.test("로그인 성공", function() {
@@ -21,31 +36,179 @@ Content-Type: application/json
 @access_token = your_access_token_here
 
 ### 결제 요청 정보 임시 저장
-POST http://localhost:8080/api/ptpayments/test/paymentinformation
+POST http://localhost:8080/api/pt-payments/test/payment-information
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzg1MzM4LCJleHAiOjE3MjIzODcxMzh9.0uQ6NJmkBQqnllAnxPmrmD_Tg4GNkojSkwChUcN0H6c
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDY2ODY3LCJleHAiOjE3MjI0Njg2Njd9.qDHd-S-lZ8RsInuS1dGnmXidI9L7zYr0nK9q8S-_dsc
 
 {
-  "trainerId": 1,
-  "userId": 5445445,
+  "trainerId": 2,
+  "userId": 5,
   "ptTimes": "TWENTY_TIMES"
 }
 
 ### 트레이너와 유저 검증
-GET http://localhost:8080/api/ptpayments/test/validate/2/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzg3MzA5LCJleHAiOjE3MjIzODkxMDl9.9kNFutN3-xl2SnDfaOHbiEhpGJK04_bTEGKT3hNMOxc
+GET http://localhost:8080/api/pt-payments/test/validate/3/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDQ3Njc5LCJleHAiOjE3MjI0NDk0Nzl9.y-Dm7iTYKFwAex1Lo7vSv-eHCq280F80bs5h_8xg5_8
 
 ### 중복 PT 예약 체크
-POST http://localhost:8080/api/ptpayments/test/duplicatecheck
+GET http://localhost:8080/api/pt-payments/test/check-duplicate/2/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDQ1NzA3LCJleHAiOjE3MjI0NDc1MDd9.SzDD7NGbXu_c0Qem7frU4m1FZc1UFSb8gfkj3dvRoJo
+
+### 결제 페이지 조회
+GET http://localhost:8080/api/pt-payments/test/paymentpage/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDQ1NzA3LCJleHAiOjE3MjI0NDc1MDd9.SzDD7NGbXu_c0Qem7frU4m1FZc1UFSb8gfkj3dvRoJo
+
+### pt 횟수 선택 총액
+POST http://localhost:8080/api/pt-payments/test/select-PtTimes
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzkwOTM3LCJleHAiOjE3MjIzOTI3Mzd9._aLnI1599PxHdSDjiXEYM36-VaFMPz2SXh2uwicrg1E
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDQ3Njc5LCJleHAiOjE3MjI0NDk0Nzl9.y-Dm7iTYKFwAex1Lo7vSv-eHCq280F80bs5h_8xg5_8
+
+{
+    "selectedTimes": "TEN_TIMES",
+    "trainerPrice": 100.0
+}
+
+### api요청 전 결제 정보 저장
+POST http://localhost:8080/api/pt-payments/test/save-payment
+Content-Type: application/json
 
 {
   "trainerId": 2,
-  "userId": 5
+  "userId": 5,
+  "ptTimes": "SIXTY_TIMES",
+  "paymentType": "UNDEFINED",
+  "amount": 100.0
 }
 
-### 결제 페이지 조회
-GET http://localhost:8080/api/ptpayments/test/paymentpage/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyMzkwOTM3LCJleHAiOjE3MjIzOTI3Mzd9._aLnI1599PxHdSDjiXEYM36-VaFMPz2SXh2uwicrg1E
+### 결제 정보 검증 및 상태 업데이트
+PUT http://localhost:8080/api/pt-payments/test/approve/8
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDYwMjg1LCJleHAiOjE3MjI0NjIwODV9.hfve6aX161GQvYHskC13Z4_ZIL-elxHeymbpJpLc8LM
 
+{
+  "trainer": {
+    "id": 2,
+    "accountId": "mao123",
+    "trainerName": "노르에피네프린",
+    "trainerInfo": "일하기 싫습니다.",
+    "password": "mao123",
+    "nickname": "일하기 싫습니다.",
+    "email": "mao@naver.com",
+    "trainerStatus": "Active",
+    "trainerPhoneNumber": "010-4335-5590",
+    "role": "TRAINER"
+  },
+  "user": {
+    "id": 5,
+    "accountId": "tryptophan204",
+    "userName": "세로토닌",
+    "residentRegistrationNumber": "01011117678",
+    "email": "USER",
+    "status": "ACTIVE",
+    "zipcode": "19384",
+    "role": "USER"
+  },
+  "ptTimes": "SIXTY_TIMES",
+  "paymentType": "UNDEFINED",
+  "amount": 100.0,
+  "paymentStatus": "PENDING",
+  "paymentDate": "2024-08-01T03:18:42.404000",
+  "expiryDate": "2024-08-03T03:18:42.404772",
+  "membership": false
+}
+
+### 결제를 완료하고 최종 결제 정보를 저장
+POST http://localhost:8080/api/pt-payments/test/complete?userId=5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDY4NzU4LCJleHAiOjE3MjI0NzA1NTh9.3FtxgWyFL8NZirB74nmYhg7SGPP4XJhgJqesi5orlXg
+
+{
+  "trainerId": 3,
+  "userId": 5,
+  "ptTimes": "TEN_TIMES",
+  "paymentType": "UNDEFINED",
+  "amount": 600.0,
+  "isMembership": false
+}
+
+### 결제 정보의 일관성을 검증
+POST http://localhost:8080/api/pt-payments/test/check?userId=5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDY4NzU4LCJleHAiOjE3MjI0NzA1NTh9.3FtxgWyFL8NZirB74nmYhg7SGPP4XJhgJqesi5orlXg
+
+{
+  "id": 3,
+  "trainer": {
+    "id": 3,
+    "name": "아드레날린"
+  },
+  "user": {
+    "id": 5,
+    "name": "세로토닌"
+  },
+  "ptTimes": "TEN_TIMES",
+  "paymentType": "UNDEFINED",
+  "amount": 600.0,
+  "paymentStatus": "COMPLETED",
+  "paymentDate": "2024-08-01T00:00:00",
+  "expiryDate": "2024-08-31T00:00:00",
+  "isMembership": false
+}
+
+###  결제 정보를 UserPt에 저장
+POST http://localhost:8080/api/pt-payments/test/save-UserPt
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDY4NzU4LCJleHAiOjE3MjI0NzA1NTh9.3FtxgWyFL8NZirB74nmYhg7SGPP4XJhgJqesi5orlXg
+
+{
+  "trainer": {
+    "id": 3,
+    "name": "아드레날린"
+  },
+  "user": {
+    "id": 5,
+    "name": "세로토닌"
+  },
+  "ptTimes":"TEN_TIMES",
+  "paymentType":"CREDIT_CARD",
+  "amount": 600.0,
+  "paymentStatus": "COMPLETED",
+  "paymentDate": "2024-08-01T00:00:00",
+  "expiryDate": "2024-08-31T00:00:00",
+  "isMembership": false
+}
+
+###  결제 완료 페이지
+POST http://localhost:8080/api/pt-payments/test/completePage
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDY2ODY3LCJleHAiOjE3MjI0Njg2Njd9.qDHd-S-lZ8RsInuS1dGnmXidI9L7zYr0nK9q8S-_dsc
+
+{
+  "trainer": {
+    "id": 2,
+    "name": "아드레날린"
+  },
+  "user": {
+    "id": 5,
+    "name": "세로토닌"
+  },
+  "ptTimes":"TEN_TIMES",
+  "paymentType": "UNDEFINED",
+  "amount": 600.0,
+  "paymentStatus": "COMPLETED",
+  "paymentDate": "2024-08-01T00:00:00",
+  "expiryDate": "2024-08-31T00:00:00",
+  "isMembership": false
+}
+
+###  결제 완료 - 저장 - 페이지 생성
+POST http://localhost:8080/api/pt-payments/test/all-complete?userId=5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cnlwdG9waGFuMjA0IiwiaWF0IjoxNzIyNDY4NzU4LCJleHAiOjE3MjI0NzA1NTh9.3FtxgWyFL8NZirB74nmYhg7SGPP4XJhgJqesi5orlXg
+
+{
+  "trainerId": 3,
+  "ptTimes": "TEN_TIMES",
+  "paymentType": "CREDIT_CARD",
+  "isMembership": false
+}

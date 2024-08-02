@@ -10,30 +10,30 @@ import lombok.Getter;
 public class PtPaymentRequest {
 
   @NotNull(message = "트레이너 ID는 필수 항목입니다.")
-  private Long trainerId;
+  private  final Long trainerId;
 
-  @NotNull(message = "PT 횟수는 필수 항목입니다.")
-  private Long userId;
+  @NotNull(message = "유저 ID는 횟수는 필수 항목입니다.")
+  private final Long userId;
 
-  @NotNull(message = "결제 타입은 필수 항목입니다.")
+  @NotNull(message = "피티 횟수는 필수 항목입니다.")
   @JsonFormat(shape = JsonFormat.Shape.STRING)
-  private PtTimes ptTimes;
+  private final PtTimes ptTimes;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private final PaymentType paymentType;
 
   @NotNull(message = "결제 금액은 필수 항목입니다.")
-  @JsonFormat(shape = JsonFormat.Shape.STRING)
-  private PaymentType paymentType;
+  private final double amount;
 
-  private boolean isMembership;
+  private final boolean isMembership;
 
-  public PtPaymentRequest() {
-  }
-
-  public PtPaymentRequest(Long trainerId, Long userId, PtTimes ptTimes, PaymentType paymentType,
+  public PtPaymentRequest(Long trainerId, Long userId, PtTimes ptTimes, PaymentType paymentType, double amount,
       boolean isMembership) {
     this.trainerId = trainerId;
     this.userId = userId;
     this.ptTimes = ptTimes;
     this.paymentType = paymentType;
+    this.amount = amount;
     this.isMembership = isMembership;
   }
 }

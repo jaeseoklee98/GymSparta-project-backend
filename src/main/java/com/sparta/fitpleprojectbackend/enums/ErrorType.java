@@ -19,13 +19,11 @@ public enum ErrorType {
   RESERVATION_CONFLICT(HttpStatus.CONFLICT, "이미 예약이 존재합니다."),
   TRAINER_NOT_FOUND(HttpStatus.NOT_FOUND, "트레이너를 찾을 수 없습니다."),
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
-  TRAINER_AND_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "트레이너와 사용자를 찾을 수 없습니다."),
   PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 처리 중 오류가 발생했습니다."),
   PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
   PAYMENT_MISMATCH(HttpStatus.BAD_REQUEST, "결제 정보가 일치하지 않습니다."),
   PAYMENT_APPROVAL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 승인이 실패했습니다."),
   INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다.");
-
 
   private final HttpStatus httpStatus;
   private final String message;

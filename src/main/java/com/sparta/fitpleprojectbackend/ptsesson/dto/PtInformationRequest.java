@@ -7,12 +7,18 @@ import lombok.Getter;
 @Getter
 public class PtInformationRequest {
 
-  private Long trainerId;
+  private final Long trainerId;
 
-  private Long userId;
+  private final Long userId;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING)
-  private PtTimes ptTimes;
+  private final PtTimes ptTimes;
+
+  public PtInformationRequest(Long trainerId, Long userId, PtTimes ptTimes) {
+    this.trainerId = trainerId;
+    this.userId = userId;
+    this.ptTimes = ptTimes;
+  }
 
 }
 

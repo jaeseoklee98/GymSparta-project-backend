@@ -5,7 +5,12 @@ import lombok.Getter;
 @Getter
 public class UserPtRequest {
 
-  private Long trainerId;
+  private final Long trainerId;
 
-  private Long userId;
+  private final Long userId;
+
+  public UserPtRequest (Long trainerId, Long userId){
+    this.trainerId = trainerId;
+    this.userId = userId;
+  }
 }
