@@ -3,11 +3,12 @@ POST http://localhost:8080/api/user/signup
 Content-Type: application/json
 
 {
-  "userName": "testuser",
-  "accountId": "testaccount",
-  "password": "testpassword",
-  "confirmPassword": "testpassword",
-  "email": "testuser@example.com"
+  "userName": "testuser1",
+  "accountId": "test123",
+  "password": "qwer1234!@#$",
+  "confirmPassword": "qwer1234!@#$",
+  "email": "testuser@example.com",
+  "phoneNumber": "1234567890"
 }
 
 
