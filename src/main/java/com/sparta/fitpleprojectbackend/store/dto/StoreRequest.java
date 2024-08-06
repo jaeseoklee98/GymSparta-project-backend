@@ -2,10 +2,10 @@ package com.sparta.fitpleprojectbackend.store.dto;
 
 import java.util.List;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor
 public class StoreRequest {
   private String storeName;
   private String address;

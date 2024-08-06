@@ -55,8 +55,8 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "accountId": "testowner",
-  "password": "password123"
+  "accountId": "jslee4577",
+  "password": "qwer1234"
 }
 
 > {%
