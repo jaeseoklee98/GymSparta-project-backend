@@ -14,9 +14,6 @@ public class UserSignupRequest {
   @Size(max = 50, message = "유저 이름은 최대 50자까지 가능합니다.")
   private String userName;  // 유저 이름 (휴대폰 인증 후 얻은 이름)
 
-  @NotNull(message = "잔고를 입력해 주세요")
-  private Double balance;  // 잔고
-
   @NotBlank(message = "아이디는 필수 항목입니다.")
   @Size(max = 15, message = "아이디는 최대 15자까지 가능합니다.")
   private String accountId;  // 아이디

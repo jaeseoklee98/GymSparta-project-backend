@@ -161,18 +161,15 @@ public class AuthController {
     }
 
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
-    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(username,
-        "ACTIVE");
-    Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(username,
-        "ACTIVE");
+    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(username, "ACTIVE");
+    Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(username, "ACTIVE");
 
-    if (!userOptional.isPresent() && !ownerOptional.isPresent() && !trainerOptional.isPresent()) {
+    if (userOptional.isEmpty() && ownerOptional.isEmpty() && trainerOptional.isEmpty()) {
       CommonResponse<String> response = new CommonResponse<>(
           HttpStatus.UNAUTHORIZED.value(), "이미 로그아웃된 상태입니다.", null);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
-    //인증된 상태에서 로그아웃 처리
     SecurityContextHolder.clearContext();
     CommonResponse<String> response = new CommonResponse<>(
         HttpStatus.OK.value(), "로그아웃 성공", "로그아웃이 완료되었습니다.");

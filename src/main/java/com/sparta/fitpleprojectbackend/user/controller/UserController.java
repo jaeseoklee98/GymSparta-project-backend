@@ -1,6 +1,8 @@
 package com.sparta.fitpleprojectbackend.user.controller;
 
 import com.sparta.fitpleprojectbackend.common.CommonResponse;
+import com.sparta.fitpleprojectbackend.enums.ErrorType;
+import com.sparta.fitpleprojectbackend.exception.CustomException;
 import com.sparta.fitpleprojectbackend.jwtutil.JwtUtil;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fitpleprojectbackend.user.dto.UpdatePasswordRequest;
@@ -36,15 +38,19 @@ public class UserController {
    * @return 회원가입 성공 또는 실패 메시지를 담은 응답
    */
   @PostMapping("/user/signup")
-  public ResponseEntity<CommonResponse<String>> signup(@RequestBody UserSignupRequest request) {
+  public ResponseEntity<CommonResponse<String>> signup(@RequestBody @Valid UserSignupRequest request) {
     try {
       userService.signup(request);
       CommonResponse<String> response = new CommonResponse<>(
           HttpStatus.OK.value(), "회원가입 성공", "회원가입이 완료되었습니다.");
       return ResponseEntity.ok(response);
+    } catch (CustomException e) {
+      CommonResponse<String> response = new CommonResponse<>(
+          HttpStatus.BAD_REQUEST.value(), "회원가입 실패", e.getMessage());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     } catch (Exception e) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.BAD_REQUEST.value(), "회원가입 실패", "회원가입 실패: " + e.getMessage());
+          HttpStatus.BAD_REQUEST.value(), "회원가입 실패", "알 수 없는 오류가 발생했습니다.");
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }

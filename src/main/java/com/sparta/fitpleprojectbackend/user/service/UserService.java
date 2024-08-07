@@ -12,6 +12,7 @@ import com.sparta.fitpleprojectbackend.user.entity.User;
 import com.sparta.fitpleprojectbackend.user.exception.UserException;
 import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +25,10 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
-
   public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
   }
-
 
   /**
    * 사용자 회원가입
@@ -38,7 +37,13 @@ public class UserService {
    * @return 등록된 사용자 객체
    * @throws CustomException 중복된 사용자 정보가 있을 경우 발생
    */
+  @Transactional
   public User signup(UserSignupRequest request) {
+    // 비밀번호와 비밀번호 확인 일치 여부 확인
+    if (!request.getPassword().equals(request.getConfirmPassword())) {
+      throw new CustomException(ErrorType.INVALID_PASSWORD, "비밀번호가 일치하지 않습니다.");
+    }
+
     Optional<User> existingUserByUsername = userRepository.findByAccountIdAndStatus(
         request.getAccountId(), "ACTIVE");
     Optional<User> existingUserByEmail = userRepository.findByEmailAndStatus(request.getEmail(),
@@ -66,7 +71,7 @@ public class UserService {
           user.getResidentRegistrationNumber(),
           user.getForeignerRegistrationNumber(),
           user.getIsForeigner(),
-          user.getAccountId(),
+          user.getAccountId() + "_deleted",
           passwordEncoder.encode(request.getPassword()),
           user.getNickname(),
           user.getEmail(),
@@ -85,7 +90,7 @@ public class UserService {
 
     User newUser = new User(
         request.getUserName(),
-        request.getBalance(),
+        0.0,
         request.getResidentRegistrationNumber(),
         request.getForeignerRegistrationNumber(),
         false,
@@ -113,17 +118,20 @@ public class UserService {
    * @param username 탈퇴 사용자 계정 ID
    * @throws UserException 사용자를 찾을 수 없는 경우 발생
    */
+  @Transactional
   public void deleteUser(String username) {
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
     User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
 
+    String newAccountId = user.getAccountId() + "_del";
+
     User updatedUser = new User(
         user.getUserName(),
-        user.getBalance(),
+        0.0,
         user.getResidentRegistrationNumber(),
         user.getForeignerRegistrationNumber(),
         user.getIsForeigner(),
-        user.getAccountId(),
+        newAccountId,
         user.getPassword(),
         user.getNickname(),
         user.getEmail(),
@@ -139,6 +147,13 @@ public class UserService {
     );
 
     userRepository.save(updatedUser);
+  }
+
+  // 7일 후 "DELETED" 상태의 계정을 완전히 삭제하는 스케줄러
+  @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+  @Transactional
+  public void permanentlyDeleteUsers() {
+    userRepository.deleteAllByScheduledDeletionDateBefore(LocalDateTime.now());
   }
 
   /**

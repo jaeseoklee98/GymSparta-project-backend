@@ -29,7 +29,7 @@ public class Owner extends TimeStamped {
   @Column(nullable = false)
   private Boolean isForeigner = false; // 국적구분
 
-  @Column(nullable = false, length = 15, unique = true)
+  @Column(nullable = false, length = 30, unique = true)
   private String accountId; // 아이디
 
   @Column(nullable = false, length = 255)
