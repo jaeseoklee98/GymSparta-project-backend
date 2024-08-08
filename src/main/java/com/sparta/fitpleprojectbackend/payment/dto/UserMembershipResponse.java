@@ -1,5 +1,5 @@
 package com.sparta.fitpleprojectbackend.payment.dto;
 
-public class MembershipRequest {
+public class UserMembershipResponse {
 
 }

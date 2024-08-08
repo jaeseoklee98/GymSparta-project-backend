@@ -1,5 +1,5 @@
 package com.sparta.fitpleprojectbackend.payment.controller;
 
-public class MembershipController {
+public class UserMembershipController {
 
 }

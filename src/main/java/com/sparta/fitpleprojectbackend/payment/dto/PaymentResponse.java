@@ -7,13 +7,15 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-public class PtPaymentResponse {
+public class PaymentResponse {
 
-  private final Long id;
+  private final Long paymentId;
 
   private final Long trainerId;
 
   private final Long userId;
+
+  private final Long productId;
 
   private final PtTimes ptTimes;
 
@@ -29,12 +31,11 @@ public class PtPaymentResponse {
 
   private final boolean isMembership;
 
-  public PtPaymentResponse(Long id, Long trainerId, Long userId, PtTimes ptTimes,
-      PaymentType paymentType, double amount, PaymentStatus paymentStatus,
-      LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
-    this.id = id;
+  public PaymentResponse(Long paymentId, Long trainerId, Long userId, Long productId, PtTimes ptTimes, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
+    this.paymentId = paymentId;
     this.trainerId = trainerId;
     this.userId = userId;
+    this.productId = productId;
     this.ptTimes = ptTimes;
     this.paymentType = paymentType;
     this.amount = amount;

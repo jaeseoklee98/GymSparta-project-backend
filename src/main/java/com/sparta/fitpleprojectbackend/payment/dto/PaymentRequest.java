@@ -7,12 +7,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class PtPaymentRequest {
+public class PaymentRequest {
 
   @NotNull(message = "트레이너 ID는 필수 항목입니다.")
-  private  final Long trainerId;
+  private final Long trainerId;
 
-  @NotNull(message = "유저 ID는 횟수는 필수 항목입니다.")
+  @NotNull(message = "유저 ID는 필수 항목입니다.")
   private final Long userId;
 
   @NotNull(message = "피티 횟수는 필수 항목입니다.")
@@ -27,8 +27,7 @@ public class PtPaymentRequest {
 
   private final boolean isMembership;
 
-  public PtPaymentRequest(Long trainerId, Long userId, PtTimes ptTimes, PaymentType paymentType, double amount,
-      boolean isMembership) {
+  public PaymentRequest(Long trainerId, Long userId, PtTimes ptTimes, PaymentType paymentType, double amount, boolean isMembership) {
     this.trainerId = trainerId;
     this.userId = userId;
     this.ptTimes = ptTimes;
