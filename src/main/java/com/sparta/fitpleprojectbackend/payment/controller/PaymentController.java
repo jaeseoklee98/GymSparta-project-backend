@@ -6,6 +6,7 @@ import com.sparta.fitpleprojectbackend.payment.dto.PaymentUpdateRequest;
 import com.sparta.fitpleprojectbackend.payment.dto.PtTotalAmountRequest;
 import com.sparta.fitpleprojectbackend.payment.dto.PtTotalAmountResponse;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
+import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentType;
 import com.sparta.fitpleprojectbackend.payment.enums.PtTimes;
 import com.sparta.fitpleprojectbackend.payment.service.PaymentService;
@@ -170,6 +171,26 @@ public class PaymentController {
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An error occurred while processing the refund");
+    }
+  }
+
+  /**
+   * 결제 상태 조회
+   *
+   * @param paymentId 결제 ID
+   * @return 결제 상태
+   */
+  @GetMapping("/status/{paymentId}")
+  public ResponseEntity<PaymentStatus> inquirePaymentStatus(@PathVariable Long paymentId) {
+    try {
+      PaymentStatus paymentStatus = paymentService.inquirePaymentStatus(paymentId);
+      return ResponseEntity.ok(paymentStatus);
+    } catch (CustomException e) {
+      return ResponseEntity.status(e.getErrorType().getHttpStatus())
+          .body(null);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(null);
     }
   }
 }

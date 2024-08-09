@@ -106,19 +106,16 @@ public class PaymentService {
     Payment payment = paymentRepository.findById(paymentId)
         .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
 
+    if (payment.getPaymentStatus() == PaymentStatus.APPROVED) {
+      throw new CustomException(ErrorType.PAYMENT_ALREADY_COMPLETED);
+    }
+
+    if (payment.getPaymentStatus() == PaymentStatus.CANCELED) {
+      throw new CustomException(ErrorType.PAYMENT_ALREADY_CANCELED);
+    }
+
     payment.setPaymentStatus(PaymentStatus.APPROVED);
-    payment = new Payment(
-        payment.getTrainer(),
-        payment.getUser(),
-        payment.getProduct(),
-        payment.getPtTimes(),
-        paymentType,
-        payment.getAmount(),
-        PaymentStatus.APPROVED,
-        payment.getPaymentDate(),
-        payment.getExpiryDate(),
-        payment.isMembership()
-    );
+    payment.setPaymentType(paymentType);
 
     return paymentRepository.save(payment);
   }
@@ -195,6 +192,9 @@ public class PaymentService {
 
     // 상태 변경 시 예외 처리
     if (updateRequest.getStatus() != null) {
+      if (payment.getPaymentStatus() == PaymentStatus.APPROVED || payment.getPaymentStatus() == PaymentStatus.CANCELED) {
+        throw new CustomException(ErrorType.PAYMENT_ALREADY_COMPLETED);
+      }
       if (updateRequest.getStatus() == PaymentStatus.CANCELED && payment.getPaymentStatus() != PaymentStatus.PENDING) {
         throw new CustomException(ErrorType.INVALID_PAYMENT_STATUS);
       }
@@ -204,18 +204,38 @@ public class PaymentService {
     // 결제 금액 변경 시 예외 처리
     if (updateRequest.getAmount() != null) {
       if (updateRequest.getAmount() <= 0) {
-        throw new CustomException(ErrorType.INVALID_INPUT);
+        throw new CustomException(ErrorType.INVALID_PAYMENT_AMOUNT);
       }
       payment.setAmount(updateRequest.getAmount());
     }
 
     // 결제 수단 변경 시 예외 처리
     if (updateRequest.getPaymentType() != null) {
-      if (updateRequest.getPaymentType() != payment.getPaymentType()) {
-        payment.setPaymentType(updateRequest.getPaymentType());
+      if (payment.getPaymentStatus() == PaymentStatus.APPROVED || payment.getPaymentStatus() == PaymentStatus.CANCELED) {
+        throw new CustomException(ErrorType.PAYMENT_TYPE_NOT_UPDATABLE);
       }
+      payment.setPaymentType(updateRequest.getPaymentType());
     }
 
     return paymentRepository.save(payment);
+  }
+
+  /**
+   * 결제 상태 조회
+   *
+   * @param paymentId 조회할 결제의 ID
+   * @return 결제 상태
+   * @throws CustomException 결제를 찾을 수 없는 경우 발생
+   */
+  public PaymentStatus inquirePaymentStatus(Long paymentId) {
+    Payment payment = paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
+
+    // 결제가 아직 처리 중인 경우 상태를 조회할 수 없도록 처리
+    if (payment.getPaymentStatus() == PaymentStatus.PENDING) {
+      throw new CustomException(ErrorType.PAYMENT_IN_PROCESS);
+    }
+
+    return payment.getPaymentStatus();
   }
 }
