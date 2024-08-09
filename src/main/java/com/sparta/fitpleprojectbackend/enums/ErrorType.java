@@ -23,16 +23,6 @@ public enum ErrorType {
   PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
   PAYMENT_MISMATCH(HttpStatus.BAD_REQUEST, "결제 정보가 일치하지 않습니다."),
   PAYMENT_APPROVAL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 승인이 실패했습니다."),
-  INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다."),
-  REFUND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "환불 처리 중 오류가 발생했습니다."),
-  REFUND_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "환불 요청 정보를 찾을 수 없습니다."),
-  REFUND_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "이미 처리된 환불입니다."),
-  REFUND_AMOUNT_EXCEEDS_LIMIT(HttpStatus.BAD_REQUEST, "환불 금액이 허용된 한도를 초과했습니다."),
-  REFUND_PAYMENT_METHOD_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "해당 결제 방법으로는 환불이 지원되지 않습니다."),
-  REFUND_WINDOW_EXPIRED(HttpStatus.BAD_REQUEST, "환불 가능한 기간이 지났습니다."),
-  PARTIAL_REFUND_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "부분 환불이 허용되지 않습니다."),
-  REFUND_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "환불 받을 계좌 정보를 찾을 수 없습니다."),
-  REFUND_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "환불 처리 중 알 수 없는 오류가 발생했습니다."),
   PAYMENT_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "이미 완료된 결제는 갱신할 수 없습니다."),
   PAYMENT_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 결제는 갱신할 수 없습니다."),
   INVALID_PAYMENT_AMOUNT(HttpStatus.BAD_REQUEST, "잘못된 결제 금액이 입력되었습니다."),
@@ -44,7 +34,10 @@ public enum ErrorType {
   CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
   CART_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니 아이템을 찾을 수 없습니다."),
   CART_EMPTY(HttpStatus.BAD_REQUEST, "장바구니가 비어 있습니다."),
-  INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다.");
+  INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다."),
+  UNSUPPORTED_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "지원되지 않는 결제 방법입니다."),
+  INVALID_PAYMENT_STATE(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다."), // 변경된 이름
+  PAYMENT_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."); // 변경된 이름
 
   private final HttpStatus httpStatus;
   private final String message;

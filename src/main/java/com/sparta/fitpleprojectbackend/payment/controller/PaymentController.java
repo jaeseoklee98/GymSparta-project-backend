@@ -193,4 +193,25 @@ public class PaymentController {
           .body(null);
     }
   }
+
+  /**
+   * 결제 페이지 반환 및 결제 수단 선택 처리
+   *
+   * @param paymentId 결제 ID
+   * @param paymentType 선택한 결제 수단
+   * @return 결제 결과 메시지
+   */
+  @PostMapping("/{paymentId}/select-payment-type")
+  public ResponseEntity<String> selectPaymentType(@PathVariable Long paymentId, @RequestParam PaymentType paymentType) {
+    try {
+      String paymentResult = paymentService.processPaymentWithSelectedType(paymentId, paymentType);
+      return ResponseEntity.ok(paymentResult);
+    } catch (CustomException e) {
+      return ResponseEntity.status(e.getErrorType().getHttpStatus())
+          .body(e.getErrorType().getMessage());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("An error occurred while processing the payment");
+    }
+  }
 }

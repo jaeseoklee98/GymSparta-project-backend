@@ -238,4 +238,42 @@ public class PaymentService {
 
     return payment.getPaymentStatus();
   }
+
+  /**
+   * 선택한 결제 수단으로 결제 처리
+   *
+   * @param paymentId 결제 ID
+   * @param paymentType 선택한 결제 수단
+   * @return 결제 결과 메시지
+   */
+  @Transactional
+  public String processPaymentWithSelectedType(Long paymentId, PaymentType paymentType) {
+    Payment payment = paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
+
+    if (payment.getPaymentStatus() != PaymentStatus.PENDING) {
+      throw new CustomException(ErrorType.INVALID_PAYMENT_STATUS);
+    }
+
+    // 결제 수단에 따른 API 호출 로직
+    switch (paymentType) {
+      case CREDIT_CARD:
+        // 여기에 신용카드 결제 API 호출 로직 추가
+        break;
+      case DEBIT_CARD:
+        // 여기에 직불카드 결제 API 호출 로직 추가
+        break;
+      case CASH:
+        // 여기에 현금 결제 처리 로직 추가
+        break;
+      default:
+        throw new CustomException(ErrorType.UNSUPPORTED_PAYMENT_METHOD);
+    }
+
+    payment.setPaymentType(paymentType);
+    payment.setPaymentStatus(PaymentStatus.APPROVED); // 결제가 성공했다고 가정
+    paymentRepository.save(payment);
+
+    return "Payment processed successfully with " + paymentType.getTypes();
+  }
 }
