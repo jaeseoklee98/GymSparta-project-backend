@@ -59,7 +59,7 @@ public class Store extends TimeStamped {
   private List<String> trainerList;
 
   // 추가 필드
-  @Column(nullable = false)
+  @Column
   private String price;
 
   @Column(nullable = true)

@@ -2,8 +2,10 @@ package com.sparta.fitpleprojectbackend.user.entity;
 
 import com.sparta.fitpleprojectbackend.common.TimeStamped;
 import com.sparta.fitpleprojectbackend.enums.Role;
+import com.sparta.fitpleprojectbackend.notification.entity.UserAllNotification;
 import com.sparta.fitpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -64,6 +66,9 @@ public class User extends TimeStamped {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Role role;
+
+  @OneToMany(mappedBy = "user")
+  private List<UserAllNotification> userAllNotificationList;
 
   @Column
   private LocalDateTime deletedAt;
