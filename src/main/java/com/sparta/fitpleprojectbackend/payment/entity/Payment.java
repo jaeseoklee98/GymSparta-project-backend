@@ -35,10 +35,12 @@ public class Payment extends TimeStamped {
   @Column(nullable = false)
   private PtTimes ptTimes;
 
+  @Setter
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private PaymentType paymentType;
 
+  @Setter
   @Column(nullable = false)
   private double amount;
 

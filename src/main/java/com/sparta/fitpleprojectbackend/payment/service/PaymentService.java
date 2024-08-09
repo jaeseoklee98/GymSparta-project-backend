@@ -3,6 +3,7 @@ package com.sparta.fitpleprojectbackend.payment.service;
 import com.sparta.fitpleprojectbackend.enums.ErrorType;
 import com.sparta.fitpleprojectbackend.exception.CustomException;
 import com.sparta.fitpleprojectbackend.payment.dto.PaymentRequest;
+import com.sparta.fitpleprojectbackend.payment.dto.PaymentUpdateRequest;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentType;
@@ -178,5 +179,43 @@ public class PaymentService {
     logger.info("선택된 PT 횟수: ", ptTimes);
 
     return ptTimes;
+  }
+
+  /**
+   * 결제 갱신
+   *
+   * @param paymentId 갱신할 결제의 ID
+   * @param updateRequest 결제 갱신 요청 정보
+   * @return 갱신된 결제 정보
+   */
+  @Transactional
+  public Payment updatePayment(Long paymentId, PaymentUpdateRequest updateRequest) {
+    Payment payment = paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
+
+    // 상태 변경 시 예외 처리
+    if (updateRequest.getStatus() != null) {
+      if (updateRequest.getStatus() == PaymentStatus.CANCELED && payment.getPaymentStatus() != PaymentStatus.PENDING) {
+        throw new CustomException(ErrorType.INVALID_PAYMENT_STATUS);
+      }
+      payment.setPaymentStatus(updateRequest.getStatus());
+    }
+
+    // 결제 금액 변경 시 예외 처리
+    if (updateRequest.getAmount() != null) {
+      if (updateRequest.getAmount() <= 0) {
+        throw new CustomException(ErrorType.INVALID_INPUT);
+      }
+      payment.setAmount(updateRequest.getAmount());
+    }
+
+    // 결제 수단 변경 시 예외 처리
+    if (updateRequest.getPaymentType() != null) {
+      if (updateRequest.getPaymentType() != payment.getPaymentType()) {
+        payment.setPaymentType(updateRequest.getPaymentType());
+      }
+    }
+
+    return paymentRepository.save(payment);
   }
 }
