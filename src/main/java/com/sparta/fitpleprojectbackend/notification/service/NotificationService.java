@@ -40,6 +40,13 @@ public class NotificationService {
   private final PaymentRepository paymentRepository;
   private final UserAllNotificationRepository userAllNotificationRepository;
 
+  /**
+   * 점주 전체 공지 작성
+   *
+   * @param storeId 공지를 작성하는 매장의 ID
+   * @param request 공지 작성 내용
+   * @param userDetails 로그인 한 점주의 데이터
+   */
   @Transactional
   public void createNotification(Long storeId, UserDetailsImpl userDetails, createAllNotificationDto request) {
     Owner owner = userDetails.getOwner();
@@ -62,7 +69,12 @@ public class NotificationService {
 
   }
 
-  // sse 구독
+  /**
+   * 실시간 공지 알림
+   *
+   * @param userId 로그인 한 유저의 ID
+   * @return 구독권
+   */
   public SseEmitter createEmitter(Long userId) {
     SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); // Sse 구독 시간에 대해서 관리 사실상 무한
     userEmitters.put(userId, emitter);
@@ -74,6 +86,12 @@ public class NotificationService {
     return emitter;
   }
 
+  /**
+   * 매장 전체 공지 알림을 저장
+   *
+   * @param user 공지를 작성한 매장의 유저
+   * @param allNotification 공지 데이터
+   */
   @Transactional
   public void sendUserAllNotification(User user, AllNotification allNotification) {
     String message = allNotification.getStore().getStoreName() + "매장의 전체 공지가 추가되었습니다.";
@@ -82,6 +100,11 @@ public class NotificationService {
     sendRealTimeNotification(notification);
   }
 
+  /**
+   * 매장 전체 공지 알림을 실시간으로 보내기
+   *
+   * @param notification 유저의 전체공지 알림
+   */
   private void sendRealTimeNotification(UserAllNotification notification) {
     SseEmitter emitter = userEmitters.get(notification.getUser().getId());
     if (emitter != null) {
@@ -94,4 +117,16 @@ public class NotificationService {
       });
     }
   }
+
+  /**
+   * 매일 아침 9시 만료 임박 회원권 조회하고 알림 보내기
+   *
+   * @param
+   */
+
+  /**
+   * 매일 아침 9시 만료 임박 PT권 조회하고 알림 보내기
+   *
+   * @param
+   */
 }

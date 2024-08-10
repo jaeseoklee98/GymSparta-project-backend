@@ -22,14 +22,26 @@ public class NotificationController {
 
   private final NotificationService notificationService;
 
-  // 점주 공지 작성
+  /**
+   * 점주 전체 공지 작성
+   *
+   * @param storeId 공지를 작성하는 매장의 ID
+   * @param request 공지 작성 내용
+   * @param userDetails 로그인 한 점주의 데이터
+   * @return 정상적으로 완료 했다는 메세지
+   */
   @PostMapping("/{storeId}/allNotification")
   public ResponseEntity<?> createNotification(@PathVariable Long storeId, @RequestBody createAllNotificationDto request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
   notificationService.createNotification(storeId, userDetails, request);
   return ResponseEntity.ok("공지 작성 완료");
   }
 
-  // sse 구독
+  /**
+   * 유저에게 실시간 알림을 보내기 위한 구독
+   *
+   * @param userDetails 로그인 한 유저의 데이터
+   * @return SseEmitter 실시간 알림 처리하는 구독권
+   */
   @GetMapping("/notifications/stream")
   public SseEmitter streamNotifications(@AuthenticationPrincipal UserDetailsImpl userDetails) {
     return notificationService.createEmitter(userDetails.getUser().getId());
