@@ -10,7 +10,7 @@ import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentType;
 import com.sparta.fitpleprojectbackend.payment.enums.PtTimes;
 import com.sparta.fitpleprojectbackend.payment.repository.PtInformationRepository;
-import com.sparta.fitpleprojectbackend.payment.repository.UserPtRepository;
+import com.sparta.fitpleprojectbackend.payment.repository.UserPtRepository.UserPtRepository;
 import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fitpleprojectbackend.trainer.repository.TrainerRepository;
 import com.sparta.fitpleprojectbackend.user.entity.User;
@@ -29,8 +29,8 @@ public class PtPaymentHttpTestService {
 
   private static final int MAX_RETRY_ATTEMPTS = 5;
   private static final String TEST = "testId"; // 테스트용
-  private static final Logger logger = LoggerFactory.getLogger(PtPaymentService.class);
-  private final PtPaymentRepository ptPaymentRepository;
+//  private static final Logger logger = LoggerFactory.getLogger(PtPaymentService.class);
+//  private final PtPaymentRepository ptPaymentRepository;
   private final TrainerRepository trainerRepository;
   private final UserRepository userRepository;
   private final UserPtRepository userPtRepository;

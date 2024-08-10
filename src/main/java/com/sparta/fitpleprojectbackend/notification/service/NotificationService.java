@@ -4,20 +4,22 @@ import com.sparta.fitpleprojectbackend.enums.ErrorType;
 import com.sparta.fitpleprojectbackend.notification.dto.createAllNotificationDto;
 import com.sparta.fitpleprojectbackend.notification.entity.AllNotification;
 import com.sparta.fitpleprojectbackend.notification.entity.UserAllNotification;
+import com.sparta.fitpleprojectbackend.notification.entity.UserNotification;
 import com.sparta.fitpleprojectbackend.notification.exception.NotificationException;
 import com.sparta.fitpleprojectbackend.notification.repository.AllNotificationRepository;
 import com.sparta.fitpleprojectbackend.notification.repository.UserAllNotificationRepository;
+import com.sparta.fitpleprojectbackend.notification.repository.UserNotificationRepository;
 import com.sparta.fitpleprojectbackend.owner.entity.Owner;
-import com.sparta.fitpleprojectbackend.owner.repository.OwnerRepository;
-import com.sparta.fitpleprojectbackend.owner.service.OwnerService;
+import com.sparta.fitpleprojectbackend.payment.entity.UserPt;
 import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository.PaymentRepository;
+import com.sparta.fitpleprojectbackend.payment.repository.UserPtRepository.UserPtRepository;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fitpleprojectbackend.store.entity.Store;
-import com.sparta.fitpleprojectbackend.store.exception.StoreException;
 import com.sparta.fitpleprojectbackend.store.repository.StoreRepository;
 import com.sparta.fitpleprojectbackend.user.entity.User;
 import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -39,6 +42,9 @@ public class NotificationService {
   private final StoreRepository storeRepository;
   private final PaymentRepository paymentRepository;
   private final UserAllNotificationRepository userAllNotificationRepository;
+  private final UserPtRepository userPtRepository;
+  private final UserNotificationRepository userNotificationRepository;
+  private final UserRepository userRepository;
 
   /**
    * 점주 전체 공지 작성
@@ -97,7 +103,7 @@ public class NotificationService {
     String message = allNotification.getStore().getStoreName() + "매장의 전체 공지가 추가되었습니다.";
     UserAllNotification notification = new UserAllNotification(message, user, allNotification);
     userAllNotificationRepository.save(notification);
-    sendRealTimeNotification(notification);
+    sendRealTimeUserAllNotification(notification);
   }
 
   /**
@@ -105,7 +111,7 @@ public class NotificationService {
    *
    * @param notification 유저의 전체공지 알림
    */
-  private void sendRealTimeNotification(UserAllNotification notification) {
+  public void sendRealTimeUserAllNotification(UserAllNotification notification) {
     SseEmitter emitter = userEmitters.get(notification.getUser().getId());
     if (emitter != null) {
       executor.execute(() -> {
@@ -118,15 +124,49 @@ public class NotificationService {
     }
   }
 
-  /**
-   * 매일 아침 9시 만료 임박 회원권 조회하고 알림 보내기
-   *
-   * @param
-   */
+//  /**
+//   * 매일 아침 9시 만료 임박 회원권 조회, 알림 보내기
+//   *
+//   * @param
+//   */
+//  @Scheduled(cron = "0 0 9 * * ?")
+//  public void
 
   /**
    * 매일 아침 9시 만료 임박 PT권 조회하고 알림 보내기
    *
-   * @param
+   *
    */
+  @Scheduled(cron = "0 0 9 * * ?")
+  public void sendPtNotification() {
+    LocalDateTime today = LocalDateTime.now();
+    LocalDateTime twoDaysLater = today.plusDays(2);
+
+    List<UserPt> ptList = userPtRepository.findPtExpiringSoon(today, twoDaysLater);
+
+    for (UserPt userPt : ptList) {
+      sendPtExpiredNotification(userPt);
+    }
+  }
+
+  private void sendPtExpiredNotification(UserPt userPt) {
+    String message = userPt.getTrainer().getTrainerName() + " 선생님의 pt 권이 2일 후 만료됩니다.";
+    User user = userPt.getUser();
+    UserNotification notification = new UserNotification(message, user);
+    userNotificationRepository.save(notification);
+    sendRealTimeUserPtNotification(notification);
+  }
+
+  public void sendRealTimeUserPtNotification(UserNotification notification) {
+    SseEmitter emitter = userEmitters.get(notification.getUser().getId());
+    if (emitter != null) {
+      executor.execute(() -> {
+        try {
+          emitter.send(SseEmitter.event().name("notification").data(notification.getMessage()));
+        } catch (Exception e) {
+          throw new NotificationException(ErrorType.Notification_delivery_failed);
+        }
+      });
+    }
+  }
 }
