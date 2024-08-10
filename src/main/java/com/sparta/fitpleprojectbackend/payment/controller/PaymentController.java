@@ -36,7 +36,7 @@ public class PaymentController {
    * 결제 요청 처리 및 결제 페이지 반환
    *
    * @param request 결제 요청 정보
-   * @return 결제 정보 출력 메시지
+   * @return 결제 처리 결과 메시지
    */
   @PostMapping("/process")
   @Transactional
@@ -44,11 +44,9 @@ public class PaymentController {
     try {
       Payment payment = paymentService.savePayment(request);
       return ResponseEntity.ok("Payment processed successfully");
-
     } catch (CustomException e) {
       return ResponseEntity.status(e.getErrorType().getHttpStatus())
           .body(e.getErrorType().getMessage());
-
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An error occurred while processing the payment");
@@ -56,10 +54,10 @@ public class PaymentController {
   }
 
   /**
-   * PT 횟수 선택과 총액 계산 [횟수 선택과 총액 계산 ~ API 결제]
+   * PT 횟수 선택과 총액 계산
    *
-   * @param request 선택된 PT 횟수
-   * @return 선택된 PT 횟수 객체
+   * @param request 선택된 PT 횟수 및 트레이너 가격 정보
+   * @return 선택된 PT 횟수 및 총액 정보
    */
   @PostMapping("/select-PtTimes")
   public ResponseEntity<PtTotalAmountResponse> selectPtTimes(@RequestBody PtTotalAmountRequest request) {
@@ -69,7 +67,6 @@ public class PaymentController {
 
       PtTotalAmountResponse response = new PtTotalAmountResponse(ptTimes.name(), ptTimes.getTimes(), totalAmount);
       return ResponseEntity.ok(response);
-
     } catch (CustomException e) {
       return ResponseEntity.status(e.getErrorType().getHttpStatus())
           .body(null);
@@ -80,10 +77,10 @@ public class PaymentController {
   }
 
   /**
-   * API 요청 전 결제 정보 저장 [횟수 선택과 총액 계산 ~ API 결제]
+   * 결제 정보 저장
    *
    * @param request 결제 요청 정보
-   * @return 저장된 결제 정보
+   * @return 저장된 결제 정보 메시지
    */
   @PostMapping("/save-payment")
   public ResponseEntity<String> savePayment(@RequestBody PaymentRequest request) {
@@ -103,7 +100,6 @@ public class PaymentController {
 
       Payment savedPayment = paymentService.savePayment(request);
       return ResponseEntity.ok("Payment saved successfully");
-
     } catch (CustomException e) {
       return ResponseEntity.status(e.getErrorType().getHttpStatus())
           .body(e.getErrorType().getMessage());
@@ -157,7 +153,7 @@ public class PaymentController {
   }
 
   /**
-   * 환불 요청을 처리합니다.
+   * 환불 요청 처리
    *
    * @param paymentId 환불할 결제의 ID
    * @return 환불 처리 결과 메시지
@@ -225,8 +221,16 @@ public class PaymentController {
    */
   @PostMapping("/complete/{paymentId}")
   public ResponseEntity<Payment> completePayment(@PathVariable Long paymentId) {
-    Payment completedPayment = paymentService.completePayment(paymentId);
-    return ResponseEntity.ok(completedPayment);
+    try {
+      Payment completedPayment = paymentService.completePayment(paymentId);
+      return ResponseEntity.ok(completedPayment);
+    } catch (CustomException e) {
+      return ResponseEntity.status(e.getErrorType().getHttpStatus())
+          .body(null);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(null);
+    }
   }
 
   /**
@@ -237,7 +241,15 @@ public class PaymentController {
    */
   @GetMapping("/history/{userId}")
   public ResponseEntity<List<PaymentResponse>> getUserPaymentHistory(@PathVariable Long userId) {
-    List<PaymentResponse> paymentHistory = paymentService.getUserPaymentHistory(userId);
-    return ResponseEntity.ok(paymentHistory);
+    try {
+      List<PaymentResponse> paymentHistory = paymentService.getUserPaymentHistory(userId);
+      return ResponseEntity.ok(paymentHistory);
+    } catch (CustomException e) {
+      return ResponseEntity.status(e.getErrorType().getHttpStatus())
+          .body(null);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(null);
+    }
   }
 }
