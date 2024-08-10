@@ -1,6 +1,7 @@
 package com.sparta.fitpleprojectbackend.notification.service;
 
 import com.sparta.fitpleprojectbackend.enums.ErrorType;
+import com.sparta.fitpleprojectbackend.notification.dto.NotificationSimpleResponse;
 import com.sparta.fitpleprojectbackend.notification.dto.createAllNotificationDto;
 import com.sparta.fitpleprojectbackend.notification.entity.AllNotification;
 import com.sparta.fitpleprojectbackend.notification.entity.UserAllNotification;
@@ -14,17 +15,20 @@ import com.sparta.fitpleprojectbackend.payment.entity.UserPt;
 import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository.PaymentRepository;
 import com.sparta.fitpleprojectbackend.payment.repository.UserPtRepository.UserPtRepository;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fitpleprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.fitpleprojectbackend.store.entity.Store;
 import com.sparta.fitpleprojectbackend.store.repository.StoreRepository;
 import com.sparta.fitpleprojectbackend.user.entity.User;
 import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -168,5 +172,15 @@ public class NotificationService {
         }
       });
     }
+  }
+
+  public List<NotificationSimpleResponse> readNotification(Long storeId) {
+    List<AllNotification> allNotificationList = allnotificationRepository.findByStoreId(storeId);
+
+    List<NotificationSimpleResponse> responseList = allNotificationList.stream()
+      .map(NotificationSimpleResponse::new)
+      .toList();
+
+    return responseList;
   }
 }

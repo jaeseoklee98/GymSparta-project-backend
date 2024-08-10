@@ -1,9 +1,10 @@
 package com.sparta.fitpleprojectbackend.notification.controller;
 
+import com.sparta.fitpleprojectbackend.notification.dto.NotificationSimpleResponse;
 import com.sparta.fitpleprojectbackend.notification.dto.createAllNotificationDto;
-import com.sparta.fitpleprojectbackend.notification.entity.AllNotification;
 import com.sparta.fitpleprojectbackend.notification.service.NotificationService;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,4 +48,9 @@ public class NotificationController {
     return notificationService.createEmitter(userDetails.getUser().getId());
   }
 
+  @GetMapping("/{storeId}/allNotification")
+  public ResponseEntity<?> redNotification(@PathVariable Long storeId) {
+    List<NotificationSimpleResponse> notificationSimpleResponseList = notificationService.readNotification(storeId);
+    return ResponseEntity.ok(notificationSimpleResponseList);
+  }
 }
