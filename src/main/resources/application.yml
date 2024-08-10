@@ -1,33 +1,7 @@
-spring:
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username:
-#    password:
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-#            required: true
-#          connectiontimeout: 5000
-#          timeout: 5000
-#          writetimeout: 5000
-#        auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30?
-
-  server:
-    port: 8443
-    ssl:
-      key-store: classpath:keystore.p12
-      key-store-password: qwer1234
-      key-store-type: PKCS12
-      key-alias: myapp
-
   datasource:
     url: jdbc:mysql://localhost:3306/fitple_project
-    username:
-    password:
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -38,13 +12,16 @@ spring:
         format_sql: true
         use_sql_comments: true
 jwt:
-  secret:
-    key:
+  secret: b1ee7f2bb90b78b2274f86936a50c6619fdd96ab9ca837f7902b3f53cc8992ff4b45a58b91cfd1103f85281ea694151d7e83ea0e36d91e022d124223317caf07
 server:
   port: 8080
 
 cors:
-  allowed-origins: http://localhost:3003
+  allowed-origins: http://localhost:7070
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: "*"
   allow-credentials: true
+
+toss:
+  payments:
+    secret-key: ${test_sk_GjLJoQ1aVZ9KQRgbxBkJ3w6KYe2R}
