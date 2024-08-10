@@ -6,7 +6,7 @@ import com.sparta.fitpleprojectbackend.payment.entity.Cart;
 import com.sparta.fitpleprojectbackend.payment.entity.CartItem;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
 import com.sparta.fitpleprojectbackend.payment.repository.CartRepository;
-import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
+import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository.PaymentRepository;
 import com.sparta.fitpleprojectbackend.payment.entity.Product;
 import com.sparta.fitpleprojectbackend.payment.repository.ProductRepository;
 import com.sparta.fitpleprojectbackend.user.entity.User;

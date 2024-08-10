@@ -37,7 +37,8 @@ public enum ErrorType {
   INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다."),
   UNSUPPORTED_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "지원되지 않는 결제 방법입니다."),
   INVALID_PAYMENT_STATE(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다."), // 변경된 이름
-  PAYMENT_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."); // 변경된 이름
+  PAYMENT_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."), // 변경된 이름
+  Notification_delivery_failed(HttpStatus.INTERNAL_SERVER_ERROR, "알림 전달 중 오류 발생");
 
   private final HttpStatus httpStatus;
   private final String message;

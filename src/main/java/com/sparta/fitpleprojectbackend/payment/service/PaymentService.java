@@ -8,7 +8,7 @@ import com.sparta.fitpleprojectbackend.payment.entity.Payment;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentType;
 import com.sparta.fitpleprojectbackend.payment.enums.PtTimes;
-import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
+import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository.PaymentRepository;
 import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fitpleprojectbackend.trainer.repository.TrainerRepository;
 import com.sparta.fitpleprojectbackend.user.entity.User;

@@ -18,7 +18,7 @@ public class UserAllNotification extends TimeStamped {
 
   private String message;
 
-  // 삭제 여부
+  private boolean deleted = false;
 
   @ManyToOne
   @JoinColumn(name = "allNotification_id")
@@ -27,4 +27,10 @@ public class UserAllNotification extends TimeStamped {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  public UserAllNotification(String message,  User user, AllNotification allNotification) {
+    this.message = message;
+    this.allNotification = allNotification;
+    this.user = user;
+  }
 }
