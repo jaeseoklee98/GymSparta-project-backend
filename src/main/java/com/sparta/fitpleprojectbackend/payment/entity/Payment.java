@@ -4,6 +4,7 @@ import com.sparta.fitpleprojectbackend.common.TimeStamped;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentType;
 import com.sparta.fitpleprojectbackend.payment.enums.PtTimes;
+import com.sparta.fitpleprojectbackend.store.entity.Store;
 import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fitpleprojectbackend.user.entity.User;
 import jakarta.persistence.*;
@@ -30,6 +31,10 @@ public class Payment extends TimeStamped {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id")
   private Product product;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "store_id", nullable = false)
+  private Store store;
 
   @Enumerated(EnumType.STRING)
   @Column
@@ -61,18 +66,11 @@ public class Payment extends TimeStamped {
   public Payment() {
   }
 
-  // 새로운 생성자: 장바구니 결제용
-  public Payment(User user, double amount) {
-    this.user = user;
-    this.amount = amount;
-    this.paymentStatus = PaymentStatus.PENDING; // 기본값 설정
-    this.paymentDate = LocalDateTime.now(); // 기본값 설정
-  }
-
-  // 기존 생성자: PT 세션, 회원권 결제용
-  public Payment(Trainer trainer, User user, Product product, PtTimes ptTimes, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
+  // 기존 생성자: PT 세션, 회원권 결제용 (Product 포함)
+  public Payment(Trainer trainer, User user, Store store, Product product, PtTimes ptTimes, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
     this.trainer = trainer;
     this.user = user;
+    this.store = store;
     this.product = product;
     this.ptTimes = ptTimes;
     this.paymentType = paymentType;
@@ -81,5 +79,29 @@ public class Payment extends TimeStamped {
     this.paymentDate = paymentDate;
     this.expiryDate = expiryDate;
     this.isMembership = isMembership;
+  }
+
+  // 새로운 생성자: PT 세션, 회원권 결제용 (Product 없이)
+  public Payment(Trainer trainer, User user, Store store, PtTimes ptTimes, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
+    this.trainer = trainer;
+    this.user = user;
+    this.store = store;
+    this.product = null; // Product가 없는 경우 null로 설정
+    this.ptTimes = ptTimes;
+    this.paymentType = paymentType;
+    this.amount = amount;
+    this.paymentStatus = paymentStatus;
+    this.paymentDate = paymentDate;
+    this.expiryDate = expiryDate;
+    this.isMembership = isMembership;
+  }
+
+  // 장바구니 결제용 생성자
+  public Payment(User user, Store store, double amount) {
+    this.user = user;
+    this.store = store;
+    this.amount = amount;
+    this.paymentStatus = PaymentStatus.PENDING; // 기본값 설정
+    this.paymentDate = LocalDateTime.now(); // 기본값 설정
   }
 }

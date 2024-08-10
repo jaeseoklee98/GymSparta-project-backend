@@ -2,6 +2,7 @@ package com.sparta.fitpleprojectbackend.payment.controller;
 
 import com.sparta.fitpleprojectbackend.exception.CustomException;
 import com.sparta.fitpleprojectbackend.payment.dto.PaymentRequest;
+import com.sparta.fitpleprojectbackend.payment.dto.PaymentResponse;
 import com.sparta.fitpleprojectbackend.payment.dto.PaymentUpdateRequest;
 import com.sparta.fitpleprojectbackend.payment.dto.PtTotalAmountRequest;
 import com.sparta.fitpleprojectbackend.payment.dto.PtTotalAmountResponse;
@@ -12,6 +13,7 @@ import com.sparta.fitpleprojectbackend.payment.enums.PtTimes;
 import com.sparta.fitpleprojectbackend.payment.service.PaymentService;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -213,5 +215,29 @@ public class PaymentController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An error occurred while processing the payment");
     }
+  }
+
+  /**
+   * 결제 완료 처리 및 내역 반환
+   *
+   * @param paymentId 결제 ID
+   * @return 결제 완료된 Payment 엔티티
+   */
+  @PostMapping("/complete/{paymentId}")
+  public ResponseEntity<Payment> completePayment(@PathVariable Long paymentId) {
+    Payment completedPayment = paymentService.completePayment(paymentId);
+    return ResponseEntity.ok(completedPayment);
+  }
+
+  /**
+   * 유저의 결제 내역을 조회
+   *
+   * @param userId 유저 ID
+   * @return 유저의 결제 내역 리스트
+   */
+  @GetMapping("/history/{userId}")
+  public ResponseEntity<List<PaymentResponse>> getUserPaymentHistory(@PathVariable Long userId) {
+    List<PaymentResponse> paymentHistory = paymentService.getUserPaymentHistory(userId);
+    return ResponseEntity.ok(paymentHistory);
   }
 }

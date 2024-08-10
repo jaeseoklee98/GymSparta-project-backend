@@ -47,10 +47,10 @@ public class CartController {
   }
 
   @PostMapping("/checkout")
-  public ResponseEntity<Payment> checkout() {
+  public ResponseEntity<Payment> checkout(@RequestParam Long storeId) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-    Payment payment = cartService.checkout(userDetails.getUserId());
+    Payment payment = cartService.checkout(userDetails.getUserId(), storeId);
     return ResponseEntity.ok(payment);
   }
 }
