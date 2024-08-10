@@ -21,9 +21,11 @@ public class PaymentRepositoryQueryImpl implements PaymentRepositoryQuery {
 
     return queryFactory
       .select(payment.user)
+      .distinct()  // 중복된 유저 제거
       .from(payment)
       .join(payment.product, product)
       .where(product.store.id.eq(storeId))
       .fetch();
   }
+
 }
