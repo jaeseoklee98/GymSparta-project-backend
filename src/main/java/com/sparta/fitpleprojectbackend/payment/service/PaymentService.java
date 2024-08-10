@@ -3,6 +3,7 @@ package com.sparta.fitpleprojectbackend.payment.service;
 import com.sparta.fitpleprojectbackend.enums.ErrorType;
 import com.sparta.fitpleprojectbackend.exception.CustomException;
 import com.sparta.fitpleprojectbackend.payment.dto.PaymentRequest;
+import com.sparta.fitpleprojectbackend.payment.dto.PaymentResponse;
 import com.sparta.fitpleprojectbackend.payment.dto.PaymentUpdateRequest;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
@@ -16,7 +17,9 @@ import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -275,5 +278,45 @@ public class PaymentService {
     paymentRepository.save(payment);
 
     return "Payment processed successfully with " + paymentType.getTypes();
+  }
+
+  /**
+   * 결제 완료 후, 결제 내역 저장
+   */
+  @Transactional
+  public Payment completePayment(Long paymentId) {
+    Payment payment = paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
+
+    if (payment.getPaymentStatus().equals("COMPLETED")) {
+      throw new CustomException(ErrorType.PAYMENT_ALREADY_COMPLETED);
+    }
+
+    // 결제 상태를 완료로 업데이트
+    payment.setPaymentStatus(PaymentStatus.COMPLETED);
+    return paymentRepository.save(payment);
+  }
+
+  /**
+   * 유저가 자신의 결제 내역을 확인하는 기능
+   *
+   * @param userId 확인할 유저의 ID
+   * @return 해당 유저의 결제 내역 리스트
+   */
+  public List<PaymentResponse> getUserPaymentHistory(Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+
+    List<Payment> payments = paymentRepository.findAllByUserUserId(userId);
+
+    // 결제 내역이 없을 때 예외 처리
+    if (payments.isEmpty()) {
+      throw new CustomException(ErrorType.PAYMENT_RECORD_NOT_FOUND);
+    }
+
+    // 결제 내역을 DTO로 변환하여 반환
+    return payments.stream()
+        .map(PaymentResponse::fromEntity)
+        .collect(Collectors.toList());
   }
 }

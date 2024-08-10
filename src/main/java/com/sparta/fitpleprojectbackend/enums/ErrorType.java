@@ -36,8 +36,20 @@ public enum ErrorType {
   CART_EMPTY(HttpStatus.BAD_REQUEST, "장바구니가 비어 있습니다."),
   INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다."),
   UNSUPPORTED_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "지원되지 않는 결제 방법입니다."),
-  INVALID_PAYMENT_STATE(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다."), // 변경된 이름
-  PAYMENT_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."); // 변경된 이름
+  INVALID_PAYMENT_STATE(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다."),
+  PAYMENT_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
+  TIMEOUT_OCCURRED(HttpStatus.REQUEST_TIMEOUT, "요청이 시간 내에 완료되지 않았습니다."),
+  CONCURRENCY_FAILURE(HttpStatus.CONFLICT, "동시성 문제로 요청이 실패했습니다."),
+  DATA_INTEGRITY_VIOLATION(HttpStatus.BAD_REQUEST, "데이터 무결성 제약 조건이 위반되었습니다."),
+  ILLEGAL_STATE(HttpStatus.BAD_REQUEST, "잘못된 상태입니다."),
+  EXTERNAL_SERVICE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "외부 서비스와의 통신이 실패했습니다."),
+  AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),
+  UNAUTHORIZED_OPERATION(HttpStatus.FORBIDDEN, "해당 작업을 수행할 권한이 없습니다."),
+  REFUND_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "환불 요청 정보를 찾을 수 없습니다."),
+  REFUND_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "이미 처리된 환불입니다."),
+  REFUND_WINDOW_EXPIRED(HttpStatus.BAD_REQUEST, "환불 가능한 기간이 지났습니다."),
+  REFUND_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "환불 처리 중 오류가 발생했습니다."),
+  INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

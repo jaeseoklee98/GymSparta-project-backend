@@ -9,6 +9,8 @@ import com.sparta.fitpleprojectbackend.payment.repository.CartRepository;
 import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
 import com.sparta.fitpleprojectbackend.payment.entity.Product;
 import com.sparta.fitpleprojectbackend.payment.repository.ProductRepository;
+import com.sparta.fitpleprojectbackend.store.entity.Store;
+import com.sparta.fitpleprojectbackend.store.repository.StoreRepository;
 import com.sparta.fitpleprojectbackend.user.entity.User;
 import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -23,13 +25,15 @@ public class CartService {
   private final ProductRepository productRepository;
   private final PaymentRepository paymentRepository;
   private final UserRepository userRepository;
+  private final StoreRepository storeRepository;
 
   public CartService(CartRepository cartRepository, ProductRepository productRepository,
-      PaymentRepository paymentRepository, UserRepository userRepository) {
+      PaymentRepository paymentRepository, UserRepository userRepository, StoreRepository storeRepository) {
     this.cartRepository = cartRepository;
     this.productRepository = productRepository;
     this.paymentRepository = paymentRepository;
     this.userRepository = userRepository;
+    this.storeRepository = storeRepository;
   }
 
   @Transactional
@@ -64,7 +68,7 @@ public class CartService {
   }
 
   @Transactional
-  public Payment checkout(Long userId) {
+  public Payment checkout(Long userId, Long storeId) {
     Cart cart = cartRepository.findByUserUserId(userId)
         .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
 
@@ -72,13 +76,16 @@ public class CartService {
       throw new CustomException(ErrorType.CART_EMPTY);
     }
 
-    // 여기서는 간단히 합계 계산 후 Payment 엔티티를 생성
+    // Store 정보를 가져오기
+    Store store = storeRepository.findById(storeId)
+        .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_STORE));
+
     double totalAmount = cart.getCartItems().stream()
         .mapToDouble(item -> item.getProduct().getProductPrice() * item.getQuantity())
         .sum();
 
-    // 수정된 생성자 사용
-    Payment payment = new Payment(cart.getUser(), totalAmount);
+    // store와 함께 Payment 생성
+    Payment payment = new Payment(cart.getUser(), store, totalAmount);
     paymentRepository.save(payment);
 
     // 결제 후 장바구니 비우기
