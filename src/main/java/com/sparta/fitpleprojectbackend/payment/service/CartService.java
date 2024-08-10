@@ -44,7 +44,7 @@ public class CartService {
     Product product = productRepository.findById(productId)
         .orElseThrow(() -> new CustomException(ErrorType.PRODUCT_NOT_FOUND));
 
-    Cart cart = cartRepository.findByUserUserId(userId)
+    Cart cart = cartRepository.findByUser_Id(userId) // 메서드 이름을 업데이트된 대로 사용
         .orElse(new Cart(user));
 
     CartItem cartItem = new CartItem(product, quantity);
@@ -55,7 +55,7 @@ public class CartService {
 
   @Transactional
   public void removeFromCart(Long userId, Long cartItemId) {
-    Cart cart = cartRepository.findByUserUserId(userId)
+    Cart cart = cartRepository.findByUser_Id(userId) // 메서드 이름을 업데이트된 대로 사용
         .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
 
     CartItem cartItem = cart.getCartItems().stream()
@@ -69,7 +69,7 @@ public class CartService {
 
   @Transactional
   public Payment checkout(Long userId, Long storeId) {
-    Cart cart = cartRepository.findByUserUserId(userId)
+    Cart cart = cartRepository.findByUser_Id(userId) // 메서드 이름을 업데이트된 대로 사용
         .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
 
     if (cart.getCartItems().isEmpty()) {
@@ -96,7 +96,7 @@ public class CartService {
   }
 
   public List<CartItem> getCartItems(Long userId) {
-    Cart cart = cartRepository.findByUserUserId(userId)
+    Cart cart = cartRepository.findByUser_Id(userId) // 메서드 이름을 업데이트된 대로 사용
         .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
     return cart.getCartItems();
   }

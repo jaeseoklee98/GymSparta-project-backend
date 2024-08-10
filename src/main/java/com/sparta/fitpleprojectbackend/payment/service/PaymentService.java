@@ -60,31 +60,38 @@ public class PaymentService {
    */
   @Transactional
   public Payment savePayment(PaymentRequest request) {
-    validateTrainerAndUser(request.getTrainerId(), request.getUserId());
+    try {
+      validateTrainerAndUser(request.getTrainerId(), request.getUserId());
 
-    Trainer trainer = trainerRepository.findById(request.getTrainerId())
-        .orElseThrow(() -> new CustomException(ErrorType.TRAINER_NOT_FOUND));
-    User user = userRepository.findById(request.getUserId())
-        .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+      Trainer trainer = trainerRepository.findById(request.getTrainerId())
+          .orElseThrow(() -> new CustomException(ErrorType.TRAINER_NOT_FOUND));
+      User user = userRepository.findById(request.getUserId())
+          .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-    PtTimes ptTimes = request.getPtTimes() != null ? request.getPtTimes() : PtTimes.TEN_TIMES;
+      PtTimes ptTimes = request.getPtTimes() != null ? request.getPtTimes() : PtTimes.TEN_TIMES;
 
-    Payment payment = new Payment(
-        trainer,
-        user,
-        null,
-        ptTimes,
-        request.getPaymentType(),
-        request.getAmount(),
-        PaymentStatus.PENDING,
-        LocalDateTime.now(),
-        LocalDateTime.now().plusDays(ptTimes.getTimes() / 30),
-        request.isMembership()
-    );
+      Payment payment = new Payment(
+          trainer,
+          user,
+          null,  // Product가 필요한 경우 해당 필드를 설정
+          ptTimes,
+          request.getPaymentType(),
+          request.getAmount(),
+          PaymentStatus.PENDING,
+          LocalDateTime.now(),
+          LocalDateTime.now().plusDays(ptTimes.getTimes() / 30),
+          request.isMembership()
+      );
 
-    return paymentRepository.save(payment);
+      return paymentRepository.save(payment);
+    } catch (CustomException e) {
+      // Custom 예외 처리
+      throw e;
+    } catch (Exception e) {
+      // 모든 일반적인 예외 처리
+      throw new RuntimeException("결제 처리 중 문제가 발생했습니다.", e);
+    }
   }
-
   /**
    * 결제 승인 및 상태 업데이트
    *
@@ -307,7 +314,7 @@ public class PaymentService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-    List<Payment> payments = paymentRepository.findAllByUserUserId(userId);
+    List<Payment> payments = paymentRepository.findAllByUser_Id(userId);
 
     // 결제 내역이 없을 때 예외 처리
     if (payments.isEmpty()) {
