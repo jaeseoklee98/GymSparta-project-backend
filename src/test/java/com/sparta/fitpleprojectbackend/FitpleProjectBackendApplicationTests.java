@@ -1,6 +1,5 @@
 package com.sparta.fitpleprojectbackend;
 
-import com.sparta.fitpleprojectbackend.ptsesson.service.PtPaymentService;
 import com.sparta.fitpleprojectbackend.trainer.repository.TrainerRepository;
 import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
 import org.mockito.InjectMocks;

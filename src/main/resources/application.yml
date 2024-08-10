@@ -22,3 +22,13 @@ cors:
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: "*"
   allow-credentials: true
+
+toss:
+  payments:
+    secret-key: ${test_sk_GjLJoQ1aVZ9KQRgbxBkJ3w6KYe2R}
+
+kakao:
+  pay:
+    client-id: A7EAB5C0E188BA0EF82B  # 클라이언트 ID
+    client-secret: 749696A87ABCFA738A36  # 클라이언트 시크릿
+    secret-key: PRD441A04CE52647D4E94FFA919FD67242007B40  # 시크릿 키
