@@ -45,7 +45,7 @@ Content-Type: application/json
   client.test("로그인 성공", function() {
     var response = client.response;
     var jsonResponse = JSON.parse(response.body);
-    var accessToken = response.headers["Authorization"].substring(7);
+    var accessToken = response.headers["Authorization"].substring(7); // "Bearer " 제거
     client.global.set("accessToken", accessToken);
   });
 %}
@@ -71,7 +71,7 @@ Content-Type: application/json
 
 ### 로그아웃
 POST http://localhost:8080/api/logout
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMzI5MzMzNiwiZXhwIjoxNzIzMjk1MTM2fQ.nnW7p6f8nZ3sMN8kxV6Gp1m8AJJ2Du77r8reFW4PO_4
 
 ### 점주 로그아웃
 POST http://localhost:8080/api/logout
