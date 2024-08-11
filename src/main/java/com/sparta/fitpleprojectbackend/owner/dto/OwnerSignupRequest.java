@@ -62,5 +62,8 @@ public class OwnerSignupRequest {
   @Size(max = 255, message = "닉네임은 최대 255자까지 가능합니다.")
   private String nickname; // 닉네임
 
+  @Size(max = 255, message = "상호명(법인명)은 최대 255자까지 가능합니다.")
+  private String businessName; // 상호명(법인명)
+
   private Boolean isForeigner; // 국적 구분 필드 추가
 }

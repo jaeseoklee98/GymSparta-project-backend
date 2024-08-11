@@ -104,5 +104,29 @@ public class Trainer extends TimeStamped {
   public Trainer(String trainerName, double ptPrice) {
     this.trainerName = trainerName;
     this.ptPrice = ptPrice;
+
+  /**.
+   * 프로필 변경
+   *
+   * @param TrainerRequest 새 프로필 정보
+   */
+  public void updateUserProfile(UpdateTrainerProfileRequest TrainerRequest) {
+    this.trainerName = TrainerRequest.getTrainerName();
+    this.nickname = TrainerRequest.getNickname();
+    this.trainerInfo = TrainerRequest.getTrainerInfo();
+    this.email = TrainerRequest.getEmail();
+    this.trainerPhoneNumber = TrainerRequest.getTrainerPhoneNumber();
+    this.trainerPicture = TrainerRequest.getTrainerPicture();
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**.
+   * 비밀번호 변경
+   *
+   * @param newPassword 새 비밀번호 정보
+   */
+  public void updatePassword(String newPassword) {
+    this.password = newPassword;
+    this.updatedAt = LocalDateTime.now();
   }
 }

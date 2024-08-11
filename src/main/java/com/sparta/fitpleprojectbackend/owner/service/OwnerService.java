@@ -23,10 +23,13 @@ public class OwnerService {
 
   private final OwnerRepository ownerRepository;
   private final PasswordEncoder passwordEncoder;
+  private final TrainerRepository trainerRepository;
 
-  public OwnerService(OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
+  public OwnerService(OwnerRepository ownerRepository, PasswordEncoder passwordEncoder,
+    TrainerRepository trainerRepository) {
     this.ownerRepository = ownerRepository;
     this.passwordEncoder = passwordEncoder;
+    this.trainerRepository = trainerRepository;
   }
 
   /**
@@ -176,8 +179,8 @@ public class OwnerService {
 
     owner.updateOwnerProfile(ownerRequest);
   }
-  /**
-   * 유저 비밀번호 변경
+  /**.
+   * 점주 비밀번호 변경
    *
    * @param userDetails 점주 정보
    * @param ownerRequest 새 비밀번호 정보
@@ -195,5 +198,20 @@ public class OwnerService {
     }
 
     owner.updatePassword(passwordEncoder.encode(ownerRequest.getNewPassword()));
+  }
+
+  /**.
+   * 점주의 모든 트레이너 조회
+   *
+   * @param userDetails 오너 정보
+   * @throws TrainerException 트레이너를 찾을 수 없는 경우 발생
+   */
+  public List<TrainerGetResponse> getAllMyTrainers(UserDetailsImpl userDetails) {
+
+    Long ownerId = userDetails.getOwner().getId();
+
+    return trainerRepository.findAllTrainersByOwnerId(ownerId).stream()
+      .map(TrainerGetResponse::new)
+      .toList();
   }
 }

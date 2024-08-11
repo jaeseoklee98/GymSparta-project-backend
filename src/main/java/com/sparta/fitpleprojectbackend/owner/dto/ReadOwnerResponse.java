@@ -26,7 +26,6 @@ public class ReadOwnerResponse {
 
   public ReadOwnerResponse(Owner owner) {
     this.ownerName = owner.getOwnerName();
-    this.accountId = owner.getAccountId();
     this.nickname = owner.getNickname();
     this.email = owner.getEmail();
     this.ownerPicture = owner.getOwnerPicture();
