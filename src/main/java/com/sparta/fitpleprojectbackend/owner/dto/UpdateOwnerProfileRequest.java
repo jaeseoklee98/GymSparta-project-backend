@@ -1,4 +1,4 @@
-package com.sparta.fltpleprojectbackend.owner.dto;
+package com.sparta.fitpleprojectbackend.owner.dto;
 
 import lombok.Getter;
 

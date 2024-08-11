@@ -2,6 +2,9 @@ package com.sparta.fitpleprojectbackend.trainer.entity;
 
 import com.sparta.fitpleprojectbackend.common.TimeStamped;
 import com.sparta.fitpleprojectbackend.enums.Role;
+import com.sparta.fitpleprojectbackend.store.entity.Store;
+import com.sparta.fitpleprojectbackend.trainer.dto.UpdateTrainerProfileRequest;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +12,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -62,6 +67,10 @@ public class Trainer extends TimeStamped {
   @Column
   private LocalDateTime deletedAt; // 삭제일
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "store_id", nullable = false)
+  private Store store;
+
 
   public Trainer() {
   }
@@ -104,20 +113,20 @@ public class Trainer extends TimeStamped {
   public Trainer(String trainerName, double ptPrice) {
     this.trainerName = trainerName;
     this.ptPrice = ptPrice;
+  }
 
   /**.
    * 프로필 변경
    *
-   * @param TrainerRequest 새 프로필 정보
+   * @param trainerRequest 새 프로필 정보
    */
-  public void updateUserProfile(UpdateTrainerProfileRequest TrainerRequest) {
-    this.trainerName = TrainerRequest.getTrainerName();
-    this.nickname = TrainerRequest.getNickname();
-    this.trainerInfo = TrainerRequest.getTrainerInfo();
-    this.email = TrainerRequest.getEmail();
-    this.trainerPhoneNumber = TrainerRequest.getTrainerPhoneNumber();
-    this.trainerPicture = TrainerRequest.getTrainerPicture();
-    this.updatedAt = LocalDateTime.now();
+  public void updateUserProfile (UpdateTrainerProfileRequest trainerRequest) {
+    this.trainerName = trainerRequest.getTrainerName();
+    this.nickname = trainerRequest.getNickname();
+    this.trainerInfo = trainerRequest.getTrainerInfo();
+    this.email = trainerRequest.getEmail();
+    this.trainerPhoneNumber = trainerRequest.getTrainerPhoneNumber();
+    this.trainerPicture = trainerRequest.getTrainerPicture();
   }
 
   /**.
@@ -125,8 +134,7 @@ public class Trainer extends TimeStamped {
    *
    * @param newPassword 새 비밀번호 정보
    */
-  public void updatePassword(String newPassword) {
+  public void updatePassword (String newPassword) {
     this.password = newPassword;
-    this.updatedAt = LocalDateTime.now();
   }
 }

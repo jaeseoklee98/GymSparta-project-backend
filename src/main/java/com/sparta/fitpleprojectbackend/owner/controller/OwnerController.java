@@ -39,11 +39,11 @@ public class OwnerController {
     try {
       ownerService.signup(request);
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.OK.value(), "회원가입 성공", "회원가입이 완료되었습니다.");
+        HttpStatus.OK.value(), "회원가입 성공", "회원가입이 완료되었습니다.");
       return ResponseEntity.ok(response);
     } catch (Exception e) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.BAD_REQUEST.value(), "회원가입 실패", "회원가입 실패" + e.getMessage());
+        HttpStatus.BAD_REQUEST.value(), "회원가입 실패", "회원가입 실패" + e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }
@@ -59,21 +59,21 @@ public class OwnerController {
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String token = authHeader.substring(7);
     if (!jwtUtil.validateToken(token)) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String username = jwtUtil.getUsername(token);
     if (username == null) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
@@ -81,11 +81,11 @@ public class OwnerController {
       ownerService.deleteOwner(username);
       SecurityContextHolder.clearContext();
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.OK.value(), "회원탈퇴 성공", "회원탈퇴가 완료되었습니다.");
+        HttpStatus.OK.value(), "회원탈퇴 성공", "회원탈퇴가 완료되었습니다.");
       return ResponseEntity.ok(response);
     } catch (Exception e) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패", "회원탈퇴 실패: " + e.getMessage());
+        HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패", "회원탈퇴 실패: " + e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }
@@ -98,10 +98,10 @@ public class OwnerController {
    */
   @GetMapping("/profile/owner")
   public ResponseEntity<CommonResponse<ReadOwnerResponse>> readOwnerProfile(
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReadOwnerResponse readOwnerResponse = ownerService.readOwnerProfile(userDetails);
     CommonResponse<ReadOwnerResponse> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "프로필 조회 완료", readOwnerResponse);
+      HttpStatus.OK.value(), "프로필 조회 완료", readOwnerResponse);
     return ResponseEntity.ok(response);
   }
 
@@ -114,12 +114,12 @@ public class OwnerController {
    */
   @PutMapping("/profile/owner")
   public ResponseEntity<CommonResponse<String>> updateOwnerProfile(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @Valid @RequestBody UpdateOwnerProfileRequest ownerRequest) {
+    @AuthenticationPrincipal UserDetailsImpl userDetails,
+    @Valid @RequestBody UpdateOwnerProfileRequest ownerRequest) {
 
     ownerService.updateOwnerProfile(ownerRequest, userDetails);
     CommonResponse<String> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "프로필 변경 완료", "프로필이 성공적으로 변경되었습니다.");
+      HttpStatus.OK.value(), "프로필 변경 완료", "프로필이 성공적으로 변경되었습니다.");
     return ResponseEntity.ok(response);
   }
 
@@ -132,12 +132,12 @@ public class OwnerController {
    */
   @PutMapping("/profile/owner/password")
   public ResponseEntity<CommonResponse<String>> updateOwnerPassword(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @Valid @RequestBody UpdateOwnerPasswordRequest ownerRequest) {
+    @AuthenticationPrincipal UserDetailsImpl userDetails,
+    @Valid @RequestBody UpdateOwnerPasswordRequest ownerRequest) {
 
     ownerService.updateOwnerPassword(ownerRequest, userDetails);
     CommonResponse<String> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "비밀번호 변경 완료", "비밀번호가 성공적으로 변경되었습니다.");
+      HttpStatus.OK.value(), "비밀번호 변경 완료", "비밀번호가 성공적으로 변경되었습니다.");
     return ResponseEntity.ok(response);
   }
 }

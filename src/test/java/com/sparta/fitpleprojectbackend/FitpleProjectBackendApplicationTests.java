@@ -15,8 +15,8 @@ class FitpleProjectBackendApplicationTests {
     @Mock
     private UserRepository userRepository;
 
-    @InjectMocks
-    private PtPaymentService ptPaymentService;
+//    @InjectMocks
+//    private PtPaymentService ptPaymentService;
 
 
 }

@@ -16,5 +16,7 @@ public class UpdateTrainerProfileRequest {
 
   private String email;
 
+  private String oldPassword;
+
   private String password;
 }

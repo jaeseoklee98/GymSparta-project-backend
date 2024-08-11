@@ -123,6 +123,5 @@ public class User extends TimeStamped {
     this.email = userRequest.getEmail();
     this.phoneNumber = userRequest.getPhoneNumber();
     this.userName = userRequest.getUsername();
-    this.updatedAt = LocalDateTime.now();
   }
 }

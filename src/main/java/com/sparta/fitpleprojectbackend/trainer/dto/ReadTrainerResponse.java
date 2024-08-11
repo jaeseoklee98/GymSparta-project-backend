@@ -1,6 +1,6 @@
-package com.sparta.fltpleprojectbackend.trainer.dto;
+package com.sparta.fitpleprojectbackend.trainer.dto;
 
-import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
+import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import lombok.Getter;
 
 @Getter
