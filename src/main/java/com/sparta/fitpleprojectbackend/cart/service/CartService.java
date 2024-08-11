@@ -1,11 +1,11 @@
-package com.sparta.fitpleprojectbackend.payment.service;
+package com.sparta.fitpleprojectbackend.cart.service;
 
 import com.sparta.fitpleprojectbackend.enums.ErrorType;
 import com.sparta.fitpleprojectbackend.exception.CustomException;
-import com.sparta.fitpleprojectbackend.payment.entity.Cart;
-import com.sparta.fitpleprojectbackend.payment.entity.CartItem;
+import com.sparta.fitpleprojectbackend.cart.entity.Cart;
+import com.sparta.fitpleprojectbackend.cart.entity.CartItem;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
-import com.sparta.fitpleprojectbackend.payment.repository.CartRepository;
+import com.sparta.fitpleprojectbackend.cart.repository.CartRepository;
 import com.sparta.fitpleprojectbackend.product.entity.Product;
 import com.sparta.fitpleprojectbackend.product.repository.ProductRepository;
 import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;

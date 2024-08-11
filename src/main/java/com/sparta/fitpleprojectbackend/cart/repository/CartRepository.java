@@ -1,6 +1,6 @@
-package com.sparta.fitpleprojectbackend.payment.repository;
+package com.sparta.fitpleprojectbackend.cart.repository;
 
-import com.sparta.fitpleprojectbackend.payment.entity.Cart;
+import com.sparta.fitpleprojectbackend.cart.entity.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

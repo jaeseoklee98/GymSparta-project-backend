@@ -12,8 +12,8 @@ import com.sparta.fitpleprojectbackend.notification.repository.AllNotificationRe
 import com.sparta.fitpleprojectbackend.notification.repository.UserAllNotificationRepository;
 import com.sparta.fitpleprojectbackend.notification.repository.UserNotificationRepository;
 import com.sparta.fitpleprojectbackend.owner.entity.Owner;
-import com.sparta.fitpleprojectbackend.payment.entity.UserPt;
 import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
+import com.sparta.fitpleprojectbackend.userpt.entity.UserPt;
 import com.sparta.fitpleprojectbackend.userpt.repository.UserPtRepository;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fitpleprojectbackend.store.entity.Store;

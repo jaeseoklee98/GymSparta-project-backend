@@ -1,16 +1,26 @@
 package com.sparta.fitpleprojectbackend.userpt.entity;
 
 import com.sparta.fitpleprojectbackend.common.TimeStamped;
-import com.sparta.fitpleprojectbackend.store.entity.Store;
-import com.sparta.fitpleprojectbackend.user.entity.User;
+import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
+import com.sparta.fitpleprojectbackend.payment.enums.PaymentType;
+import com.sparta.fitpleprojectbackend.payment.enums.PtTimes;
 import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
-import jakarta.persistence.*;
+import com.sparta.fitpleprojectbackend.user.entity.User;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
-@NoArgsConstructor
+@Entity
 public class UserPt extends TimeStamped {
 
     @Id
@@ -18,31 +28,54 @@ public class UserPt extends TimeStamped {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column
-    private Long ptPaymentId; // PT Payment ID (not yet implemented)
-
-    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainer_id", nullable = false)
     private Trainer trainer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PtTimes ptTimes;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentType paymentType;
+
+    @Column
+    private double amount;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
+    @Column
+    private LocalDateTime paymentDate;
+
+    @Column
+    private LocalDateTime expiryDate;
+
+    @Column
+    private boolean isMembership;
 
     @Column(nullable = false)
-    private int ptCount;
+    private boolean isActive;
 
-    @Column(nullable = false)
-    private double ptPrice;
+    protected UserPt() {
+    }
 
-    public UserPt(User user, Long ptPaymentId, Trainer trainer, int ptCount, double ptPrice) {
-        this.user = user;
-        this.ptPaymentId = ptPaymentId;
+    public UserPt(Trainer trainer, User user, PtTimes ptTimes, PaymentType paymentType, double amount,
+        PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate,
+        boolean isMembership, boolean isActive) {
         this.trainer = trainer;
-        this.ptCount = ptCount;
-        this.ptPrice = ptPrice;
+        this.user = user;
+        this.ptTimes = ptTimes;
+        this.paymentType = paymentType;
+        this.amount = amount;
+        this.paymentStatus = paymentStatus;
+        this.paymentDate = paymentDate;
+        this.expiryDate = expiryDate;
+        this.isMembership = isMembership;
+        this.isActive = isActive;
     }
 }

@@ -1,9 +1,9 @@
-package com.sparta.fitpleprojectbackend.payment.controller;
+package com.sparta.fitpleprojectbackend.cart.controller;
 
-import com.sparta.fitpleprojectbackend.payment.entity.Cart;
-import com.sparta.fitpleprojectbackend.payment.entity.CartItem;
+import com.sparta.fitpleprojectbackend.cart.entity.Cart;
+import com.sparta.fitpleprojectbackend.cart.entity.CartItem;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
-import com.sparta.fitpleprojectbackend.payment.service.CartService;
+import com.sparta.fitpleprojectbackend.cart.service.CartService;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

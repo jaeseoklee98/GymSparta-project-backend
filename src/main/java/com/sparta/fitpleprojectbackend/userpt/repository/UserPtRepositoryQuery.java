@@ -1,6 +1,5 @@
 package com.sparta.fitpleprojectbackend.userpt.repository;
-import com.sparta.fitpleprojectbackend.payment.entity.UserPt;
-import java.time.LocalDate;
+import com.sparta.fitpleprojectbackend.userpt.entity.UserPt;
 import java.time.LocalDateTime;
 import java.util.List;
 

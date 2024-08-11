@@ -1,8 +1,8 @@
 package com.sparta.fitpleprojectbackend.userpt.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.fitpleprojectbackend.payment.entity.QUserPt;
-import com.sparta.fitpleprojectbackend.payment.entity.UserPt;
+import com.sparta.fitpleprojectbackend.userpt.entity.QUserPt;
+import com.sparta.fitpleprojectbackend.userpt.entity.UserPt;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.sparta.fitpleprojectbackend.payment.dto;
+package com.sparta.fitpleprojectbackend.userpt.dto;
 
 import lombok.Getter;
 

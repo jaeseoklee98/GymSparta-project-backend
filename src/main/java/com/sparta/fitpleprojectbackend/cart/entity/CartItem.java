@@ -1,4 +1,4 @@
-package com.sparta.fitpleprojectbackend.payment.entity;
+package com.sparta.fitpleprojectbackend.cart.entity;
 
 import com.sparta.fitpleprojectbackend.product.entity.Product;
 import jakarta.persistence.*;
