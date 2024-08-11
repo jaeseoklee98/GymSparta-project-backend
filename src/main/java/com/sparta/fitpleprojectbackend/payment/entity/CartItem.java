@@ -1,6 +1,6 @@
 package com.sparta.fitpleprojectbackend.payment.entity;
 
-import com.sparta.fitpleprojectbackend.payment.entity.Product;
+import com.sparta.fitpleprojectbackend.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

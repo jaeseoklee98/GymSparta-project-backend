@@ -4,6 +4,7 @@ import com.sparta.fitpleprojectbackend.common.TimeStamped;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.fitpleprojectbackend.payment.enums.PaymentType;
 import com.sparta.fitpleprojectbackend.payment.enums.PtTimes;
+import com.sparta.fitpleprojectbackend.product.entity.Product;
 import com.sparta.fitpleprojectbackend.store.entity.Store;
 import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fitpleprojectbackend.user.entity.User;
