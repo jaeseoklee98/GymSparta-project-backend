@@ -1,13 +1,13 @@
 on:
   push:
-    branches: [ main ] # 해당 branch에 push 되었을 경우
+    branches: [ 105-feat-cicd-deploy ]
 
 env:
-  DOCKER_IMAGE_TAG_NAME: {{이미지 태그명}}
+  DOCKER_IMAGE_TAG_NAME: fitple-project
 
 jobs:
   build-and-docker-push:
-    runs-on: ubuntu-latest # 실행환경
+    runs-on: ubuntu-20.04 # 실행환경
 
     # 실행 스텝 지정
     steps:
@@ -28,18 +28,18 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
-#      직접 사용
-#      # Docker Image 빌드
-#      - name: Build the Docker image
-#        run: docker build . --file docker/Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
-#
-#      # Docker 로큰
-#      - name: Login to Docker Hub using Access Token
-#        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-#
-#      # 이미지 푸시
-#      - name: Push the Docker image
-#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
+      #      직접 사용
+      #      # Docker Image 빌드
+      #      - name: Build the Docker image
+      #        run: docker build . --file docker/Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
+      #
+      #      # Docker 로큰
+      #      - name: Login to Docker Hub using Access Token
+      #        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      #
+      #      # 이미지 푸시
+      #      - name: Push the Docker image
+      #        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -57,6 +57,34 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./docker/Dockerfile
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
+
+
+
+  deploy-to-ec2:
+    needs: build-and-docker-push # 위의 build-and-docker-push 이 끝나고 실행
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080-8080")
+            
+            if [ ! -z "$CONTAINER_ID" ]; then
+              sudo docker stop $CONTAINER_ID
+              sudo docker rm $CONTAINER_ID
+            fi
+            # 여기서의 환경 변수도 여러분 상황에 맞게 작성하시면 됩니다!!!
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
+            sudo docker run -d -p 8080:8080 \
+                -e DB_USERNAME=${{secrets.DB_USERNAME}} \
+                -e DB_PASSWORD=${{secrets.DB_PASSWORD}} \
+                -e DB_URL=${{secrets.DB_URL}} \
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
