@@ -40,11 +40,11 @@ public class UserController {
     try {
       userService.signup(request);
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.OK.value(), "회원가입 성공", "회원가입이 완료되었습니다.");
+        HttpStatus.OK.value(), "회원가입 성공", "회원가입이 완료되었습니다.");
       return ResponseEntity.ok(response);
     } catch (Exception e) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.BAD_REQUEST.value(), "회원가입 실패", "회원가입 실패: " + e.getMessage());
+        HttpStatus.BAD_REQUEST.value(), "회원가입 실패", "회원가입 실패: " + e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }
@@ -60,21 +60,21 @@ public class UserController {
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String token = authHeader.substring(7);
     if (!jwtUtil.validateToken(token)) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String username = jwtUtil.getUsername(token);
     if (username == null) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
@@ -82,15 +82,15 @@ public class UserController {
       userService.deleteUser(username);
       SecurityContextHolder.clearContext();
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.OK.value(), "회원탈퇴 성공", "회원탈퇴가 완료되었습니다.");
+        HttpStatus.OK.value(), "회원탈퇴 성공", "회원탈퇴가 완료되었습니다.");
       return ResponseEntity.ok(response);
     } catch (UserException e) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.NOT_FOUND.value(), "해당 사용자를 찾을 수 없습니다.", "해당 사용자를 찾을 수 없습니다.");
+        HttpStatus.NOT_FOUND.value(), "해당 사용자를 찾을 수 없습니다.", "해당 사용자를 찾을 수 없습니다.");
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     } catch (Exception e) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패", "회원탈퇴 실패: " + e.getMessage());
+        HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패", "회원탈퇴 실패: " + e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }
@@ -104,12 +104,12 @@ public class UserController {
    */
   @PutMapping("/profile/user")
   public ResponseEntity<CommonResponse<String>> updateUserProfile(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @Valid @RequestBody UpdateUserProfileRequest userRequest) {
+    @AuthenticationPrincipal UserDetailsImpl userDetails,
+    @Valid @RequestBody UpdateUserProfileRequest userRequest) {
 
     userService.updateUserProfile(userRequest, userDetails);
     CommonResponse<String> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "프로필 변경 완료", "프로필이 성공적으로 변경되었습니다.");
+      HttpStatus.OK.value(), "프로필 변경 완료", "프로필이 성공적으로 변경되었습니다.");
     return ResponseEntity.ok(response);
   }
 
@@ -122,12 +122,12 @@ public class UserController {
    */
   @PutMapping("/profile/users/password")
   public ResponseEntity<CommonResponse<String>> updateUserPassword(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @Valid @RequestBody UpdatePasswordRequest userRequest) {
+    @AuthenticationPrincipal UserDetailsImpl userDetails,
+    @Valid @RequestBody UpdatePasswordRequest userRequest) {
 
     userService.updateUserPassword(userRequest, userDetails);
     CommonResponse<String> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "비밀번호 변경 완료", "비밀번호가 성공적으로 변경되었습니다.");
+      HttpStatus.OK.value(), "비밀번호 변경 완료", "비밀번호가 성공적으로 변경되었습니다.");
     return ResponseEntity.ok(response);
   }
 
@@ -139,10 +139,10 @@ public class UserController {
    */
   @GetMapping("/profile/user")
   public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile(
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
     CommonResponse<ReadUserResponse> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
+      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
     return ResponseEntity.ok(response);
   }
 }
