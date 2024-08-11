@@ -1,4 +1,4 @@
-package com.sparta.fitpleprojectbackend.payment.entity;
+package com.sparta.fitpleprojectbackend.product.entity;
 
 import com.sparta.fitpleprojectbackend.common.TimeStamped;
 import com.sparta.fitpleprojectbackend.payment.enums.ProductType;
