@@ -1,6 +1,7 @@
 package com.sparta.fitpleprojectbackend.review.service;
 
 import com.sparta.fitpleprojectbackend.enums.ErrorType;
+import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
 import com.sparta.fitpleprojectbackend.review.dto.ReportRequest;
 import com.sparta.fitpleprojectbackend.review.dto.ReviewRequest;
 import com.sparta.fitpleprojectbackend.review.dto.ReviewResponse;
@@ -19,7 +20,6 @@ import com.sparta.fitpleprojectbackend.usermembership.repository.UserMembershipR
 import com.sparta.fitpleprojectbackend.userpt.entity.UserPt;
 import com.sparta.fitpleprojectbackend.userpt.repository.UserPtRepository;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
-import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

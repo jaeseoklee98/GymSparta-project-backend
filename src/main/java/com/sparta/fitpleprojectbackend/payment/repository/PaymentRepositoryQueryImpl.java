@@ -1,8 +1,8 @@
-package com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
+package com.sparta.fitpleprojectbackend.payment.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.fitpleprojectbackend.payment.entity.QPayment;
-import com.sparta.fitpleprojectbackend.payment.entity.QProduct;
+import com.sparta.fitpleprojectbackend.product.entity.QProduct;
 import com.sparta.fitpleprojectbackend.user.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

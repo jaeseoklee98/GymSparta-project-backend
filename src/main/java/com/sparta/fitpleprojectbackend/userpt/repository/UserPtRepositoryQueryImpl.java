@@ -1,4 +1,4 @@
-package com.sparta.fitpleprojectbackend.payment.repository.UserPtRepository;
+package com.sparta.fitpleprojectbackend.userpt.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.fitpleprojectbackend.payment.entity.QUserPt;
