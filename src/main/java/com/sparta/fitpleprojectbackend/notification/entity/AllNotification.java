@@ -34,9 +34,10 @@ public class AllNotification extends TimeStamped {
   @OneToMany(mappedBy = "allNotification")
   private List<UserAllNotification> userAllNotificationList;
 
-  public AllNotification(createAllNotificationDto request) {
+  public AllNotification(createAllNotificationDto request, Store store) {
     this.title = request.getTitle();
     this.message = request.getMessage();
     this.image = request.getImage();
+    this.store = store;
   }
 }

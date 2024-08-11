@@ -1,5 +1,6 @@
 package com.sparta.fitpleprojectbackend.notification.controller;
 
+import com.sparta.fitpleprojectbackend.notification.dto.NotificationDetailResponse;
 import com.sparta.fitpleprojectbackend.notification.dto.NotificationSimpleResponse;
 import com.sparta.fitpleprojectbackend.notification.dto.createAllNotificationDto;
 import com.sparta.fitpleprojectbackend.notification.service.NotificationService;
@@ -48,9 +49,27 @@ public class NotificationController {
     return notificationService.createEmitter(userDetails.getUser().getId());
   }
 
+  /**
+   * 매장 공지 목록 조회
+   *
+   * @param storeId 매장 ID
+   * @return 매장 공지 목록
+   */
   @GetMapping("/{storeId}/allNotification")
-  public ResponseEntity<?> redNotification(@PathVariable Long storeId) {
+  public ResponseEntity<?> readNotification(@PathVariable Long storeId) {
     List<NotificationSimpleResponse> notificationSimpleResponseList = notificationService.readNotification(storeId);
     return ResponseEntity.ok(notificationSimpleResponseList);
+  }
+
+  /**
+   * 매장 공지 상세 조회
+   *
+   * @param allNotificationId 공지 ID
+   * @return 매장 공지 목록
+   */
+  @GetMapping("/allNotification/{allNotificationId}")
+  public ResponseEntity<?> readNotificationDetails(@PathVariable Long allNotificationId) {
+    NotificationDetailResponse response = notificationService.readNotificationDetail(allNotificationId);
+    return ResponseEntity.ok(response);
   }
 }

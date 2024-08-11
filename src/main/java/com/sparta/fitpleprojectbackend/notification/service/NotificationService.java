@@ -1,6 +1,7 @@
 package com.sparta.fitpleprojectbackend.notification.service;
 
 import com.sparta.fitpleprojectbackend.enums.ErrorType;
+import com.sparta.fitpleprojectbackend.notification.dto.NotificationDetailResponse;
 import com.sparta.fitpleprojectbackend.notification.dto.NotificationSimpleResponse;
 import com.sparta.fitpleprojectbackend.notification.dto.createAllNotificationDto;
 import com.sparta.fitpleprojectbackend.notification.entity.AllNotification;
@@ -66,7 +67,7 @@ public class NotificationService {
       throw new NotificationException(ErrorType.INVALID_USER);
     }
 
-    AllNotification allNotification = new AllNotification(request);
+    AllNotification allNotification = new AllNotification(request, store);
 
     allnotificationRepository.save(allNotification);
 
@@ -137,8 +138,7 @@ public class NotificationService {
 //  public void
 
   /**
-   * 매일 아침 9시 만료 임박 PT권 조회하고 알림 보내기
-   *
+   * 매일 아침 9시 만료 임박 PT권 조회
    *
    */
   @Scheduled(cron = "0 0 9 * * ?")
@@ -153,6 +153,10 @@ public class NotificationService {
     }
   }
 
+  /**
+   * 매일 아침 9시 만료 임박 PT권 알림 보내기
+   *
+   */
   private void sendPtExpiredNotification(UserPt userPt) {
     String message = userPt.getTrainer().getTrainerName() + " 선생님의 pt 권이 2일 후 만료됩니다.";
     User user = userPt.getUser();
@@ -161,6 +165,10 @@ public class NotificationService {
     sendRealTimeUserPtNotification(notification);
   }
 
+  /**
+   * 매일 아침 9시 만료 임박 PT권 알림 보내기 (SSE)
+   *
+   */
   public void sendRealTimeUserPtNotification(UserNotification notification) {
     SseEmitter emitter = userEmitters.get(notification.getUser().getId());
     if (emitter != null) {
@@ -174,6 +182,11 @@ public class NotificationService {
     }
   }
 
+  /**
+   * 매장 공지 목록 조회
+   * @param storeId 매장 id
+   * @return 공지 목록
+   */
   public List<NotificationSimpleResponse> readNotification(Long storeId) {
     List<AllNotification> allNotificationList = allnotificationRepository.findByStoreId(storeId);
 
@@ -182,5 +195,15 @@ public class NotificationService {
       .toList();
 
     return responseList;
+  }
+
+  /**
+   * 매장 공지 상세 조회
+   * @param allNotificationId 공지 id
+   * @return 공지 상세
+   */
+  public NotificationDetailResponse readNotificationDetail(Long allNotificationId) {
+    AllNotification allNotification = allnotificationRepository.findById(allNotificationId).orElseThrow(() -> new NotificationException(ErrorType.NOT_FOUND_NOTIFICATION));
+    return new NotificationDetailResponse(allNotification);
   }
 }
