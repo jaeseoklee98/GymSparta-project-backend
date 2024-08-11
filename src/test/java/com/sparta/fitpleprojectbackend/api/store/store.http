@@ -36,7 +36,7 @@ Content-Type: application/json
 ###매장 등록
 POST http://localhost:8080/api/stores/owners
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjExMSIsImlhdCI6MTcyMzExMjc4NiwiZXhwIjoxNzIzMTE0NTg2fQ.1y7PubkAwSz-ng20-Sl4d_vM5sdxAgOyAwTW6EADGek
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
 
 {
   "storeName": "매장명42225",

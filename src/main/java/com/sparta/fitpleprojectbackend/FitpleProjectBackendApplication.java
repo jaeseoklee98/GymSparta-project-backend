@@ -5,13 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableJpaAuditing
-@EnableScheduling
 @SpringBootApplication
+@EnableScheduling
+@EnableJpaAuditing
 public class FitpleProjectBackendApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(FitpleProjectBackendApplication.class, args);
   }
-
 }
