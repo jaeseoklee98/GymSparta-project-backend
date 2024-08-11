@@ -2,6 +2,8 @@ package com.sparta.fitpleprojectbackend.review.service;
 
 import com.sparta.fitpleprojectbackend.enums.ErrorType;
 import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
+import com.sparta.fitpleprojectbackend.product.entity.Product;
+import com.sparta.fitpleprojectbackend.product.repository.ProductRepository;
 import com.sparta.fitpleprojectbackend.review.dto.ReportRequest;
 import com.sparta.fitpleprojectbackend.review.dto.ReviewRequest;
 import com.sparta.fitpleprojectbackend.review.dto.ReviewResponse;
@@ -15,10 +17,6 @@ import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fitpleprojectbackend.trainer.repository.TrainerRepository;
 import com.sparta.fitpleprojectbackend.user.entity.User;
 import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
-import com.sparta.fitpleprojectbackend.usermembership.entity.UserMembership;
-import com.sparta.fitpleprojectbackend.usermembership.repository.UserMembershipRepository;
-import com.sparta.fitpleprojectbackend.userpt.entity.UserPt;
-import com.sparta.fitpleprojectbackend.userpt.repository.UserPtRepository;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,9 +34,8 @@ public class ReviewService {
   private final StoreRepository storeRepository;
   private final TrainerRepository trainerRepository;
   private final UserRepository userRepository;
-  private final UserMembershipRepository userMembershipRepository;
-  private final UserPtRepository userPtRepository;
   private final PaymentRepository paymentRepository;
+  private final ProductRepository productRepository;
 
   /**
    * 리뷰 생성
@@ -55,25 +52,25 @@ public class ReviewService {
 
     Store store = null;
     Trainer trainer = null;
-    UserMembership userMembership = null;
-    UserPt userPt = null;
+    Product product = null;
 
     if (reviewRequest.getStoreId() != null) {
       store = storeRepository.findById(reviewRequest.getStoreId())
           .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_STORE));
-      userMembership = userMembershipRepository.findById(reviewRequest.getMembershipId())
-          .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_USER_MEMBERSHIP));
     } else if (reviewRequest.getTrainerId() != null) {
       trainer = trainerRepository.findById(reviewRequest.getTrainerId())
           .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_TRAINER));
-      userPt = userPtRepository.findById(reviewRequest.getUserPtId())
-          .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_USER_PT));
+    }
+
+    if (reviewRequest.getProductId() != null) {
+      product = productRepository.findById(reviewRequest.getProductId())
+          .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_PRODUCT));
     }
 
     Payment payment = paymentRepository.findById(reviewRequest.getPaymentId())
         .orElseThrow(() -> new ReviewException(ErrorType.PAYMENT_NOT_FOUND));
 
-    Review review = new Review(user, store, trainer, payment, userMembership, userPt, reviewRequest.getRating(), reviewRequest.getComment(), reviewRequest.getReviewType());
+    Review review = new Review(user, store, trainer, payment, product, reviewRequest.getRating(), reviewRequest.getComment(), reviewRequest.getReviewType());
     reviewRepository.save(review);
 
     return new ReviewResponse(review);
