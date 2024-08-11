@@ -1,4 +1,4 @@
-package com.sparta.fltpleprojectbackend.trainer.dto;
+package com.sparta.fitpleprojectbackend.trainer.dto;
 
 import lombok.Getter;
 

@@ -1,28 +1,28 @@
-package com.sparta.fltpleprojectbackend.user.controller;
+package com.sparta.fitpleprojectbackend.user.controller;
 
-import com.sparta.fltpleprojectbackend.enums.Role;
-import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
-import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
-import com.sparta.fltpleprojectbackend.user.dto.LoginRequest;
-import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
-import com.sparta.fltpleprojectbackend.user.repository.UserRepository;
-import com.sparta.fltpleprojectbackend.owner.repository.OwnerRepository;
-import com.sparta.fltpleprojectbackend.trainer.repository.TrainerRepository;
-import com.sparta.fltpleprojectbackend.user.service.UserService;
-import com.sparta.fltpleprojectbackend.owner.service.OwnerService;
-import com.sparta.fltpleprojectbackend.trainer.entity.Trainer;
-import com.sparta.fltpleprojectbackend.owner.entity.Owner;
-import com.sparta.fltpleprojectbackend.user.entity.User;
+import com.sparta.fitpleprojectbackend.common.CommonResponse;
+import com.sparta.fitpleprojectbackend.enums.Role;
+import com.sparta.fitpleprojectbackend.jwtutil.JwtUtil;
+import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fitpleprojectbackend.user.dto.LoginRequest;
+import com.sparta.fitpleprojectbackend.user.repository.UserRepository;
+import com.sparta.fitpleprojectbackend.owner.repository.OwnerRepository;
+import com.sparta.fitpleprojectbackend.trainer.repository.TrainerRepository;
+import com.sparta.fitpleprojectbackend.user.service.UserService;
+import com.sparta.fitpleprojectbackend.owner.service.OwnerService;
+import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
+import com.sparta.fitpleprojectbackend.owner.entity.Owner;
+import com.sparta.fitpleprojectbackend.user.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,122 +32,150 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class AuthController {
 
-  @Autowired
   private AuthenticationManager authenticationManager;
 
-  @Autowired
   private JwtUtil jwtUtil;
 
-  @Autowired
   private UserRepository userRepository;
 
-  @Autowired
   private OwnerRepository ownerRepository;
 
-  @Autowired
   private TrainerRepository trainerRepository;
 
-  @Autowired
   private UserService userService;
 
-  @Autowired
   private OwnerService ownerService;
+
+  public AuthController(AuthenticationManager authenticationManager,
+    JwtUtil jwtUtil,
+    UserRepository userRepository,
+    OwnerRepository ownerRepository,
+    TrainerRepository trainerRepository,
+    UserService userService,
+    OwnerService ownerService) {
+    this.authenticationManager = authenticationManager;
+    this.jwtUtil = jwtUtil;
+    this.userRepository = userRepository;
+    this.ownerRepository = ownerRepository;
+    this.trainerRepository = trainerRepository;
+    this.userService = userService;
+    this.ownerService = ownerService;
+  }
 
   /**
    * 로그인 처리
+   *
    * @param loginRequest 로그인 요청 정보 (아이디, 비밀번호)
    * @return ResponseEntity<ResponseMessage> JWT 액세스 토큰과 리프레시 토큰
    */
   @PostMapping("/login")
-  public ResponseEntity<ResponseMessage> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
-    // 현재 로그인된 상태인지 확인
+  public ResponseEntity<CommonResponse<Map<String, String>>> login(
+    @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
     Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
     if (currentAuth != null && currentAuth.isAuthenticated() &&
-        !currentAuth.getName().equals("anonymousUser")) {
-      return ResponseEntity.status(HttpStatus.CONFLICT)
-          .body(ResponseMessage.error("이미 ad 상태입니다."));
+      !currentAuth.getName().equals("anonymousUser")) {
+      CommonResponse<Map<String, String>> response = new CommonResponse<>(
+        HttpStatus.CONFLICT.value(), "이미 로그인된 상태입니다.", null);
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     try {
       Authentication authentication = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(loginRequest.getAccountId(), loginRequest.getPassword())
+        new UsernamePasswordAuthenticationToken(loginRequest.getAccountId(),
+          loginRequest.getPassword())
       );
 
       UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-      // 사용자, 점주 또는 트레이너 상태 확인
       if (userDetails.getRole() == Role.USER) {
-        Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE");
+        Optional<User> userOptional = userRepository.findByAccountIdAndStatus(
+          userDetails.getUsername(), "ACTIVE");
         if (!userOptional.isPresent()) {
-          return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-              .body(ResponseMessage.error("회원탈퇴된 사용자입니다."));
+          CommonResponse<Map<String, String>> response = new CommonResponse<>(
+            HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 사용자입니다.", null);
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
       } else if (userDetails.getRole() == Role.OWNER) {
-        Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(userDetails.getUsername(), "ACTIVE");
+        Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(
+          userDetails.getUsername(), "ACTIVE");
         if (!ownerOptional.isPresent()) {
-          return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-              .body(ResponseMessage.error("회원탈퇴된 점주입니다."));
+          CommonResponse<Map<String, String>> response = new CommonResponse<>(
+            HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 점주입니다.", null);
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
       } else if (userDetails.getRole() == Role.TRAINER) {
-        Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(userDetails.getUsername(), "ACTIVE");
+        Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(
+          userDetails.getUsername(), "ACTIVE");
         if (!trainerOptional.isPresent()) {
-          return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-              .body(ResponseMessage.error("회원탈퇴된 트레이너입니다."));
+          CommonResponse<Map<String, String>> response = new CommonResponse<>(
+            HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 트레이너입니다.", null);
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
       }
 
       String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
       String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
 
-      ResponseMessage response = ResponseMessage.success("로그인 성공");
-      return ResponseEntity.ok()
-          .header("Authorization", "Bearer " + accessToken)
-          .header("Refresh-Token", refreshToken)
-          .body(response);
+      Map<String, String> tokenResponse = new HashMap<>();
+      tokenResponse.put("accessToken", accessToken);
+      tokenResponse.put("refreshToken", refreshToken);
+
+      CommonResponse<Map<String, String>> response = new CommonResponse<>(
+        HttpStatus.OK.value(), "로그인 성공", tokenResponse);
+      return ResponseEntity.ok(response);
 
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("로그인 실패: " + e.getMessage()));
+      CommonResponse<Map<String, String>> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "로그인 실패", null);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
   }
 
   /**
    * 로그아웃 처리
+   *
    * @param request HTTP 요청
-   * @return ResponseEntity<ResponseMessage<String>> 로그아웃 성공 메시지
+   * @return ResponseEntity<ResponseMessage < String>> 로그아웃 성공 메시지
    */
   @PostMapping("/logout")
-  public ResponseEntity<ResponseMessage> logout(HttpServletRequest request) {
+  public ResponseEntity<CommonResponse<String>> logout(HttpServletRequest request) {
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("로그인 먼저 해주세요."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "로그인 먼저 해주세요.", null);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String token = authHeader.substring(7);
     if (!jwtUtil.validateToken(token)) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("유효하지 않은 토큰입니다."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", null);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String username = jwtUtil.getUsername(token);
     if (username == null) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("로그인되지 않은 상태입니다."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "로그인되지 않은 상태입니다.", null);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
-    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(username, "ACTIVE");
-    Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(username, "ACTIVE");
+    Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(username,
+      "ACTIVE");
+    Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(username,
+      "ACTIVE");
 
     if (!userOptional.isPresent() && !ownerOptional.isPresent() && !trainerOptional.isPresent()) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("이미 로그아웃된 상태입니다."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "이미 로그아웃된 상태입니다.", null);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
-    // 인증된 상태에서 로그아웃 처리
+    //인증된 상태에서 로그아웃 처리
     SecurityContextHolder.clearContext();
-    ResponseMessage response = ResponseMessage.success("로그아웃 성공");
+    CommonResponse<String> response = new CommonResponse<>(
+      HttpStatus.OK.value(), "로그아웃 성공", "로그아웃이 완료되었습니다.");
     return ResponseEntity.ok(response);
   }
 }

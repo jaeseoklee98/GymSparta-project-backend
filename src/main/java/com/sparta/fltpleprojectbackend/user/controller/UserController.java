@@ -1,18 +1,16 @@
-package com.sparta.fltpleprojectbackend.user.controller;
+package com.sparta.fitpleprojectbackend.user.controller;
 
-import com.sparta.fltpleprojectbackend.common.CommonResponse;
-import com.sparta.fltpleprojectbackend.jwtutil.JwtUtil;
-import com.sparta.fltpleprojectbackend.security.UserDetailsImpl;
-import com.sparta.fltpleprojectbackend.user.dto.ResponseMessage;
-import com.sparta.fltpleprojectbackend.user.dto.UpdatePasswordRequest;
-import com.sparta.fltpleprojectbackend.user.dto.UpdateUserProfileRequest;
-import com.sparta.fltpleprojectbackend.user.dto.UserSignupRequest;
-import com.sparta.fltpleprojectbackend.user.dto.ReadUserResponse;
-import com.sparta.fltpleprojectbackend.user.exception.UserException;
-import com.sparta.fltpleprojectbackend.user.service.UserService;
+import com.sparta.fitpleprojectbackend.common.CommonResponse;
+import com.sparta.fitpleprojectbackend.jwtutil.JwtUtil;
+import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
+import com.sparta.fitpleprojectbackend.user.dto.UpdatePasswordRequest;
+import com.sparta.fitpleprojectbackend.user.dto.UpdateUserProfileRequest;
+import com.sparta.fitpleprojectbackend.user.dto.UserSignupRequest;
+import com.sparta.fitpleprojectbackend.user.dto.ReadUserResponse;
+import com.sparta.fitpleprojectbackend.user.exception.UserException;
+import com.sparta.fitpleprojectbackend.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,59 +24,78 @@ public class UserController {
   private final UserService userService;
   private final JwtUtil jwtUtil;
 
-  @Autowired
   public UserController(UserService userService, JwtUtil jwtUtil) {
     this.userService = userService;
     this.jwtUtil = jwtUtil;
   }
 
+  /**
+   * 사용자 회원가입
+   *
+   * @param request 회원가입에 필요한 데이터가 담긴 요청 본문
+   * @return 회원가입 성공 또는 실패 메시지를 담은 응답
+   */
   @PostMapping("/user/signup")
-  public ResponseEntity<ResponseMessage> signup(@RequestBody UserSignupRequest request) {
+  public ResponseEntity<CommonResponse<String>> signup(@RequestBody UserSignupRequest request) {
     try {
       userService.signup(request);
-      ResponseMessage response = ResponseMessage.success("회원가입 성공");
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.OK.value(), "회원가입 성공", "회원가입이 완료되었습니다.");
       return ResponseEntity.ok(response);
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(ResponseMessage.error("회원가입 실패: " + e.getMessage()));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.BAD_REQUEST.value(), "회원가입 실패", "회원가입 실패: " + e.getMessage());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }
 
+  /**
+   * 사용자 탈퇴
+   *
+   * @param request HTTP 요청 객체 (Authorization 헤더에서 토큰 추출)
+   * @return 탈퇴 성공 또는 실패 메시지를 담은 응답
+   */
   @DeleteMapping("/profile/users/signout")
-  public ResponseEntity<ResponseMessage> deleteUser(HttpServletRequest request) {
+  public ResponseEntity<CommonResponse<String>> deleteUser(HttpServletRequest request) {
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("유효하지 않은 토큰입니다."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String token = authHeader.substring(7);
     if (!jwtUtil.validateToken(token)) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("유효하지 않은 토큰입니다."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String username = jwtUtil.getUsername(token);
     if (username == null) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(ResponseMessage.error("유효하지 않은 토큰입니다."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", "유효하지 않은 토큰입니다.");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     try {
       userService.deleteUser(username);
       SecurityContextHolder.clearContext();
-      ResponseMessage response = ResponseMessage.success("회원탈퇴 성공");
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.OK.value(), "회원탈퇴 성공", "회원탈퇴가 완료되었습니다.");
       return ResponseEntity.ok(response);
     } catch (UserException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(ResponseMessage.error("해당 사용자를 찾을 수 없습니다."));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.NOT_FOUND.value(), "해당 사용자를 찾을 수 없습니다.", "해당 사용자를 찾을 수 없습니다.");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(ResponseMessage.error("회원탈퇴 실패: " + e.getMessage()));
+      CommonResponse<String> response = new CommonResponse<>(
+        HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패", "회원탈퇴 실패: " + e.getMessage());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }
 
-  /**.
+  /**
    * 유저 프로필 변경
    *
    * @param userDetails 유저 정보
@@ -86,16 +103,17 @@ public class UserController {
    * @return statusCode: 200, message: 프로필 변경 완료
    */
   @PutMapping("/profile/user")
-  public ResponseEntity<?> updateUserProfile (
+  public ResponseEntity<CommonResponse<String>> updateUserProfile(
     @AuthenticationPrincipal UserDetailsImpl userDetails,
     @Valid @RequestBody UpdateUserProfileRequest userRequest) {
-    // TODO: 리스폰 형식 컨벤션에 맞추기
-    userService.updateUserProfile(userRequest, userDetails);
 
-    return ResponseEntity.ok("프로필 변경 완료");
+    userService.updateUserProfile(userRequest, userDetails);
+    CommonResponse<String> response = new CommonResponse<>(
+      HttpStatus.OK.value(), "프로필 변경 완료", "프로필이 성공적으로 변경되었습니다.");
+    return ResponseEntity.ok(response);
   }
 
-  /**.
+  /**
    * 유저 비밀번호 변경
    *
    * @param userDetails 유저 정보
@@ -103,38 +121,28 @@ public class UserController {
    * @return statusCode: 200, message: 변경 완료
    */
   @PutMapping("/profile/users/password")
-  public ResponseEntity<?> updateUserPassword (
+  public ResponseEntity<CommonResponse<String>> updateUserPassword(
     @AuthenticationPrincipal UserDetailsImpl userDetails,
     @Valid @RequestBody UpdatePasswordRequest userRequest) {
-    // TODO: 리스폰 형식 컨벤션에 맞추기
-    userService.updateUserPassword(userRequest, userDetails);
 
-    return ResponseEntity.ok("비밀번호 변경 완료");
+    userService.updateUserPassword(userRequest, userDetails);
+    CommonResponse<String> response = new CommonResponse<>(
+      HttpStatus.OK.value(), "비밀번호 변경 완료", "비밀번호가 성공적으로 변경되었습니다.");
+    return ResponseEntity.ok(response);
   }
 
-//  /**.
-//   * 유저 프로필 조회
-//   *
-//   * @param userDetails 유저 정보
-//   * @return 상태코드, 응답 메시지, 응답 데이터
-//   */
-//  @GetMapping("/profile/user")
-//  public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
-//    ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
-//    CommonResponse<ReadUserResponse> response = new CommonResponse<>(
-//      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
-//    return new  ResponseEntity<>(response, HttpStatus.OK);
-//  }
-
-  /**.
+  /**
    * 유저 프로필 조회
    *
    * @param userDetails 유저 정보
    * @return 상태코드, 응답 메시지, 응답 데이터
    */
   @GetMapping("/profile/user")
-  public ResponseEntity<ReadUserResponse> readUserProfile (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile(
+    @AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
-    return ResponseEntity.ok(readUserResponse);
+    CommonResponse<ReadUserResponse> response = new CommonResponse<>(
+      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
+    return ResponseEntity.ok(response);
   }
 }
