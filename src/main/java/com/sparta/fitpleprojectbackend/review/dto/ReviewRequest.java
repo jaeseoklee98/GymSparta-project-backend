@@ -13,7 +13,6 @@ public class ReviewRequest {
     private ReviewType reviewType; // STORE or TRAINER
     private Long storeId; // Store ID, if applicable
     private Long trainerId; // Trainer ID, if applicable
-    private Long membershipId; // UserMembership ID, if applicable
-    private Long userPtId; // UserPt ID, if applicable
+    private Long productId; // Product ID, instead of UserMembership or UserPt
     private Long paymentId; // Payment ID, required
 }

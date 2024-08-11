@@ -5,9 +5,8 @@ import com.sparta.fitpleprojectbackend.review.enums.ReviewType;
 import com.sparta.fitpleprojectbackend.store.entity.Store;
 import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fitpleprojectbackend.user.entity.User;
-import com.sparta.fitpleprojectbackend.usermembership.entity.UserMembership;
-import com.sparta.fitpleprojectbackend.userpt.entity.UserPt;
 import com.sparta.fitpleprojectbackend.payment.entity.Payment;
+import com.sparta.fitpleprojectbackend.product.entity.Product;
 import jakarta.persistence.*;
 import java.util.List;
 import lombok.Getter;
@@ -39,12 +38,8 @@ public class Review extends TimeStamped {
   private Payment payment;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_membership_id", nullable = true)
-  private UserMembership userMembership;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_pt_id", nullable = true)
-  private UserPt userPt;
+  @JoinColumn(name = "product_id", nullable = true)
+  private Product product;
 
   @Column(nullable = false)
   private int rating;
@@ -59,13 +54,12 @@ public class Review extends TimeStamped {
   @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ReviewImage> reviewImages;
 
-  public Review(User user, Store store, Trainer trainer, Payment payment, UserMembership userMembership, UserPt userPt, int rating, String comment, ReviewType reviewType) {
+  public Review(User user, Store store, Trainer trainer, Payment payment, Product product, int rating, String comment, ReviewType reviewType) {
     this.user = user;
     this.store = store;
     this.trainer = trainer;
     this.payment = payment;
-    this.userMembership = userMembership;
-    this.userPt = userPt;
+    this.product = product;
     this.rating = rating;
     this.comment = comment;
     this.reviewType = reviewType;
