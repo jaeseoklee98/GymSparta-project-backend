@@ -50,7 +50,9 @@ public enum ErrorType {
   REFUND_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "이미 처리된 환불입니다."),
   REFUND_WINDOW_EXPIRED(HttpStatus.BAD_REQUEST, "환불 가능한 기간이 지났습니다."),
   REFUND_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "환불 처리 중 오류가 발생했습니다."),
-  INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다.");
+  INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "잘못된 결제 상태입니다."),
+  NOT_FOUND_NOTIFICATION(HttpStatus.NOT_FOUND, "해당 전체 공지를 찾을 수 없습니다."),
+  Notification_delivery_failed(HttpStatus.INTERNAL_SERVER_ERROR, "알림 전달 중 오류 발생");
 
   private final HttpStatus httpStatus;
   private final String message;

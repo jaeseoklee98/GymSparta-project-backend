@@ -3,8 +3,8 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "accountId": "testaccount",
-  "password": "testpassword"
+  "accountId": "ael12111",
+  "password": "ael121667"
 }
 
 > {%
@@ -36,7 +36,7 @@ Content-Type: application/json
 ###매장 등록
 POST http://localhost:8080/api/stores/owners
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjExMSIsImlhdCI6MTcyMjI0MTgzNSwiZXhwIjoxNzIyMjQzNjM1fQ.HWsEQTX-6OelwgPWaLt2fAuFi1pjHhqGgXfCzeVfQhE
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
 
 {
   "storeName": "매장명42225",
@@ -84,3 +84,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3M
 ###점주 매장 상세 조회
 GET http://localhost:8080/api/stores/owners/7
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0b3duZXIiLCJpYXQiOjE3MjE5MDg3MTcsImV4cCI6MTcyMTkxMDUxN30.LTUGndI0DL2fLqmoz0SnuZV3P0m-JS6nYBG4LlBLkdw
+
+### 매장 공지
+POST http://localhost:8080/api/1/allnotification
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZWwxMjExMSIsImlhdCI6MTcyMzExMjc4NiwiZXhwIjoxNzIzMTE0NTg2fQ.1y7PubkAwSz-ng20-Sl4d_vM5sdxAgOyAwTW6EADGek
+
+{
+  "title": "테스트",
+  "message": "테스트사진",
+  "image": "테스트이미지"
+}
