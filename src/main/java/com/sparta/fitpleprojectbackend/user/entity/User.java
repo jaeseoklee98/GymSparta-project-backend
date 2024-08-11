@@ -2,8 +2,11 @@ package com.sparta.fitpleprojectbackend.user.entity;
 
 import com.sparta.fitpleprojectbackend.common.TimeStamped;
 import com.sparta.fitpleprojectbackend.enums.Role;
+import com.sparta.fitpleprojectbackend.notification.entity.UserAllNotification;
+import com.sparta.fitpleprojectbackend.notification.entity.UserNotification;
 import com.sparta.fitpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -65,6 +68,12 @@ public class User extends TimeStamped {
   @Column(nullable = false)
   private Role role;
 
+  @OneToMany(mappedBy = "user")
+  private List<UserAllNotification> userAllNotificationList;
+
+  @OneToMany(mappedBy = "user")
+  private List<UserNotification> userNotificationList;
+
   @Column
   private LocalDateTime deletedAt;
 
@@ -120,5 +129,8 @@ public class User extends TimeStamped {
     this.mainAddress = userRequest.getMainAddress();
     this.detailedAddress = userRequest.getDetailedAddress();
     this.userPicture = userRequest.getUserPicture();
+    this.email = userRequest.getEmail();
+    this.phoneNumber = userRequest.getPhoneNumber();
+    this.userName = userRequest.getUsername();
   }
 }

@@ -3,7 +3,9 @@ package com.sparta.fitpleprojectbackend.owner.entity;
 import com.sparta.fitpleprojectbackend.common.TimeStamped;
 import com.sparta.fitpleprojectbackend.enums.Role;
 import com.sparta.fitpleprojectbackend.owner.dto.UpdateOwnerProfileRequest;
+import com.sparta.fitpleprojectbackend.store.entity.Store;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -75,6 +77,9 @@ public class Owner extends TimeStamped {
   @Column
   private LocalDateTime scheduledDeletionDate; // 삭제 예정일
 
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+  private List<Store> stores;
+
 
   public Owner() {
 
@@ -130,7 +135,6 @@ public class Owner extends TimeStamped {
   public void updateOwnerProfile(UpdateOwnerProfileRequest ownerRequest) {
     this.nickname = ownerRequest.getNickname();
     this.email = ownerRequest.getEmail();
-    this.ownerPicture = ownerRequest.getOwnerPicture();
     this.zipcode = ownerRequest.getZipcode();
     this.mainAddress = ownerRequest.getMainAddress();
     this.detailedAddress = ownerRequest.getDetailedAddress();

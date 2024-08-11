@@ -47,12 +47,12 @@ public class AuthController {
   private OwnerService ownerService;
 
   public AuthController(AuthenticationManager authenticationManager,
-      JwtUtil jwtUtil,
-      UserRepository userRepository,
-      OwnerRepository ownerRepository,
-      TrainerRepository trainerRepository,
-      UserService userService,
-      OwnerService ownerService) {
+    JwtUtil jwtUtil,
+    UserRepository userRepository,
+    OwnerRepository ownerRepository,
+    TrainerRepository trainerRepository,
+    UserService userService,
+    OwnerService ownerService) {
     this.authenticationManager = authenticationManager;
     this.jwtUtil = jwtUtil;
     this.userRepository = userRepository;
@@ -70,45 +70,45 @@ public class AuthController {
    */
   @PostMapping("/login")
   public ResponseEntity<CommonResponse<Map<String, String>>> login(
-      @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+    @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
     Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
     if (currentAuth != null && currentAuth.isAuthenticated() &&
-        !currentAuth.getName().equals("anonymousUser")) {
+      !currentAuth.getName().equals("anonymousUser")) {
       CommonResponse<Map<String, String>> response = new CommonResponse<>(
-          HttpStatus.CONFLICT.value(), "이미 로그인된 상태입니다.", null);
+        HttpStatus.CONFLICT.value(), "이미 로그인된 상태입니다.", null);
       return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     try {
       Authentication authentication = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(loginRequest.getAccountId(),
-              loginRequest.getPassword())
+        new UsernamePasswordAuthenticationToken(loginRequest.getAccountId(),
+          loginRequest.getPassword())
       );
 
       UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
       if (userDetails.getRole() == Role.USER) {
         Optional<User> userOptional = userRepository.findByAccountIdAndStatus(
-            userDetails.getUsername(), "ACTIVE");
+          userDetails.getUsername(), "ACTIVE");
         if (!userOptional.isPresent()) {
           CommonResponse<Map<String, String>> response = new CommonResponse<>(
-              HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 사용자입니다.", null);
+            HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 사용자입니다.", null);
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
       } else if (userDetails.getRole() == Role.OWNER) {
         Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(
-            userDetails.getUsername(), "ACTIVE");
+          userDetails.getUsername(), "ACTIVE");
         if (!ownerOptional.isPresent()) {
           CommonResponse<Map<String, String>> response = new CommonResponse<>(
-              HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 점주입니다.", null);
+            HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 점주입니다.", null);
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
       } else if (userDetails.getRole() == Role.TRAINER) {
         Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(
-            userDetails.getUsername(), "ACTIVE");
+          userDetails.getUsername(), "ACTIVE");
         if (!trainerOptional.isPresent()) {
           CommonResponse<Map<String, String>> response = new CommonResponse<>(
-              HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 트레이너입니다.", null);
+            HttpStatus.UNAUTHORIZED.value(), "회원탈퇴된 트레이너입니다.", null);
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
       }
@@ -121,12 +121,12 @@ public class AuthController {
       tokenResponse.put("refreshToken", refreshToken);
 
       CommonResponse<Map<String, String>> response = new CommonResponse<>(
-          HttpStatus.OK.value(), "로그인 성공", tokenResponse);
+        HttpStatus.OK.value(), "로그인 성공", tokenResponse);
       return ResponseEntity.ok(response);
 
     } catch (Exception e) {
       CommonResponse<Map<String, String>> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "로그인 실패", null);
+        HttpStatus.UNAUTHORIZED.value(), "로그인 실패", null);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
   }
@@ -142,40 +142,40 @@ public class AuthController {
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "로그인 먼저 해주세요.", null);
+        HttpStatus.UNAUTHORIZED.value(), "로그인 먼저 해주세요.", null);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String token = authHeader.substring(7);
     if (!jwtUtil.validateToken(token)) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", null);
+        HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다.", null);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     String username = jwtUtil.getUsername(token);
     if (username == null) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "로그인되지 않은 상태입니다.", null);
+        HttpStatus.UNAUTHORIZED.value(), "로그인되지 않은 상태입니다.", null);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
     Optional<Owner> ownerOptional = ownerRepository.findByAccountIdAndOwnerStatus(username,
-        "ACTIVE");
+      "ACTIVE");
     Optional<Trainer> trainerOptional = trainerRepository.findByAccountIdAndTrainerStatus(username,
-        "ACTIVE");
+      "ACTIVE");
 
     if (!userOptional.isPresent() && !ownerOptional.isPresent() && !trainerOptional.isPresent()) {
       CommonResponse<String> response = new CommonResponse<>(
-          HttpStatus.UNAUTHORIZED.value(), "이미 로그아웃된 상태입니다.", null);
+        HttpStatus.UNAUTHORIZED.value(), "이미 로그아웃된 상태입니다.", null);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     //인증된 상태에서 로그아웃 처리
     SecurityContextHolder.clearContext();
     CommonResponse<String> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "로그아웃 성공", "로그아웃이 완료되었습니다.");
+      HttpStatus.OK.value(), "로그아웃 성공", "로그아웃이 완료되었습니다.");
     return ResponseEntity.ok(response);
   }
 }
