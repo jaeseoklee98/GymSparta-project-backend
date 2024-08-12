@@ -35,8 +35,12 @@ public class Product extends TimeStamped {
   @Column(nullable = false)
   private PaymentType paymentType;
 
-  @Column
+  @Column(nullable = false)
   private double amount;
+
+  @Getter
+  @Column(nullable = false)
+  private double productPrice;
 
   @Enumerated(EnumType.STRING)
   private PaymentStatus paymentStatus;
@@ -54,25 +58,27 @@ public class Product extends TimeStamped {
   }
 
   public Product(Trainer trainer, User user, PtTimes ptTimes, PaymentType paymentType,
-      double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate,
+      double amount, double productPrice, PaymentStatus paymentStatus, LocalDateTime paymentDate,
       LocalDateTime expiryDate, boolean isActive) {
     this.trainer = trainer;
     this.user = user;
     this.ptTimes = ptTimes;
     this.paymentType = paymentType;
     this.amount = amount;
+    this.productPrice = productPrice;
     this.paymentStatus = paymentStatus;
     this.paymentDate = paymentDate;
     this.expiryDate = expiryDate;
     this.isActive = isActive;
   }
 
-  public Product(User user, PaymentType paymentType, double amount,
-      PaymentStatus paymentStatus, LocalDateTime paymentDate,
-      LocalDateTime expiryDate, boolean isActive) {
+  public Product(User user, PaymentType paymentType, double amount, double productPrice,
+      PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate,
+      boolean isActive) {
     this.user = user;
     this.paymentType = paymentType;
     this.amount = amount;
+    this.productPrice = productPrice;
     this.paymentStatus = paymentStatus;
     this.paymentDate = paymentDate;
     this.expiryDate = expiryDate;

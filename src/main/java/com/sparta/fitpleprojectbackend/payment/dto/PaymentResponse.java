@@ -41,7 +41,7 @@ public class PaymentResponse {
         payment.getPaymentId(),
         payment.getTrainer() != null ? payment.getTrainer().getId() : null,
         payment.getUser().getId(),
-        payment.getProduct() != null ? payment.getProduct().getProductId() : null,
+        payment.getProduct() != null ? payment.getProduct().getId() : null,
         payment.getPtTimes(),
         payment.getPaymentType(),
         payment.getAmount(),
