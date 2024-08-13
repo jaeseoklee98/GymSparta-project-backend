@@ -60,38 +60,45 @@ public class PaymentService {
    */
   @Transactional
   public Payment savePayment(PaymentRequest request) {
-    try {
-      validateTrainerAndUser(request.getTrainerId(), request.getUserId());
+    validateTrainerAndUser(request.getTrainerId(), request.getUserId());
 
-      Trainer trainer = trainerRepository.findById(request.getTrainerId())
-          .orElseThrow(() -> new CustomException(ErrorType.TRAINER_NOT_FOUND));
-      User user = userRepository.findById(request.getUserId())
-          .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+    Trainer trainer = trainerRepository.findById(request.getTrainerId())
+        .orElseThrow(() -> new CustomException(ErrorType.TRAINER_NOT_FOUND));
+    User user = userRepository.findById(request.getUserId())
+        .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-      PtTimes ptTimes = request.getPtTimes() != null ? request.getPtTimes() : PtTimes.TEN_TIMES;
+    PtTimes ptTimes = request.getPtTimes() != null ? request.getPtTimes() : PtTimes.TEN_TIMES;
 
-      Payment payment = new Payment(
-          trainer,
-          user,
-          null,  // Product가 필요한 경우 해당 필드를 설정
-          ptTimes,
-          request.getPaymentType(),
-          request.getAmount(),
-          PaymentStatus.PENDING,
-          LocalDateTime.now(),
-          LocalDateTime.now().plusDays(ptTimes.getTimes() / 30),
-          request.isMembership()
-      );
-
-      return paymentRepository.save(payment);
-    } catch (CustomException e) {
-      // Custom 예외 처리
-      throw e;
-    } catch (Exception e) {
-      // 모든 일반적인 예외 처리
-      throw new RuntimeException("결제 처리 중 문제가 발생했습니다.", e);
+    // ProductType에 따른 결제 로직
+    Payment payment;
+    switch (request.getProductType()) {
+      case PT_SESSION:
+        payment = new Payment(trainer, user, null, ptTimes, request.getProductType(),
+            request.getPaymentType(), request.getAmount(),
+            PaymentStatus.PENDING, LocalDateTime.now(),
+            LocalDateTime.now().plusDays(ptTimes.getTimes() / 30),
+            request.isMembership());
+        // PT 세션 결제에 대한 추가 처리
+        logger.info("PT 세션 결제가 저장되었습니다: " + payment.getAmount());
+        sendNotification(user, "PT 세션 결제가 완료되었습니다.");
+        break;
+      case MEMBERSHIP:
+        payment = new Payment(trainer, user, null, null, request.getProductType(),
+            request.getPaymentType(), request.getAmount(),
+            PaymentStatus.PENDING, LocalDateTime.now(),
+            LocalDateTime.now().plusYears(1), // 멤버십은 1년 기간
+            request.isMembership());
+        // 멤버십 결제에 대한 추가 처리
+        logger.info("멤버십 결제가 저장되었습니다: " + payment.getAmount());
+        sendNotification(user, "멤버십 결제가 완료되었습니다.");
+        break;
+      default:
+        throw new CustomException(ErrorType.INVALID_PRODUCT_TYPE);
     }
+
+    return paymentRepository.save(payment);
   }
+
   /**
    * 결제 승인 및 상태 업데이트
    *
@@ -102,17 +109,6 @@ public class PaymentService {
   @Transactional
   public Payment approvePayment(Long paymentId, PaymentType paymentType) {
 
-    switch (paymentType) {
-      case CREDIT_CARD:
-        break;
-      case DEBIT_CARD:
-        break;
-      case CASH:
-        break;
-      default:
-        throw new IllegalArgumentException("지원하지 않는 결제 수단입니다: " + paymentType);
-    }
-
     Payment payment = paymentRepository.findById(paymentId)
         .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
 
@@ -122,6 +118,34 @@ public class PaymentService {
 
     if (payment.getPaymentStatus() == PaymentStatus.CANCELED) {
       throw new CustomException(ErrorType.PAYMENT_ALREADY_CANCELED);
+    }
+
+    // ProductType에 따른 승인 후처리
+    switch (payment.getProductType()) {
+      case PT_SESSION:
+        // 트레이너의 PT 세션 횟수 증가
+        trainerRepository.findById(payment.getTrainer().getTrainerId())
+            .ifPresent(trainer -> {
+              trainer.increaseSessionCount(payment.getPtTimes().getTimes());
+              trainerRepository.save(trainer);
+            });
+        // PT 세션 예약 가능 상태 업데이트
+        updateSessionAvailability(payment.getTrainer(), payment.getPtTimes().getTimes());
+        sendNotification(payment.getUser(), "PT 세션 결제가 승인되었습니다.");
+        break;
+      case MEMBERSHIP:
+        // 유저의 멤버십 상태 활성화
+        userRepository.findById(payment.getUser().getUserId())
+            .ifPresent(user -> {
+              user.activateMembership(LocalDateTime.now().plusYears(1));
+              userRepository.save(user);
+            });
+        // 멤버십 혜택 적용 및 알림
+        applyMembershipBenefits(payment.getUser());
+        sendNotification(payment.getUser(), "멤버십이 활성화되었습니다.");
+        break;
+      default:
+        throw new CustomException(ErrorType.INVALID_PRODUCT_TYPE);
     }
 
     payment.setPaymentStatus(PaymentStatus.APPROVED);
@@ -155,15 +179,37 @@ public class PaymentService {
 
     if (refundSuccess) {
       payment.setPaymentStatus(PaymentStatus.CANCELED);
+
+      // ProductType에 따른 환불 후처리
+      switch (payment.getProductType()) {
+        case PT_SESSION:
+          // 트레이너의 PT 세션 횟수 감소
+          trainerRepository.findById(payment.getTrainer().getTrainerId())
+              .ifPresent(trainer -> {
+                trainer.decreaseSessionCount(payment.getPtTimes().getTimes());
+                trainerRepository.save(trainer);
+              });
+          sendNotification(payment.getUser(), "PT 세션 환불이 처리되었습니다.");
+          break;
+        case MEMBERSHIP:
+          // 유저의 멤버십 비활성화
+          userRepository.findById(payment.getUser().getUserId())
+              .ifPresent(user -> {
+                user.deactivateMembership();
+                userRepository.save(user);
+              });
+          // 모든 예약 취소 및 알림 발송
+          cancelMembershipReservations(payment.getUser());
+          sendNotification(payment.getUser(), "멤버십 환불이 처리되었습니다.");
+          break;
+        default:
+          throw new CustomException(ErrorType.INVALID_PRODUCT_TYPE);
+      }
+
       paymentRepository.save(payment);
     } else {
       throw new CustomException(ErrorType.REFUND_PROCESSING_ERROR);
     }
-  }
-
-  private boolean refundPaymentProvider(Payment payment) {
-    // 결제 제공자의 실제 환불 로직 구현
-    return true;
   }
 
   /**
@@ -295,7 +341,7 @@ public class PaymentService {
     Payment payment = paymentRepository.findById(paymentId)
         .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
 
-    if (payment.getPaymentStatus().equals("COMPLETED")) {
+    if (payment.getPaymentStatus() == PaymentStatus.COMPLETED) {
       throw new CustomException(ErrorType.PAYMENT_ALREADY_COMPLETED);
     }
 
@@ -325,5 +371,30 @@ public class PaymentService {
     return payments.stream()
         .map(PaymentResponse::fromEntity)
         .collect(Collectors.toList());
+  }
+
+  private boolean refundPaymentProvider(Payment payment) {
+    // 결제 제공자의 실제 환불 로직 구현
+    return true; // 예시로 환불이 성공했다고 가정
+  }
+
+  private void updateSessionAvailability(Trainer trainer, int additionalSessions) {
+    // 트레이너의 세션 예약 가능 상태를 업데이트하는 로직
+    logger.info("트레이너 {}의 세션 예약 가능 상태가 업데이트되었습니다. 추가 세션 수: {}", trainer.getTrainerId(), additionalSessions);
+  }
+
+  private void sendNotification(User user, String message) {
+    // 유저에게 알림을 보내는 로직 (예: 이메일, SMS 등)
+    logger.info("알림 전송: {} - {}", user.getUsername(), message);
+  }
+
+  private void applyMembershipBenefits(User user) {
+    // 유저의 멤버십 혜택을 적용하는 로직 (예: 할인율, 우선 예약 등)
+    logger.info("유저 {}에게 멤버십 혜택이 적용되었습니다.", user.getUsername());
+  }
+
+  private void cancelMembershipReservations(User user) {
+    // 유저의 멤버십과 관련된 모든 예약을 취소하는 로직
+    logger.info("유저 {}의 멤버십 예약이 취소되었습니다.", user.getUsername());
   }
 }
