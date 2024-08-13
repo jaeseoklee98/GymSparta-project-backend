@@ -58,6 +58,7 @@ public enum ErrorType {
   REVIEW_MODIFICATION_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "리뷰 수정 기간이 만료되었습니다."),
   NOT_FOUND_NOTIFICATION(HttpStatus.NOT_FOUND, "해당 전체 공지를 찾을 수 없습니다."),
   NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+  INVALID_PRODUCT_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 상품 유형이 제공되었습니다."),
   Notification_delivery_failed(HttpStatus.INTERNAL_SERVER_ERROR, "알림 전달 중 오류 발생");
 
   private final HttpStatus httpStatus;

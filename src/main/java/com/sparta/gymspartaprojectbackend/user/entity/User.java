@@ -75,6 +75,9 @@ public class User extends TimeStamped {
   private List<UserNotification> userNotificationList;
 
   @Column
+  private LocalDateTime membershipExpiryDate;
+
+  @Column
   private LocalDateTime deletedAt;
 
   @Column
@@ -132,5 +135,25 @@ public class User extends TimeStamped {
     this.email = userRequest.getEmail();
     this.phoneNumber = userRequest.getPhoneNumber();
     this.userName = userRequest.getUsername();
+  }
+
+  public Long getUserId() {
+    return this.id;
+  }
+
+  public void activateMembership(LocalDateTime expiryDate) {
+    this.membershipExpiryDate = expiryDate;
+  }
+
+  public void deactivateMembership() {
+    this.membershipExpiryDate = null;
+  }
+
+  public boolean isMembershipActive() {
+    return membershipExpiryDate != null && membershipExpiryDate.isAfter(LocalDateTime.now());
+  }
+
+  public String getUsername() {
+    return this.nickname;
   }
 }

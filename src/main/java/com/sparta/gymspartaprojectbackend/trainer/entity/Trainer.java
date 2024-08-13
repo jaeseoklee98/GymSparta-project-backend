@@ -71,6 +71,9 @@ public class Trainer extends TimeStamped {
   @JoinColumn(name = "store_id", nullable = false)
   private Store store;
 
+  @Column
+  private int availableSessionCount;
+
 
   public Trainer() {
   }
@@ -154,5 +157,21 @@ public class Trainer extends TimeStamped {
    */
   public void updatePassword (String newPassword) {
     this.password = newPassword;
+  }
+
+  public Long getTrainerId() {
+    return this.id;
+  }
+
+  public void increaseSessionCount(int sessionCount) {
+    this.availableSessionCount += sessionCount;
+  }
+
+  public void decreaseSessionCount(int sessionCount) {
+    if (this.availableSessionCount >= sessionCount) {
+      this.availableSessionCount -= sessionCount;
+    } else {
+      throw new IllegalStateException("세션 수가 부족합니다.");
+    }
   }
 }

@@ -3,6 +3,7 @@ package com.sparta.gymspartaprojectbackend.payment.entity;
 import com.sparta.gymspartaprojectbackend.common.TimeStamped;
 import com.sparta.gymspartaprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.gymspartaprojectbackend.payment.enums.PaymentType;
+import com.sparta.gymspartaprojectbackend.payment.enums.ProductType;
 import com.sparta.gymspartaprojectbackend.payment.enums.PtTimes;
 import com.sparta.gymspartaprojectbackend.product.entity.Product;
 import com.sparta.gymspartaprojectbackend.store.entity.Store;
@@ -64,17 +65,22 @@ public class Payment extends TimeStamped {
   @Column
   private boolean isMembership;
 
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private ProductType productType;
+
   public Payment() {
   }
 
   // 기존 생성자: PT 세션, 회원권 결제용 (Product 포함)
-  public Payment(Trainer trainer, User user, Store store, Product product, PtTimes ptTimes, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
+  public Payment(Trainer trainer, User user, Store store, Product product, PtTimes ptTimes, PaymentType paymentType, ProductType productType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
     this.trainer = trainer;
     this.user = user;
     this.store = store;
     this.product = product;
     this.ptTimes = ptTimes;
     this.paymentType = paymentType;
+    this.productType = productType;
     this.amount = amount;
     this.paymentStatus = paymentStatus;
     this.paymentDate = paymentDate;
@@ -83,13 +89,14 @@ public class Payment extends TimeStamped {
   }
 
   // 새로운 생성자: PT 세션, 회원권 결제용 (Product 없이)
-  public Payment(Trainer trainer, User user, Store store, PtTimes ptTimes, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
+  public Payment(Trainer trainer, User user, Store store, PtTimes ptTimes, ProductType productType, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
     this.trainer = trainer;
     this.user = user;
     this.store = store;
     this.product = null; // Product가 없는 경우 null로 설정
     this.ptTimes = ptTimes;
     this.paymentType = paymentType;
+    this.productType = productType;
     this.amount = amount;
     this.paymentStatus = paymentStatus;
     this.paymentDate = paymentDate;
