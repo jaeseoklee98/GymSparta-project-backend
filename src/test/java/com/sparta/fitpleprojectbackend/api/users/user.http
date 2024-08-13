@@ -22,6 +22,15 @@ Content-Type: application/json
   "password": "ael121667"
 }
 
+### 유저 로그인2
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "accountId": "sal123456",
+  "password": "password1"
+}
+
 ### 유저 프로필 변경
 PUT http://localhost:8080/api/profile/user
 Content-Type: application/json

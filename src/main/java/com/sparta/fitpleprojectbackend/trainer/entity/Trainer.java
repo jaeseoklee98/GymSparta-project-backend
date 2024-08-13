@@ -92,6 +92,24 @@ public class Trainer extends TimeStamped {
     this.deletedAt = deletedAt;
   }
 
+  public Trainer(String trainerName, Double ptPrice, String trainerInfo, String accountId,
+    String password, String nickname, String email, String trainerPicture, String trainerStatus,
+    String trainerPhoneNumber, Role role, LocalDateTime deletedAt, Store store) {
+    this.trainerName = trainerName;
+    this.ptPrice = ptPrice;
+    this.trainerInfo = trainerInfo;
+    this.accountId = accountId;
+    this.password = password;
+    this.nickname = nickname;
+    this.email = email;
+    this.trainerPicture = trainerPicture;
+    this.trainerStatus = trainerStatus;
+    this.trainerPhoneNumber = trainerPhoneNumber;
+    this.role = role;
+    this.deletedAt = deletedAt;
+    this.store = store;
+  }
+
   @Override
   public String toString() {
     return "Trainer{" +

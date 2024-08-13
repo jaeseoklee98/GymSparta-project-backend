@@ -13,8 +13,6 @@ import com.sparta.fitpleprojectbackend.notification.repository.UserAllNotificati
 import com.sparta.fitpleprojectbackend.notification.repository.UserNotificationRepository;
 import com.sparta.fitpleprojectbackend.owner.entity.Owner;
 import com.sparta.fitpleprojectbackend.payment.repository.PaymentRepository;
-import com.sparta.fitpleprojectbackend.userpt.entity.UserPt;
-import com.sparta.fitpleprojectbackend.userpt.repository.UserPtRepository;
 import com.sparta.fitpleprojectbackend.security.UserDetailsImpl;
 import com.sparta.fitpleprojectbackend.store.entity.Store;
 import com.sparta.fitpleprojectbackend.store.repository.StoreRepository;
@@ -44,7 +42,6 @@ public class NotificationService {
   private final StoreRepository storeRepository;
   private final PaymentRepository paymentRepository;
   private final UserAllNotificationRepository userAllNotificationRepository;
-  private final UserPtRepository userPtRepository;
   private final UserNotificationRepository userNotificationRepository;
   private final UserRepository userRepository;
 
@@ -134,33 +131,33 @@ public class NotificationService {
 //  @Scheduled(cron = "0 0 9 * * ?")
 //  public void
 
-  /**
-   * 매일 아침 9시 만료 임박 PT권 조회
-   *
-   */
-  @Scheduled(cron = "0 0 9 * * ?")
-  public void sendPtNotification() {
-    LocalDateTime today = LocalDateTime.now();
-    LocalDateTime twoDaysLater = today.plusDays(2);
-
-    List<UserPt> ptList = userPtRepository.findPtExpiringSoon(today, twoDaysLater);
-
-    for (UserPt userPt : ptList) {
-      sendPtExpiredNotification(userPt);
-    }
-  }
-
-  /**
-   * 매일 아침 9시 만료 임박 PT권 알림 보내기
-   *
-   */
-  private void sendPtExpiredNotification(UserPt userPt) {
-    String message = userPt.getTrainer().getTrainerName() + " 선생님의 pt 권이 2일 후 만료됩니다.";
-    User user = userPt.getUser();
-    UserNotification notification = new UserNotification(message, user);
-    userNotificationRepository.save(notification);
-    sendRealTimeUserPtNotification(notification);
-  }
+//  /**
+//   * 매일 아침 9시 만료 임박 PT권 조회
+//   *
+//   */
+//  @Scheduled(cron = "0 0 9 * * ?")
+//  public void sendPtNotification() {
+//    LocalDateTime today = LocalDateTime.now();
+//    LocalDateTime twoDaysLater = today.plusDays(2);
+//
+//    List<UserPt> ptList = userPtRepository.findPtExpiringSoon(today, twoDaysLater);
+//
+//    for (UserPt userPt : ptList) {
+//      sendPtExpiredNotification(userPt);
+//    }
+//  }
+//
+//  /**
+//   * 매일 아침 9시 만료 임박 PT권 알림 보내기
+//   *
+//   */
+//  private void sendPtExpiredNotification(UserPt userPt) {
+//    String message = userPt.getTrainer().getTrainerName() + " 선생님의 pt 권이 2일 후 만료됩니다.";
+//    User user = userPt.getUser();
+//    UserNotification notification = new UserNotification(message, user);
+//    userNotificationRepository.save(notification);
+//    sendRealTimeUserPtNotification(notification);
+//  }
 
   /**
    * 매일 아침 9시 만료 임박 PT권 알림 보내기 (SSE)

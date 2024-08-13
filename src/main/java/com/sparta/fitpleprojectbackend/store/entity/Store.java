@@ -72,6 +72,18 @@ public class Store extends TimeStamped {
   @JoinColumn(name = "owner_id", nullable = false)
   private Owner owner;
 
+  public Store(String storeName, String address, String storeInfo, String storeHour, String storeTel,
+    String price, String image, Owner owner) {
+    this.storeName = storeName;
+    this.address = address;
+    this.storeInfo = storeInfo;
+    this.storeHour = storeHour;
+    this.storeTel = storeTel;
+    this.price = price;
+    this.image = image;
+    this.owner = owner;
+  }
+
   public Store(StoreRequest request, Owner owner) {
     this.owner = owner;
     this.storeName = request.getStoreName();
