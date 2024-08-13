@@ -1,6 +1,7 @@
 package com.sparta.fitpleprojectbackend.trainer.service;
 
 import com.sparta.fitpleprojectbackend.trainer.dto.TrainerGetResponse;
+import com.sparta.fitpleprojectbackend.trainer.entity.Trainer;
 import com.sparta.fitpleprojectbackend.trainer.repository.TrainerRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,13 @@ public class TrainerService {
     return trainerRepository.findAll().stream()
         .map(TrainerGetResponse::new)
         .toList();
+  }
+
+  public TrainerGetResponse getTrainer(Long trainerId) {
+    return new TrainerGetResponse(trainerRepository.findById(trainerId).orElseThrow());
+  }
+
+  public Trainer findTrainerById(Long trainerId) {
+    return trainerRepository.findById(trainerId).orElseThrow();
   }
 }

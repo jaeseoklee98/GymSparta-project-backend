@@ -120,7 +120,7 @@ public class StoreService {
     return new StoreResponse(store);
   }
 
-  private Store findStoreById(long id) {
+  public Store findStoreById(long id) {
     return storeRepository.findById(id)
         .orElseThrow(() -> new StoreException(ErrorType.NOT_FOUND_STORE));
   }

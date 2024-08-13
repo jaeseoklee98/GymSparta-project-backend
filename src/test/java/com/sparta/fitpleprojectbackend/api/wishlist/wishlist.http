@@ -1,0 +1,19 @@
+### 매장 찜 등록/취소
+POST http://localhost:8080/api/wishlist/store/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMzAxOTcxMSwiZXhwIjoxNzIzMDIxNTExfQ.vHX3iN_woQxS-A9O-3sx4iWynzIGALzmtyzKouIYmdc
+
+### 트레이너 찜 등록/취소
+POST http://localhost:8080/api/wishlist/trainer/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMzAxOTcxMSwiZXhwIjoxNzIzMDIxNTExfQ.vHX3iN_woQxS-A9O-3sx4iWynzIGALzmtyzKouIYmdc
+
+### 유저 찜 목록 조회
+GET http://localhost:8080/api/wishlist/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMzAxOTcxMSwiZXhwIjoxNzIzMDIxNTExfQ.vHX3iN_woQxS-A9O-3sx4iWynzIGALzmtyzKouIYmdc
+
+### 매장 찜 갯수 조회
+GET http://localhost:8080/api/wishlist/store/1/count
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMzAxOTcxMSwiZXhwIjoxNzIzMDIxNTExfQ.vHX3iN_woQxS-A9O-3sx4iWynzIGALzmtyzKouIYmdc
+
+### 트레이너 찜 갯수 조회
+GET http://localhost:8080/api/wishlist/trainer/1/count
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0YWNjb3VudCIsImlhdCI6MTcyMzAxOTcxMSwiZXhwIjoxNzIzMDIxNTExfQ.vHX3iN_woQxS-A9O-3sx4iWynzIGALzmtyzKouIYmdc

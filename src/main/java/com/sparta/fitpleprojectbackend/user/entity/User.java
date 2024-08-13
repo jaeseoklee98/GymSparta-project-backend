@@ -5,10 +5,12 @@ import com.sparta.fitpleprojectbackend.enums.Role;
 import com.sparta.fitpleprojectbackend.user.dto.UpdateUserProfileRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Entity
 public class User extends TimeStamped {
 
@@ -65,6 +67,9 @@ public class User extends TimeStamped {
   @Column(nullable = false)
   private Role role;
 
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  private Oauth2User oauth2User;
+
   @Column
   private LocalDateTime deletedAt;
 
@@ -120,5 +125,11 @@ public class User extends TimeStamped {
     this.mainAddress = userRequest.getMainAddress();
     this.detailedAddress = userRequest.getDetailedAddress();
     this.userPicture = userRequest.getUserPicture();
+  }
+
+  public User update(String name, String picture) {
+    this.userName = name;
+    this.userPicture = picture;
+    return this;
   }
 }
