@@ -22,47 +22,50 @@ public class User extends TimeStamped {
   @Column
   private Double balance; // 잔고 테스트용
 
+  @Getter
   @Column(nullable = false, length = 10)
-  private String userName; //x
+  private String userName;
 
   @Column(length = 13)
-  private String residentRegistrationNumber; //x
+  private String residentRegistrationNumber;
 
   @Column(length = 13)
-  private String foreignerRegistrationNumber; //x
+  private String foreignerRegistrationNumber;
 
   @Column(nullable = false)
-  private Boolean isForeigner = false; //x
+  private Boolean isForeigner = false;
 
+  @Getter
   @Column(nullable = false, length = 15, unique = true)
-  private String accountId; //x
+  private String accountId;
 
   @Column(nullable = false)
-  private String password; //0
+  private String password;
 
+  @Getter
   @Column(length = 10)
-  private String nickname = ""; //0
+  private String nickname = "";
 
   @Column(nullable = false, length = 255)
-  private String email; //x
+  private String email;
 
   @Column(length = 255)
-  private String userPicture = ""; //0
+  private String userPicture = "";
 
   @Column(nullable = false, length = 10)
   private String status = "ACTIVE";
 
   @Column(length = 10)
-  private String zipcode = ""; //0
+  private String zipcode = "";
 
   @Column(length = 255)
-  private String mainAddress = ""; //0
+  private String mainAddress = "";
 
   @Column(length = 255)
-  private String detailedAddress = ""; //0
+  private String detailedAddress = "";
 
   @Column(length = 15)
-  private String phoneNumber = ""; //x
+  private String phoneNumber = "";
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -82,6 +85,7 @@ public class User extends TimeStamped {
 
   @Column
   private LocalDateTime scheduledDeletionDate;
+
 
   public User() {
   }
@@ -137,10 +141,6 @@ public class User extends TimeStamped {
     this.userName = userRequest.getUsername();
   }
 
-  public Long getUserId() {
-    return this.id;
-  }
-
   public void activateMembership(LocalDateTime expiryDate) {
     this.membershipExpiryDate = expiryDate;
   }
@@ -151,9 +151,5 @@ public class User extends TimeStamped {
 
   public boolean isMembershipActive() {
     return membershipExpiryDate != null && membershipExpiryDate.isAfter(LocalDateTime.now());
-  }
-
-  public String getUsername() {
-    return this.nickname;
   }
 }
