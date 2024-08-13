@@ -2,6 +2,7 @@ package com.sparta.gymspartaprojectbackend.payment.service;
 
 import com.sparta.gymspartaprojectbackend.enums.ErrorType;
 import com.sparta.gymspartaprojectbackend.exception.CustomException;
+import com.sparta.gymspartaprojectbackend.notification.service.NotificationService;
 import com.sparta.gymspartaprojectbackend.payment.dto.PaymentRequest;
 import com.sparta.gymspartaprojectbackend.payment.dto.PaymentResponse;
 import com.sparta.gymspartaprojectbackend.payment.dto.PaymentUpdateRequest;
@@ -31,11 +32,14 @@ public class PaymentService {
   private final PaymentRepository paymentRepository;
   private final TrainerRepository trainerRepository;
   private final UserRepository userRepository;
+  private final NotificationService notificationService;
 
-  public PaymentService(PaymentRepository paymentRepository, TrainerRepository trainerRepository, UserRepository userRepository) {
+  public PaymentService(PaymentRepository paymentRepository, TrainerRepository trainerRepository, UserRepository userRepository,
+    NotificationService notificationService) {
     this.paymentRepository = paymentRepository;
     this.trainerRepository = trainerRepository;
     this.userRepository = userRepository;
+    this.notificationService = notificationService;
   }
 
   /**
@@ -347,6 +351,7 @@ public class PaymentService {
 
     // 결제 상태를 완료로 업데이트
     payment.setPaymentStatus(PaymentStatus.COMPLETED);
+    notificationService.sendPaymentNotification(payment);
     return paymentRepository.save(payment);
   }
 

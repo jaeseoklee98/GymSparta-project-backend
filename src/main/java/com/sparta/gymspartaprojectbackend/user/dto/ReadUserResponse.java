@@ -26,7 +26,7 @@ public class ReadUserResponse {
   private String phoneNumber;
 
   public ReadUserResponse(User user) {
-    this.username = user.getUserName();
+    this.username = user.getNickname();
     this.balance = user.getBalance();
     this.accountId = user.getAccountId();
     this.nickname = user.getNickname();

@@ -112,4 +112,9 @@ public class Payment extends TimeStamped {
     this.paymentStatus = PaymentStatus.PENDING; // 기본값 설정
     this.paymentDate = LocalDateTime.now(); // 기본값 설정
   }
+
+  public Payment(Trainer trainer1, User user1, Product product1, Store store1, PtTimes ptTimes, PaymentType paymentType, double v, PaymentStatus paymentStatus, LocalDateTime now,
+    LocalDateTime paymentDate, boolean b, ProductType productType) {
+    super();
+  }
 }

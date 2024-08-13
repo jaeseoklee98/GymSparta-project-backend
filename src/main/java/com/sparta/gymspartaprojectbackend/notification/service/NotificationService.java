@@ -5,6 +5,8 @@ import com.sparta.gymspartaprojectbackend.notification.dto.NotificationDetailRes
 import com.sparta.gymspartaprojectbackend.notification.dto.NotificationSimpleResponse;
 import com.sparta.gymspartaprojectbackend.notification.dto.createAllNotificationDto;
 import com.sparta.gymspartaprojectbackend.notification.entity.AllNotification;
+import com.sparta.gymspartaprojectbackend.notification.entity.PaymentOwnerNotification;
+import com.sparta.gymspartaprojectbackend.notification.entity.PaymentUserNotification;
 import com.sparta.gymspartaprojectbackend.notification.entity.UserAllNotification;
 import com.sparta.gymspartaprojectbackend.notification.entity.UserNotification;
 import com.sparta.gymspartaprojectbackend.notification.exception.NotificationException;
@@ -12,6 +14,7 @@ import com.sparta.gymspartaprojectbackend.notification.repository.AllNotificatio
 import com.sparta.gymspartaprojectbackend.notification.repository.UserAllNotificationRepository;
 import com.sparta.gymspartaprojectbackend.notification.repository.UserNotificationRepository;
 import com.sparta.gymspartaprojectbackend.owner.entity.Owner;
+import com.sparta.gymspartaprojectbackend.payment.entity.Payment;
 import com.sparta.gymspartaprojectbackend.payment.repository.PaymentRepository;
 import com.sparta.gymspartaprojectbackend.security.UserDetailsImpl;
 import com.sparta.gymspartaprojectbackend.store.entity.Store;
@@ -19,6 +22,7 @@ import com.sparta.gymspartaprojectbackend.store.repository.StoreRepository;
 import com.sparta.gymspartaprojectbackend.user.entity.User;
 import com.sparta.gymspartaprojectbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -35,6 +40,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationService {
 
   private final Map<Long, SseEmitter> userEmitters = new ConcurrentHashMap<>();
+  private final Map<Long, SseEmitter> ownerEmitters = new ConcurrentHashMap<>();
   private final ExecutorService executor = Executors.newSingleThreadExecutor(); // 단일 스레드를 사용하여 작업하기 때문에 알림 전송을 다른 작업과 병행해서 실행 가능
   private final AllNotificationRepository allnotificationRepository;
   private final StoreRepository storeRepository;
@@ -73,18 +79,35 @@ public class NotificationService {
   }
 
   /**
-   * 실시간 공지 알림
+   * 실시간 유저 알림 구독
    *
    * @param userId 로그인 한 유저의 ID
    * @return 구독권
    */
-  public SseEmitter createEmitter(Long userId) {
+  public SseEmitter createUserEmitter(Long userId) {
     SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); // Sse 구독 시간에 대해서 관리 사실상 무한
     userEmitters.put(userId, emitter);
 
     emitter.onCompletion(() -> userEmitters.remove(userId)); // 클라이언트가 연결 정상적으로 완료했을 떄 호출되는 콜백
     emitter.onTimeout(() -> userEmitters.remove(userId));
     emitter.onError((e) -> userEmitters.remove(userId));
+
+    return emitter;
+  }
+
+  /**
+   * 실시간 유저 알림 구독
+   *
+   * @param ownerId 로그인 한 유저의 ID
+   * @return 구독권
+   */
+  public SseEmitter createOwnerEmitter(Long ownerId) {
+    SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); // Sse 구독 시간에 대해서 관리 사실상 무한
+    ownerEmitters.put(ownerId, emitter);
+
+    emitter.onCompletion(() -> userEmitters.remove(ownerId)); // 클라이언트가 연결 정상적으로 완료했을 떄 호출되는 콜백
+    emitter.onTimeout(() -> userEmitters.remove(ownerId));
+    emitter.onError((e) -> userEmitters.remove(ownerId));
 
     return emitter;
   }
@@ -121,48 +144,116 @@ public class NotificationService {
     }
   }
 
-//  /**
-//   * 매일 아침 9시 만료 임박 회원권 조회, 알림 보내기
-//   *
-//   * @param
-//   */
-//  @Scheduled(cron = "0 0 9 * * ?")
-//  public void
+  /**
+   * 매일 아침 9시 만료 임박 회원권 조회
+   *
+   */
+  @Scheduled(cron = "0 0 9 * * ?")
+  public void getMembershipExpire() {
+    LocalDateTime today = LocalDateTime.now();
+    LocalDateTime twoDaysLater = today.plusDays(2);
 
-//  /**
-//   * 매일 아침 9시 만료 임박 PT권 조회
-//   *
-//   */
-//  @Scheduled(cron = "0 0 9 * * ?")
-//  public void sendPtNotification() {
-//    LocalDateTime today = LocalDateTime.now();
-//    LocalDateTime twoDaysLater = today.plusDays(2);
-//
-//    List<UserPt> ptList = userPtRepository.findPtExpiringSoon(today, twoDaysLater);
-//
-//    for (UserPt userPt : ptList) {
-//      sendPtExpiredNotification(userPt);
-//    }
-//  }
-//
-//  /**
-//   * 매일 아침 9시 만료 임박 PT권 알림 보내기
-//   *
-//   */
-//  private void sendPtExpiredNotification(UserPt userPt) {
-//    String message = userPt.getTrainer().getTrainerName() + " 선생님의 pt 권이 2일 후 만료됩니다.";
-//    User user = userPt.getUser();
-//    UserNotification notification = new UserNotification(message, user);
-//    userNotificationRepository.save(notification);
-//    sendRealTimeUserPtNotification(notification);
-//  }
+    List<User> ExpireMembershipList = paymentRepository.findMembershipExpiringSoon(today, twoDaysLater);
+
+    for (User user : ExpireMembershipList) {
+      sendMembershipExpiredNotification(user);
+    }
+  }
+
+  /**
+   * 매일 아침 9시 만료 임박 PT권 조회
+   *
+   */
+  @Scheduled(cron = "0 0 9 * * ?")
+  public void getPtExpire() {
+    LocalDateTime today = LocalDateTime.now();
+    LocalDateTime twoDaysLater = today.plusDays(2);
+
+    // 만료 pt에 해당되는 '유저' 를 보내면 됨 그럼 pt 인지 확인하고 그게 저 위의 기간에 들어가는지를 결제에서 판단 하면 됨
+    List<User> ExpirePtList = paymentRepository.findPtExpiringSoon(today, twoDaysLater);
+
+    for (User user : ExpirePtList) {
+      sendPtExpiredNotification(user);
+    }
+  }
+
+  /**
+   * 매일 아침 9시 만료 임박 PT권 알림 보내기
+   *
+   */
+  private void sendPtExpiredNotification(User user) {
+    String message = "보유중인 pt 권이 곧 만료됩니다.";
+    UserNotification notification = new UserNotification(message, user);
+    userNotificationRepository.save(notification);
+    sendRealTimeUserNotification(notification);
+  }
+
+  /**
+   * 매일 아침 9시 만료 임박 회원권 알림 보내기
+   *
+   */
+  private void sendMembershipExpiredNotification(User user) {
+    String message = "보유중인 회원권이 만료됩니다.";
+    UserNotification notification = new UserNotification(message, user);
+    userNotificationRepository.save(notification);
+    sendRealTimeUserNotification(notification);
+  }
 
   /**
    * 매일 아침 9시 만료 임박 PT권 알림 보내기 (SSE)
    *
    */
-  public void sendRealTimeUserPtNotification(UserNotification notification) {
+  public void sendRealTimeUserNotification(UserNotification notification) {
     SseEmitter emitter = userEmitters.get(notification.getUser().getId());
+    if (emitter != null) {
+      executor.execute(() -> {
+        try {
+          emitter.send(SseEmitter.event().name("notification").data(notification.getMessage()));
+        } catch (Exception e) {
+          throw new NotificationException(ErrorType.Notification_delivery_failed);
+        }
+      });
+    }
+  }
+
+
+  /**
+   * 결제 완료 알림 보내기
+   *
+   */
+  public void sendPaymentNotification(Payment payment) {
+    String title = "결제 알림";
+    String message = "상품 결제가 완료 되었습니다.";
+    PaymentUserNotification userNotification = new PaymentUserNotification(title, message, payment);
+    PaymentOwnerNotification ownerNotification = new PaymentOwnerNotification(title, message, payment);
+
+    sendRealTimePaymentUserNotification(userNotification);
+    sendRealTimePaymentOwnerNotification(ownerNotification);
+  }
+
+  /**
+   * 결제 유저 알림 보내기 (SSE)
+   *
+   */
+  public void sendRealTimePaymentUserNotification(PaymentUserNotification notification) {
+    SseEmitter emitter = userEmitters.get(notification.getUser().getId());
+    if (emitter != null) {
+      executor.execute(() -> {
+        try {
+          emitter.send(SseEmitter.event().name("notification").data(notification.getMessage()));
+        } catch (Exception e) {
+          throw new NotificationException(ErrorType.Notification_delivery_failed);
+        }
+      });
+    }
+  }
+
+  /**
+   * 결제 점주 알림 보내기 (SSE)
+   *
+   */
+  public void sendRealTimePaymentOwnerNotification(PaymentOwnerNotification notification) {
+    SseEmitter emitter = ownerEmitters.get(notification.getOwner().getId());
     if (emitter != null) {
       executor.execute(() -> {
         try {

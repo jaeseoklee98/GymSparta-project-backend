@@ -2,6 +2,7 @@ package com.sparta.gymspartaprojectbackend.user.entity;
 
 import com.sparta.gymspartaprojectbackend.common.TimeStamped;
 import com.sparta.gymspartaprojectbackend.enums.Role;
+import com.sparta.gymspartaprojectbackend.notification.entity.PaymentUserNotification;
 import com.sparta.gymspartaprojectbackend.notification.entity.UserAllNotification;
 import com.sparta.gymspartaprojectbackend.notification.entity.UserNotification;
 import com.sparta.gymspartaprojectbackend.user.dto.UpdateUserProfileRequest;
@@ -73,6 +74,9 @@ public class User extends TimeStamped {
 
   @OneToMany(mappedBy = "user")
   private List<UserNotification> userNotificationList;
+
+  @OneToMany(mappedBy = "user")
+  private List<PaymentUserNotification> paymentUserNotificationList;
 
   @Column
   private LocalDateTime membershipExpiryDate;

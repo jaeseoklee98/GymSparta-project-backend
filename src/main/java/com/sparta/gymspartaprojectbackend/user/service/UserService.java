@@ -61,7 +61,7 @@ public class UserService {
     if (deletedUserByUsername.isPresent()) {
       User user = deletedUserByUsername.get();
       User updatedUser = new User(
-          user.getUserName(),
+          user.getUsername(),
           user.getBalance(),
           user.getResidentRegistrationNumber(),
           user.getForeignerRegistrationNumber(),
@@ -118,7 +118,7 @@ public class UserService {
     User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
 
     User updatedUser = new User(
-        user.getUserName(),
+        user.getNickname(),
         user.getBalance(),
         user.getResidentRegistrationNumber(),
         user.getForeignerRegistrationNumber(),
