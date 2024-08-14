@@ -135,7 +135,7 @@ public class PaymentService {
         break;
       case MEMBERSHIP:
         // 유저의 멤버십 상태 활성화
-        userRepository.findById(payment.getUser().getUserId())
+        userRepository.findById(payment.getUser().getId())
             .ifPresent(user -> {
               user.activateMembership(LocalDateTime.now().plusYears(1));
               userRepository.save(user);
@@ -193,7 +193,7 @@ public class PaymentService {
           break;
         case MEMBERSHIP:
           // 유저의 멤버십 비활성화
-          userRepository.findById(payment.getUser().getUserId())
+          userRepository.findById(payment.getUser().getId())
               .ifPresent(user -> {
                 user.deactivateMembership();
                 userRepository.save(user);
@@ -385,16 +385,16 @@ public class PaymentService {
 
   private void sendNotification(User user, String message) {
     // 유저에게 알림을 보내는 로직 (예: 이메일, SMS 등)
-    logger.info("알림 전송: {} - {}", user.getUsername(), message);
+    logger.info("알림 전송: {} - {}", user.getUserName(), message);
   }
 
   private void applyMembershipBenefits(User user) {
     // 유저의 멤버십 혜택을 적용하는 로직 (예: 할인율, 우선 예약 등)
-    logger.info("유저 {}에게 멤버십 혜택이 적용되었습니다.", user.getUsername());
+    logger.info("유저 {}에게 멤버십 혜택이 적용되었습니다.", user.getUserName());
   }
 
   private void cancelMembershipReservations(User user) {
     // 유저의 멤버십과 관련된 모든 예약을 취소하는 로직
-    logger.info("유저 {}의 멤버십 예약이 취소되었습니다.", user.getUsername());
+    logger.info("유저 {}의 멤버십 예약이 취소되었습니다.", user.getUserName());
   }
 }
