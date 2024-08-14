@@ -19,16 +19,17 @@ public class UserNotification {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String message;
+  private String title;
 
-  // 결제와 연결 필요
+  private String message;
 
   // 유저와 연결 필요
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
 
-  public UserNotification(String message, User user) {
+  public UserNotification(String title, String message, User user) {
+    this.title = title;
     this.message = message;
     this.user = user;
   }

@@ -3,6 +3,10 @@ package com.sparta.gymspartaprojectbackend.notification.service;
 import com.sparta.gymspartaprojectbackend.enums.ErrorType;
 import com.sparta.gymspartaprojectbackend.notification.dto.NotificationDetailResponse;
 import com.sparta.gymspartaprojectbackend.notification.dto.NotificationSimpleResponse;
+import com.sparta.gymspartaprojectbackend.notification.dto.OwnerNotificationResponse;
+import com.sparta.gymspartaprojectbackend.notification.dto.UserAllNotificationResponse;
+import com.sparta.gymspartaprojectbackend.notification.dto.UserExpireNotificationResponse;
+import com.sparta.gymspartaprojectbackend.notification.dto.UserPaymentNotificationResponse;
 import com.sparta.gymspartaprojectbackend.notification.dto.createAllNotificationDto;
 import com.sparta.gymspartaprojectbackend.notification.entity.AllNotification;
 import com.sparta.gymspartaprojectbackend.notification.entity.PaymentOwnerNotification;
@@ -11,6 +15,8 @@ import com.sparta.gymspartaprojectbackend.notification.entity.UserAllNotificatio
 import com.sparta.gymspartaprojectbackend.notification.entity.UserNotification;
 import com.sparta.gymspartaprojectbackend.notification.exception.NotificationException;
 import com.sparta.gymspartaprojectbackend.notification.repository.AllNotificationRepository;
+import com.sparta.gymspartaprojectbackend.notification.repository.PaymentOwnerNotificationRepository;
+import com.sparta.gymspartaprojectbackend.notification.repository.PaymentUserNotificationRepository;
 import com.sparta.gymspartaprojectbackend.notification.repository.UserAllNotificationRepository;
 import com.sparta.gymspartaprojectbackend.notification.repository.UserNotificationRepository;
 import com.sparta.gymspartaprojectbackend.owner.entity.Owner;
@@ -48,6 +54,8 @@ public class NotificationService {
   private final UserAllNotificationRepository userAllNotificationRepository;
   private final UserNotificationRepository userNotificationRepository;
   private final UserRepository userRepository;
+  private final PaymentOwnerNotificationRepository paymentOwnerNotificationRepository;
+  private final PaymentUserNotificationRepository paymentUserNotificationRepository;
 
   /**
    * 점주 전체 공지 작성
@@ -182,33 +190,34 @@ public class NotificationService {
    *
    */
   private void sendPtExpiredNotification(User user) {
+    String title = user.getUserName()+"님의 pt권 만료";
     String message = "보유중인 pt 권이 곧 만료됩니다.";
-    UserNotification notification = new UserNotification(message, user);
+    UserNotification notification = new UserNotification(title, message, user);
     userNotificationRepository.save(notification);
     sendRealTimeUserNotification(notification);
   }
 
   /**
    * 매일 아침 9시 만료 임박 회원권 알림 보내기
-   *
    */
   private void sendMembershipExpiredNotification(User user) {
-    String message = "보유중인 회원권이 만료됩니다.";
-    UserNotification notification = new UserNotification(message, user);
+    String title = user.getUserName()+"님의 회원권 만료";
+    String message = "보유중인 회원권이 곧 만료됩니다.";
+    UserNotification notification = new UserNotification(title, message, user);
     userNotificationRepository.save(notification);
     sendRealTimeUserNotification(notification);
   }
 
   /**
-   * 매일 아침 9시 만료 임박 PT권 알림 보내기 (SSE)
-   *
+   * 매일 아침 9시 만료 임박 PT권, 회원권 알림 보내기 (SSE)
+   * 
    */
   public void sendRealTimeUserNotification(UserNotification notification) {
     SseEmitter emitter = userEmitters.get(notification.getUser().getId());
     if (emitter != null) {
       executor.execute(() -> {
         try {
-          emitter.send(SseEmitter.event().name("notification").data(notification.getMessage()));
+          emitter.send(SseEmitter.event().name(notification.getTitle()).data(notification.getMessage()));
         } catch (Exception e) {
           throw new NotificationException(ErrorType.Notification_delivery_failed);
         }
@@ -222,8 +231,8 @@ public class NotificationService {
    *
    */
   public void sendPaymentNotification(Payment payment) {
-    String title = "결제 알림";
-    String message = "상품 결제가 완료 되었습니다.";
+    String title = payment.getStore().getStoreName() + "매장의 결제 알림";
+    String message = payment.getStore().getStoreName() + "매장의 상품 결제가 완료 되었습니다.";
     PaymentUserNotification userNotification = new PaymentUserNotification(title, message, payment);
     PaymentOwnerNotification ownerNotification = new PaymentOwnerNotification(title, message, payment);
 
@@ -240,7 +249,7 @@ public class NotificationService {
     if (emitter != null) {
       executor.execute(() -> {
         try {
-          emitter.send(SseEmitter.event().name("notification").data(notification.getMessage()));
+          emitter.send(SseEmitter.event().name(notification.getTitle()).data(notification.getMessage()));
         } catch (Exception e) {
           throw new NotificationException(ErrorType.Notification_delivery_failed);
         }
@@ -288,5 +297,66 @@ public class NotificationService {
   public NotificationDetailResponse readNotificationDetail(Long allNotificationId) {
     AllNotification allNotification = allnotificationRepository.findById(allNotificationId).orElseThrow(() -> new NotificationException(ErrorType.NOT_FOUND_NOTIFICATION));
     return new NotificationDetailResponse(allNotification);
+  }
+
+  /**
+   * 점장 알림 조회
+   * @param userDetails 로그인한 점장
+   * @return 점장 알림
+   */
+  public List<OwnerNotificationResponse> readOwnerNotification(UserDetailsImpl userDetails) {
+    List<PaymentOwnerNotification> ownerNotificationList = paymentOwnerNotificationRepository.findByOwnerId(userDetails.getOwner().getId());
+
+    List<OwnerNotificationResponse> responseList = ownerNotificationList.stream()
+      .map(notification -> new OwnerNotificationResponse(notification.getTitle(), notification.getMessage()))
+      .toList();
+
+    return responseList;
+  }
+
+  /**
+   * 유저 알림 조회 - 결제
+   * @param userDetails 로그인한 유저
+   * @return 유저 알림
+   */
+  public List<UserPaymentNotificationResponse> readUserPaymentNotification(UserDetailsImpl userDetails) {
+    List<PaymentUserNotification> userNotificationList = paymentUserNotificationRepository.findByUserId(userDetails.getUser().getId());
+
+    List<UserPaymentNotificationResponse> responseList = userNotificationList.stream()
+      .map(notification -> new UserPaymentNotificationResponse(notification.getTitle(), notification.getMessage()))
+      .toList();
+
+    return responseList;
+  }
+
+  /**
+   * 유저 알림 조회 - 만료
+   * @param userDetails 로그인한 유저
+   * @return 유저 알림
+   */
+  public List<UserExpireNotificationResponse> readUserExpireNotification(UserDetailsImpl userDetails) {
+    List<UserNotification> userNotificationList = userNotificationRepository.findByUserId(userDetails.getUser().getId());
+
+    List<UserExpireNotificationResponse> responseList = userNotificationList.stream()
+      .map(notification -> new UserExpireNotificationResponse(notification.getTitle(), notification.getMessage()))
+      .toList();
+
+    return responseList;
+  }
+  
+  /**
+   * 유저 알림 조회 - 공지
+   * @param userDetails 로그인한 유저
+   * @return 유저 알림
+   */
+  public List<UserAllNotificationResponse> readUserAllNotification(UserDetailsImpl userDetails) {
+    List<UserAllNotification> userAllNotificationList = userAllNotificationRepository.findByUserId(
+      userDetails.getUser().getId());
+
+    List<UserAllNotificationResponse> responseList = userAllNotificationList.stream()
+      .map(notification -> new UserAllNotificationResponse(notification.getMessage()))
+      .toList();
+
+    return responseList;
   }
 }
