@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://43.201.255.56:3306/fitple_project
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+#    url: jdbc:mysql://43.201.255.56:3306/fitple_project
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
     url: jdbc:mysql://localhost:3306/fitple_project
     username: root
     password: 1234
@@ -43,7 +43,7 @@ cloud:
 
 toss:
   payments:
-    secret-key: ${test_sk_GjLJoQ1aVZ9KQRgbxBkJ3w6KYe2R}
+    secret-key: test_sk_GjLJoQ1aVZ9KQRgbxBkJ3w6KYe2R
 
 kakao:
   pay:

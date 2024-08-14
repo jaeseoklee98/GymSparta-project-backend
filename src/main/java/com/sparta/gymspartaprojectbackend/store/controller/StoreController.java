@@ -6,6 +6,8 @@ import com.sparta.gymspartaprojectbackend.store.dto.StoreRequest;
 import com.sparta.gymspartaprojectbackend.store.dto.StoreResponse;
 import com.sparta.gymspartaprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.gymspartaprojectbackend.store.service.StoreService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -109,12 +112,44 @@ public class StoreController {
    */
   @GetMapping("/{storeId}")
   public ResponseEntity<CommonResponse<StoreResponse>> findStore(
-      @PathVariable Long storeId
+      @PathVariable Long storeId,
+      HttpServletResponse response,
+      @CookieValue(value = "recentStores", defaultValue = "") String recentStores
   ) {
+    // 매장 정보를 조회
     StoreResponse storeResponse = storeService.findById(storeId);
 
-    CommonResponse<StoreResponse> response = new CommonResponse<>(
+    // 최근 방문 매장 목록을 업데이트
+    String updatedRecentStores = storeService.updateRecentStoresCookie(recentStores, storeId);
+
+    // 로그 추가: 업데이트된 쿠키 값을 확인
+    System.out.println("Updated recentStores cookie value: " + updatedRecentStores);
+
+    // 업데이트된 쿠키를 클라이언트에 설정
+    System.out.println("Setting cookie with value: " + updatedRecentStores);
+    Cookie cookie = new Cookie("recentStores", updatedRecentStores);
+    cookie.setPath("/");
+    cookie.setHttpOnly(false); // 필요 시 HttpOnly를 false로 설정하여 JavaScript에서도 접근 가능하도록 변경
+    cookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 설정 (7일)
+    response.addCookie(cookie);
+
+    // 응답 생성
+    CommonResponse<StoreResponse> commonResponse = new CommonResponse<>(
         HttpStatus.OK.value(), "매장 상세 조회 완료", storeResponse);
+    return new ResponseEntity<>(commonResponse, HttpStatus.OK);
+  }
+
+
+  @GetMapping("/recent")
+  public ResponseEntity<CommonResponse<List<StoreSimpleResponse>>> getRecentStores(
+      @CookieValue(value = "recentStores", defaultValue = "") String recentStores
+  ) {
+    // 최근 방문한 매장 목록 조회
+    List<StoreSimpleResponse> recentStoreResponses = storeService.findStoresByIds(recentStores);
+
+    // 응답 생성
+    CommonResponse<List<StoreSimpleResponse>> response = new CommonResponse<>(
+        HttpStatus.OK.value(), "최근 방문한 매장 조회 완료", recentStoreResponses);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
