@@ -25,7 +25,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component // (이 부분만 주석)
 public class DataLoader implements CommandLineRunner {
 
   private final UserRepository userRepository;
@@ -336,7 +336,8 @@ public class DataLoader implements CommandLineRunner {
     System.out.println("상품 더미 데이터 삽입 완료!");
 
     // 더미 Payment 데이터 생성
-    Payment payment1 = new Payment(trainer1, user1, store1, product1, PtTimes.TEN_TIMES, PaymentType.CREDIT_CARD, ProductType.PT_SESSION, 1200.0, PaymentStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now().plusMonths(1), true);
+    Payment payment1 = new Payment(trainer1, user1,  store1, product1, PtTimes.TEN_TIMES, PaymentType.CREDIT_CARD,  ProductType.MEMBERSHIP,1200.0, PaymentStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now().plusMonths(1), true);
+
     paymentRepository.save(payment1);
 
     System.out.println("결제 더미 데이터 삽입 완료!");

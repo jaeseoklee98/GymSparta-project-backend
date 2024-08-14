@@ -40,13 +40,26 @@ public class NotificationController {
 
   /**
    * 유저에게 실시간 알림을 보내기 위한 구독
-   *
+   * 
+   * TODO: 로그인 시점에 구독하게 구독 시점 파악
    * @param userDetails 로그인 한 유저의 데이터
    * @return SseEmitter 실시간 알림 처리하는 구독권
    */
-  @GetMapping("/notifications/stream")
-  public SseEmitter streamNotifications(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-    return notificationService.createEmitter(userDetails.getUser().getId());
+  @GetMapping("/userNotifications/stream")
+  public SseEmitter streamOwnerUserNotifications(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return notificationService.createUserEmitter(userDetails.getUser().getId());
+  }
+
+  /**
+   * 점주에게 실시간 알림을 보내기 위한 구독
+   *
+   * TODO: 로그인 시점에 구독하게 구독 시점 파악
+   * @param userDetails 로그인 한 점주의 데이터
+   * @return SseEmitter 실시간 알림 처리하는 구독권
+   */
+  @GetMapping("/ownerNotifications/stream")
+  public SseEmitter streamOwnerNotifications(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return notificationService.createOwnerEmitter(userDetails.getOwner().getId());
   }
 
   /**
