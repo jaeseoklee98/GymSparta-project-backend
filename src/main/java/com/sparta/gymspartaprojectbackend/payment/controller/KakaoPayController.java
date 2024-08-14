@@ -1,6 +1,8 @@
 package com.sparta.gymspartaprojectbackend.payment.controller;
 
 import com.sparta.gymspartaprojectbackend.payment.service.KakaoPayService;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +20,10 @@ public class KakaoPayController {
   }
 
   @PostMapping("/ready")
-  public ResponseEntity<String> readyToKakaoPay() {
-    String response = kakaoPayService.kakaoPayReady();
+  public ResponseEntity<Map<String, String>> readyToKakaoPay() {
+    String redirectUrl = kakaoPayService.kakaoPayReady();
+    Map<String, String> response = new HashMap<>();
+    response.put("next_redirect_pc_url", redirectUrl);
     return ResponseEntity.ok(response);
   }
 

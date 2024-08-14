@@ -23,7 +23,7 @@ public class User extends TimeStamped {
   private Double balance; // 잔고 테스트용
 
   @Getter
-  @Column(nullable = false, length = 10)
+  @Column(nullable = false, length = 50)
   private String userName;
 
   @Column(length = 13)

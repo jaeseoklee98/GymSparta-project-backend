@@ -373,6 +373,15 @@ public class PaymentService {
         .collect(Collectors.toList());
   }
 
+  public Payment processPayment(PaymentRequest request) {
+    Payment payment = new Payment();
+    payment.setAmount(request.getAmount());
+    payment.setPaymentType(request.getPaymentType());  // 수정된 메서드 사용
+    payment.setPaymentStatus(PaymentStatus.APPROVED);
+    payment.setPaymentDate(LocalDateTime.now());
+    return payment;
+  }
+
   private boolean refundPaymentProvider(Payment payment) {
     // 결제 제공자의 실제 환불 로직 구현
     return true; // 예시로 환불이 성공했다고 가정

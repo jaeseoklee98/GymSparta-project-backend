@@ -44,8 +44,7 @@ public class CartService {
     Product product = productRepository.findById(productId)
         .orElseThrow(() -> new CustomException(ErrorType.PRODUCT_NOT_FOUND));
 
-    Cart cart = cartRepository.findByUser_Id(userId) // 메서드 이름을 업데이트된 대로 사용
-        .orElse(new Cart(user));
+    Cart cart = getOrCreateCart(userId);
 
     CartItem cartItem = new CartItem(product, quantity);
     cart.addItem(cartItem);
@@ -69,14 +68,12 @@ public class CartService {
 
   @Transactional
   public Payment checkout(Long userId, Long storeId) {
-    Cart cart = cartRepository.findByUser_Id(userId) // 메서드 이름을 업데이트된 대로 사용
-        .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
+    Cart cart = getOrCreateCart(userId);
 
     if (cart.getCartItems().isEmpty()) {
       throw new CustomException(ErrorType.CART_EMPTY);
     }
 
-    // Store 정보를 가져오기
     Store store = storeRepository.findById(storeId)
         .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_STORE));
 
@@ -84,11 +81,9 @@ public class CartService {
         .mapToDouble(item -> item.getProduct().getProductPrice() * item.getQuantity())
         .sum();
 
-    // store와 함께 Payment 생성
     Payment payment = new Payment(cart.getUser(), store, totalAmount);
     paymentRepository.save(payment);
 
-    // 결제 후 장바구니 비우기
     cart.getCartItems().clear();
     cartRepository.save(cart);
 
@@ -96,8 +91,20 @@ public class CartService {
   }
 
   public List<CartItem> getCartItems(Long userId) {
-    Cart cart = cartRepository.findByUser_Id(userId) // 메서드 이름을 업데이트된 대로 사용
-        .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
+    Cart cart = getOrCreateCart(userId);
+    if (cart.getCartItems().isEmpty()) {
+      throw new CustomException(ErrorType.CART_EMPTY);
+    }
     return cart.getCartItems();
+  }
+
+  public Cart getOrCreateCart(Long userId) {
+    return cartRepository.findByUser_Id(userId)
+        .orElseGet(() -> {
+          User user = userRepository.findById(userId)
+              .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+          Cart newCart = new Cart(user);
+          return cartRepository.save(newCart);
+        });
   }
 }

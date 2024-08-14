@@ -6,6 +6,7 @@ import com.sparta.gymspartaprojectbackend.owner.repository.OwnerRepository;
 import com.sparta.gymspartaprojectbackend.payment.entity.Payment;
 import com.sparta.gymspartaprojectbackend.payment.enums.PaymentStatus;
 import com.sparta.gymspartaprojectbackend.payment.enums.PaymentType;
+import com.sparta.gymspartaprojectbackend.payment.enums.ProductType;
 import com.sparta.gymspartaprojectbackend.payment.enums.PtTimes;
 import com.sparta.gymspartaprojectbackend.payment.repository.PaymentRepository;
 import com.sparta.gymspartaprojectbackend.product.entity.Product;
@@ -119,7 +120,7 @@ public class DataLoader implements CommandLineRunner {
     userRepository.save(user1);
     userRepository.save(user2);
     userRepository.save(user3);
-    
+
     System.out.println("유저 더미 데이터 삽입 완료!");
 
     // 더미 데이터 생성
@@ -194,7 +195,7 @@ public class DataLoader implements CommandLineRunner {
     ownerRepository.save(owner3);
 
     System.out.println("오너 더미 데이터 삽입 완료!");
-    
+
     // 매장 더미 데이터
     Store store1 = new Store(
       "아에리가게",
@@ -282,7 +283,7 @@ public class DataLoader implements CommandLineRunner {
       null,// 삭제일이 필요 없는 경우 null
       store3
     );
-    
+
     trainerRepository.save(trainer1);
     trainerRepository.save(trainer2);
     trainerRepository.save(trainer3);
@@ -328,15 +329,14 @@ public class DataLoader implements CommandLineRunner {
       LocalDateTime.now().plusDays(7),
       false
     );
-    
+
     productRepository.save(product1);
     productRepository.save(product2);
     productRepository.save(product3);
     System.out.println("상품 더미 데이터 삽입 완료!");
 
     // 더미 Payment 데이터 생성
-    Payment payment1 = new Payment(trainer1, user1, store1, product1, PtTimes.TEN_TIMES, PaymentType.CREDIT_CARD, 1200.0, PaymentStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now().plusMonths(1), true);
-
+    Payment payment1 = new Payment(trainer1, user1, store1, product1, PtTimes.TEN_TIMES, PaymentType.CREDIT_CARD, ProductType.PT_SESSION, 1200.0, PaymentStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now().plusMonths(1), true);
     paymentRepository.save(payment1);
 
     System.out.println("결제 더미 데이터 삽입 완료!");
@@ -352,7 +352,7 @@ public class DataLoader implements CommandLineRunner {
     Review review7 = new Review(user1, store1, trainer1, payment1, product1, 3, "Average servi3ce, but the trai5ner was good.", ReviewType.STORE);
     Review review8 = new Review(user1, store1, trainer1, payment1, product1, 3, "Aㅇverage service, but the train56er was good.", ReviewType.STORE);
     Review review9 = new Review(user1, store1, trainer1, payment1, product1, 3, "Avㅇerage ser45vice, but the trainer was good.", ReviewType.STORE);
-    
+
     reviewRepository.save(review1);
     reviewRepository.save(review2);
     reviewRepository.save(review3);

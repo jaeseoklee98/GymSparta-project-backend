@@ -20,6 +20,7 @@ public class PaymentRequest {
   @JsonFormat(shape = JsonFormat.Shape.STRING)
   private final PtTimes ptTimes;
 
+  @NotNull(message = "결제 수단은 필수 항목입니다.")
   @JsonFormat(shape = JsonFormat.Shape.STRING)
   private final PaymentType paymentType;
 
@@ -28,6 +29,7 @@ public class PaymentRequest {
 
   @NotNull(message = "상품 타입은 필수 항목입니다.")
   private ProductType productType;
+
 
   private final boolean isMembership;
 
