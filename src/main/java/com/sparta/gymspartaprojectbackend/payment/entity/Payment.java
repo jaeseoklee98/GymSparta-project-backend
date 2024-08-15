@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 public class Payment extends TimeStamped {
 
@@ -42,16 +43,13 @@ public class Payment extends TimeStamped {
   @Column
   private PtTimes ptTimes;
 
-  @Setter
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private PaymentType paymentType;
 
-  @Setter
   @Column(nullable = false)
   private double amount;
 
-  @Setter
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private PaymentStatus paymentStatus;
