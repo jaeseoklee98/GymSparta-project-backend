@@ -5,7 +5,7 @@ spring:
 #    password: ${DB_PASSWORD}
     url: jdbc:mysql://localhost:3306/fitple_project
     username: root
-    password: 1234
+    password: 12345678
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
