@@ -7,6 +7,7 @@ import com.sparta.gymspartaprojectbackend.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -55,6 +56,7 @@ public class SecurityConfig {
             .requestMatchers("/api/stores/**").permitAll()
             .requestMatchers("/api/stores/admin/**").hasAuthority("OWNER")
             .requestMatchers("/api/pt-payments/test/**").authenticated()
+            .requestMatchers(HttpMethod.GET,"/api/reviews/**").permitAll()
             .requestMatchers("/api/reviews/**").hasAnyRole("USER", "TRAINER", "OWNER")
             .requestMatchers("/api/reviews/manage/**").hasRole("OWNER")
             .requestMatchers("/api/payments/**").authenticated()
@@ -73,5 +75,19 @@ public class SecurityConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  // CORS 설정 추가
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedOrigins("http://localhost:7070")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
+            .allowCredentials(true);
+      }
+    };
   }
 }

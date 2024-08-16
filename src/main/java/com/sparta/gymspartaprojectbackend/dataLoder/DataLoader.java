@@ -332,7 +332,8 @@ public class DataLoader implements CommandLineRunner {
     productRepository.save(product3);
     System.out.println("상품 더미 데이터 삽입 완료!");
 
-    // 더미 Payment 데이터 생성
+
+    Payment payment1 = new Payment(trainer1, user1, store1, product1, PtTimes.TEN_TIMES, PaymentType.CREDIT_CARD, ProductType.PT_SESSION, 1200.0, PaymentStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now().plusMonths(1), true);
     Payment payment1 = new Payment(trainer1, user1,  store1, product1, PtTimes.TEN_TIMES, PaymentType.CREDIT_CARD,  ProductType.MEMBERSHIP,1200.0, PaymentStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now().plusMonths(1), true);
 
     paymentRepository.save(payment1);
@@ -340,16 +341,25 @@ public class DataLoader implements CommandLineRunner {
     System.out.println("결제 더미 데이터 삽입 완료!");
 
 
-    // 더미 리뷰 데이터 생성
-    Review review1 = new Review(user1, store1, null, payment1, null, 5, "Great expe23rience!", ReviewType.STORE);
-    Review review2 = new Review(user1, store1, null, payment1, null, 5, "Great exp1erience!", ReviewType.STORE);
-    Review review3 = new Review(user1, store1, null, payment1, null, 5, "Great exㄴperience!", ReviewType.STORE);
-    Review review4 = new Review(user1, null, trainer1, payment1, product1, 4, "Trainer was very professional.", ReviewType.TRAINER);
-    Review review5 = new Review(user1, null, trainer1, payment1, product1, 4, "Trainer wasㄴ very professional.", ReviewType.TRAINER);
-    Review review6 = new Review(user1, null, trainer1, payment1, product1, 4, "Trainer was very professional.", ReviewType.TRAINER);
-    Review review7 = new Review(user1, store1, trainer1, payment1, product1, 3, "Average servi3ce, but the trai5ner was good.", ReviewType.STORE);
-    Review review8 = new Review(user1, store1, trainer1, payment1, product1, 3, "Aㅇverage service, but the train56er was good.", ReviewType.STORE);
-    Review review9 = new Review(user1, store1, trainer1, payment1, product1, 3, "Avㅇerage ser45vice, but the trainer was good.", ReviewType.STORE);
+    Review review1 = new Review(user1, store1, null, payment1,  5, "Great expe23rience!", ReviewType.STORE);
+    Review review2 = new Review(user1, store1, null, payment1,  5, "Great exp1erience!", ReviewType.STORE);
+    Review review3 = new Review(user1, store1, null, payment1,  5, "Great exㄴperience!", ReviewType.STORE);
+    Review review4 = new Review(user1, null, trainer1, payment1,  4, "Trainer was very professional.", ReviewType.TRAINER);
+    Review review5 = new Review(user1, null, trainer1, payment1,  4, "Trainer wasㄴ very professional.", ReviewType.TRAINER);
+    Review review6 = new Review(user1, null, trainer1, payment1,  4, "Trainer was very professional.", ReviewType.TRAINER);
+    Review review7 = new Review(user1, store1, trainer1, payment1,  3, "Average servi3ce, but the trai5ner was good.", ReviewType.STORE);
+    Review review8 = new Review(user1, store1, trainer1, payment1, 3, "Aㅇverage service, but the train56er was good.", ReviewType.STORE);
+    Review review9 = new Review(user1, store1, trainer1, payment1, 3, "Avㅇerage ser45vice, but the trainer was good.", ReviewType.STORE);
+    
+    Review review1 = new Review(user1, store1, null, payment1, 5, "Great expe23rience!", ReviewType.STORE);
+    Review review2 = new Review(user1, store1, null, payment1, 5, "Great exp1erience!", ReviewType.STORE);
+    Review review3 = new Review(user1, store1, null, payment1, 5, "Great exㄴperience!", ReviewType.STORE);
+    Review review4 = new Review(user1, null, trainer1, payment1, 4, "Trainer was very professional.", ReviewType.TRAINER);
+    Review review5 = new Review(user1, null, trainer1, payment1, 4, "Trainer wasㄴ very professional.", ReviewType.TRAINER);
+    Review review6 = new Review(user1, null, trainer1, payment1, 4, "Trainer was very professional.", ReviewType.TRAINER);
+    Review review7 = new Review(user1, store1, trainer1, payment1, 3, "Average servi3ce, but the trai5ner was good.", ReviewType.STORE);
+    Review review8 = new Review(user1, store1, trainer1, payment1, 3, "Aㅇverage service, but the train56er was good.", ReviewType.STORE);
+    Review review9 = new Review(user1, store1, trainer1, payment1, 3, "Avㅇerage ser45vice, but the trainer was good.", ReviewType.STORE);
 
     reviewRepository.save(review1);
     reviewRepository.save(review2);

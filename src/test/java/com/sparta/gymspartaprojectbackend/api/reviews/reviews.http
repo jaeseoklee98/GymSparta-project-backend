@@ -1,5 +1,6 @@
 ### 리뷰 작성
 POST http://localhost:8080/api/reviews
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxcXExMTExMTEiLCJpYXQiOjE3MjM4MTA2MTksImV4cCI6MTcyMzgxMjQxOX0.anEUTm7Ay-bqrpXaHHknyqXI6cR4eXIj41lucKk4_9s
 Content-Type: application/json
 
 {
