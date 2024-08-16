@@ -13,5 +13,4 @@ public class PtTotalAmountRequest {
     this.selectedTimes = selectedTimes;
     this.trainerPrice = trainerPrice;
   }
-
 }

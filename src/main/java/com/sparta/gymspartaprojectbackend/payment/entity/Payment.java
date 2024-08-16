@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 public class Payment extends TimeStamped {
 
@@ -42,16 +43,13 @@ public class Payment extends TimeStamped {
   @Column
   private PtTimes ptTimes;
 
-  @Setter
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private PaymentType paymentType;
 
-  @Setter
   @Column(nullable = false)
   private double amount;
 
-  @Setter
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private PaymentStatus paymentStatus;
@@ -88,15 +86,15 @@ public class Payment extends TimeStamped {
     this.isMembership = isMembership;
   }
 
-  // 새로운 생성자: PT 세션, 회원권 결제용 (Product 없이)
-  public Payment(Trainer trainer, User user, Store store, PtTimes ptTimes, ProductType productType, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
+  // 새로운 생성자 추가
+  public Payment(Trainer trainer, User user, PtTimes ptTimes, ProductType productType,
+      PaymentType paymentType, double amount, PaymentStatus paymentStatus,
+      LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
     this.trainer = trainer;
     this.user = user;
-    this.store = store;
-    this.product = null; // Product가 없는 경우 null로 설정
     this.ptTimes = ptTimes;
-    this.paymentType = paymentType;
     this.productType = productType;
+    this.paymentType = paymentType;
     this.amount = amount;
     this.paymentStatus = paymentStatus;
     this.paymentDate = paymentDate;
@@ -111,5 +109,10 @@ public class Payment extends TimeStamped {
     this.amount = amount;
     this.paymentStatus = PaymentStatus.PENDING; // 기본값 설정
     this.paymentDate = LocalDateTime.now(); // 기본값 설정
+  }
+
+  public Payment(Trainer trainer1, User user1, Product product1, Store store1, PtTimes ptTimes, PaymentType paymentType, double v, PaymentStatus paymentStatus, LocalDateTime now,
+    LocalDateTime paymentDate, boolean b, ProductType productType) {
+    super();
   }
 }

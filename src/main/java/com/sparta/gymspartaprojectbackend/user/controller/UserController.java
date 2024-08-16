@@ -145,4 +145,26 @@ public class UserController {
       HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
     return ResponseEntity.ok(response);
   }
+
+  /**
+   * 현재 로그인된 사용자 정보 조회
+   *
+   * @param userDetails 유저 정보
+   * @return 상태코드, 응답 메시지, 사용자 정보
+   */
+  @GetMapping("/user/me")
+  public ResponseEntity<CommonResponse<ReadUserResponse>> getCurrentUser(
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    if (userDetails == null) {
+      CommonResponse<ReadUserResponse> response = new CommonResponse<>(
+          HttpStatus.UNAUTHORIZED.value(), "인증되지 않은 사용자입니다.", null);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
+    CommonResponse<ReadUserResponse> response = new CommonResponse<>(
+        HttpStatus.OK.value(), "사용자 정보 조회 성공", readUserResponse);
+    return ResponseEntity.ok(response);
+  }
 }

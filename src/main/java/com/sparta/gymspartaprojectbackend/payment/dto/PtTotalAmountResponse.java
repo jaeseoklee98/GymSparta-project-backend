@@ -16,5 +16,4 @@ public class PtTotalAmountResponse {
     this.times = times;
     this.amount = amount;
   }
-
 }

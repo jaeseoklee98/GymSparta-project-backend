@@ -5,9 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class ReadUserResponse {
-  private String username;
-
-  private double balance;
+  private String userName;
 
   private String accountId;
 

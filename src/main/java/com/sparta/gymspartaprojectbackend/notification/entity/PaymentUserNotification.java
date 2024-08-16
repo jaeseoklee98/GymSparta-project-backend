@@ -1,7 +1,6 @@
 package com.sparta.gymspartaprojectbackend.notification.entity;
 
 import com.sparta.gymspartaprojectbackend.common.TimeStamped;
-import com.sparta.gymspartaprojectbackend.owner.entity.Owner;
 import com.sparta.gymspartaprojectbackend.payment.entity.Payment;
 import com.sparta.gymspartaprojectbackend.user.entity.User;
 import jakarta.persistence.Entity;
@@ -17,29 +16,28 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class PaymentOwnerNotification extends TimeStamped {
+public class PaymentUserNotification extends TimeStamped {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
   private String title;
 
   private String message;
 
-  // 결제와 연결 필요
   @OneToOne
   @JoinColumn(name = "payment_id")
   private Payment payment;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private Owner owner;
+  private User user;
 
-  public PaymentOwnerNotification(String title, String message, Payment payment) {
+  public PaymentUserNotification(String title, String message, Payment payment) {
     this.title = title;
     this.message = message;
     this.payment = payment;
-    this.owner = payment.getStore().getOwner();
+    this.user = payment.getUser();
   }
 }
