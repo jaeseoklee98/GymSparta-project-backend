@@ -20,9 +20,6 @@ public class User extends TimeStamped {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private Double balance; // 잔고 테스트용
-
   @Getter
   @Column(nullable = false, length = 50)
   private String userName;
@@ -94,14 +91,13 @@ public class User extends TimeStamped {
   public User() {
   }
 
-  public User(String userName, Double balance, String residentRegistrationNumber,
+  public User(String userName, String residentRegistrationNumber,
       String foreignerRegistrationNumber, Boolean isForeigner,
       String accountId, String password, String nickname, String email, String userPicture,
       String status,
       String zipcode, String mainAddress, String detailedAddress, String phoneNumber, Role role,
       LocalDateTime deletedAt, LocalDateTime scheduledDeletionDate) {
     this.userName = userName;
-    this.balance = balance;
     this.residentRegistrationNumber = residentRegistrationNumber;
     this.foreignerRegistrationNumber = foreignerRegistrationNumber;
     this.isForeigner = isForeigner != null ? isForeigner : false;

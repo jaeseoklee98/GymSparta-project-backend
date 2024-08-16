@@ -7,8 +7,6 @@ import lombok.Getter;
 public class ReadUserResponse {
   private String userName;
 
-  private double balance;
-
   private String accountId;
 
   private String nickname;
@@ -27,7 +25,6 @@ public class ReadUserResponse {
 
   public ReadUserResponse(User user) {
     this.userName = user.getUserName();
-    this.balance = user.getBalance();
     this.accountId = user.getAccountId();
     this.nickname = user.getNickname();
     this.email = user.getEmail();

@@ -19,6 +19,4 @@ public class PtInformationRequest {
     this.userId = userId;
     this.ptTimes = ptTimes;
   }
-
 }
-

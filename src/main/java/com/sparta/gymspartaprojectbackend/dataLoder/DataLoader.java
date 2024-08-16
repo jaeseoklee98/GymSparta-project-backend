@@ -56,7 +56,6 @@ public class DataLoader implements CommandLineRunner {
     // 유저 더미 데이터
     User user1 = new User(
       "손아엘",                      // userName
-      1000.0,                           // balance
       "111111222222",                 // residentRegistrationNumber
       null,                             // foreignerRegistrationNumber
       false,                            // isForeigner
@@ -77,7 +76,6 @@ public class DataLoader implements CommandLineRunner {
 
     User user2 = new User(
       "이인빈",                      // userName
-      1000.0,                           // balance
       "333333444444",                 // residentRegistrationNumber
       null,                             // foreignerRegistrationNumber
       false,                            // isForeigner
@@ -98,7 +96,6 @@ public class DataLoader implements CommandLineRunner {
 
     User user3 = new User(
       "이여재",                      // userName
-      1000.0,                           // balance
       "555555666666",                 // residentRegistrationNumber
       null,                             // foreignerRegistrationNumber
       false,                            // isForeigner
