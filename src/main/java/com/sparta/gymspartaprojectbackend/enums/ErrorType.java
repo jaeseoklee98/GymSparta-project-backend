@@ -59,7 +59,9 @@ public enum ErrorType {
   NOT_FOUND_NOTIFICATION(HttpStatus.NOT_FOUND, "해당 전체 공지를 찾을 수 없습니다."),
   NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
   INVALID_PRODUCT_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 상품 유형이 제공되었습니다."),
-  Notification_delivery_failed(HttpStatus.INTERNAL_SERVER_ERROR, "알림 전달 중 오류 발생");
+  Notification_delivery_failed(HttpStatus.INTERNAL_SERVER_ERROR, "알림 전달 중 오류 발생"),
+  SOME_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "일반적인 오류가 발생했습니다."),
+  TRAINER_ID_IS_NULL(HttpStatus.NOT_FOUND, "트레이너 ID는 null일 수 없습니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

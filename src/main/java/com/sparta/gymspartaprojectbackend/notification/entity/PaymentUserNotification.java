@@ -38,6 +38,6 @@ public class PaymentUserNotification extends TimeStamped {
     this.title = title;
     this.message = message;
     this.payment = payment;
-    this. user = payment.getUser();
+    this.user = payment.getUser();
   }
 }

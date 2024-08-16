@@ -86,15 +86,15 @@ public class Payment extends TimeStamped {
     this.isMembership = isMembership;
   }
 
-  // 새로운 생성자: PT 세션, 회원권 결제용 (Product 없이)
-  public Payment(Trainer trainer, User user, Store store, PtTimes ptTimes, ProductType productType, PaymentType paymentType, double amount, PaymentStatus paymentStatus, LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
+  // 새로운 생성자 추가
+  public Payment(Trainer trainer, User user, PtTimes ptTimes, ProductType productType,
+      PaymentType paymentType, double amount, PaymentStatus paymentStatus,
+      LocalDateTime paymentDate, LocalDateTime expiryDate, boolean isMembership) {
     this.trainer = trainer;
     this.user = user;
-    this.store = store;
-    this.product = null; // Product가 없는 경우 null로 설정
     this.ptTimes = ptTimes;
-    this.paymentType = paymentType;
     this.productType = productType;
+    this.paymentType = paymentType;
     this.amount = amount;
     this.paymentStatus = paymentStatus;
     this.paymentDate = paymentDate;

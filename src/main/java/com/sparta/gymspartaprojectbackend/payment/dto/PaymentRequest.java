@@ -10,13 +10,11 @@ import lombok.Getter;
 @Getter
 public class PaymentRequest {
 
-  @NotNull(message = "트레이너 ID는 필수 항목입니다.")
   private final Long trainerId;
 
   @NotNull(message = "유저 ID는 필수 항목입니다.")
-  private final Long userId;
+  private final String userId;
 
-  @NotNull(message = "피티 횟수는 필수 항목입니다.")
   @JsonFormat(shape = JsonFormat.Shape.STRING)
   private final PtTimes ptTimes;
 
@@ -33,7 +31,7 @@ public class PaymentRequest {
 
   private final boolean isMembership;
 
-  public PaymentRequest(Long trainerId, Long userId, PtTimes ptTimes, ProductType productType, PaymentType paymentType, double amount, boolean isMembership) {
+  public PaymentRequest(Long trainerId, String userId, PtTimes ptTimes, ProductType productType, PaymentType paymentType, double amount, boolean isMembership) {
     this.trainerId = trainerId;
     this.userId = userId;
     this.ptTimes = ptTimes;

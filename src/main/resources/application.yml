@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/fitple
+    url: jdbc:mysql://localhost:3306/fitple_project
     username: root
-    password: 135246adgsfh!
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -17,6 +17,13 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+  logging:
+    level:
+      root: INFO
+      org.springframework.web: DEBUG
+      org.hibernate: DEBUG
+
 jwt:
   secret: b1ee7f2bb90b78b2274f86936a50c6619fdd96ab9ca837f7902b3f53cc8992ff4b45a58b91cfd1103f85281ea694151d7e83ea0e36d91e022d124223317caf07
 server:
@@ -36,15 +43,17 @@ cloud:
     stack.auto: false
     region.static: ap-northeast-2
     credentials:
-      accessKey: AWS_ACCESS_KEY_ID
-      secretKey: AWS_SECRET_ACCESS_KEY
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
 
 toss:
   payments:
+    client-secret: test_ck_AQ92ymxN342KQZW5Ym64rajRKXvd
     secret-key: test_sk_GjLJoQ1aVZ9KQRgbxBkJ3w6KYe2R
 
 kakao:
   pay:
+    cid: TC0ONETIME  # 테스트용 CID
     client-id: A7EAB5C0E188BA0EF82B  # 클라이언트 ID
     client-secret: 749696A87ABCFA738A36  # 클라이언트 시크릿
     secret-key: PRD441A04CE52647D4E94FFA919FD67242007B40  # 시크릿 키
