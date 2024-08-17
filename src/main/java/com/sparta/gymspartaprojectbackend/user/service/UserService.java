@@ -53,11 +53,7 @@ public class UserService {
       User user = deletedUserByUsername.get();
       User updatedUser = new User(
 
-          user.getUsername(),
-          user.getBalance(),
-
           user.getUserName(),
-
           user.getResidentRegistrationNumber(),
           user.getForeignerRegistrationNumber(),
           user.getIsForeigner(),
@@ -106,9 +102,7 @@ public class UserService {
     User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
 
     User updatedUser = new User(
-        user.getUsername(),
-        user.getBalance(),
-        user.getNickname(),
+        user.getUserName(),
         user.getResidentRegistrationNumber(),
         user.getForeignerRegistrationNumber(),
         user.getIsForeigner(),
@@ -157,9 +151,14 @@ public class UserService {
   }
 
   public ReadUserResponse readUserProfile(UserDetailsImpl userDetails) {
-    User user = userRepository.findByAccountIdAndStatus(userDetails.getUsername(), "ACTIVE")
-        .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
-
-    return new ReadUserResponse(user);
+    if (userDetails.getUser() != null) {
+      return new ReadUserResponse(userDetails.getUser());
+    } else if (userDetails.getOwner() != null) {
+      return new ReadUserResponse(userDetails.getOwner());
+    } else if (userDetails.getTrainer() != null) {
+      return new ReadUserResponse(userDetails.getTrainer());
+    } else {
+      throw new UserException(ErrorType.NOT_FOUND_USER);
+    }
   }
 }

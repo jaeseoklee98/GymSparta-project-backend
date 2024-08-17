@@ -17,15 +17,10 @@ import java.util.List;
 public class UserDetailsImpl implements UserDetails {
 
   private final String accountId;
-
   private final String password;
-
   private final Role role;
-
   private final User user;
-
   private final Owner owner;
-
   private final Trainer trainer;
 
   public UserDetailsImpl(User user) {
@@ -55,48 +50,39 @@ public class UserDetailsImpl implements UserDetails {
     this.trainer = trainer;
   }
 
-  /**
-   * 사용자 권한
-   */
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-    return authorities;
+    return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
   }
+
 
   @Override
   public String getPassword() {
-
     return password;
   }
 
   @Override
   public String getUsername() {
-
     return accountId;
   }
 
   @Override
   public boolean isAccountNonExpired() {
-
     return true;
   }
 
   @Override
   public boolean isAccountNonLocked() {
-
     return true;
   }
 
   @Override
   public boolean isCredentialsNonExpired() {
-
     return true;
   }
 
   @Override
   public boolean isEnabled() {
-
     return true;
   }
 
