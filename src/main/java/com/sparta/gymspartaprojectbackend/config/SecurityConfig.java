@@ -57,6 +57,7 @@ public class SecurityConfig {
             .requestMatchers("/api/pt-payments/test/**").authenticated()
             .requestMatchers("/api/reviews/**").hasAnyRole("USER", "TRAINER", "OWNER")
             .requestMatchers("/api/reviews/manage/**").hasRole("OWNER")
+            .requestMatchers("/api/notification/**").authenticated()
             .requestMatchers("/api/payments/**").authenticated()
             .anyRequest().authenticated());
 

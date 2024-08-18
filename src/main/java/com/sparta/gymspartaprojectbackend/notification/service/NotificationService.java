@@ -6,7 +6,7 @@ import com.sparta.gymspartaprojectbackend.notification.dto.NotificationSimpleRes
 import com.sparta.gymspartaprojectbackend.notification.dto.OwnerNotificationResponse;
 import com.sparta.gymspartaprojectbackend.notification.dto.UserAllNotificationResponse;
 import com.sparta.gymspartaprojectbackend.notification.dto.UserExpireNotificationResponse;
-import com.sparta.gymspartaprojectbackend.notification.dto.UserPaymentNotificationResponse;
+import com.sparta.gymspartaprojectbackend.notification.dto.UserNotificationResponse;
 import com.sparta.gymspartaprojectbackend.notification.dto.createAllNotificationDto;
 import com.sparta.gymspartaprojectbackend.notification.entity.AllNotification;
 import com.sparta.gymspartaprojectbackend.notification.entity.PaymentOwnerNotification;
@@ -26,9 +26,9 @@ import com.sparta.gymspartaprojectbackend.security.UserDetailsImpl;
 import com.sparta.gymspartaprojectbackend.store.entity.Store;
 import com.sparta.gymspartaprojectbackend.store.repository.StoreRepository;
 import com.sparta.gymspartaprojectbackend.user.entity.User;
-import com.sparta.gymspartaprojectbackend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,7 +53,6 @@ public class NotificationService {
   private final PaymentRepository paymentRepository;
   private final UserAllNotificationRepository userAllNotificationRepository;
   private final UserNotificationRepository userNotificationRepository;
-  private final UserRepository userRepository;
   private final PaymentOwnerNotificationRepository paymentOwnerNotificationRepository;
   private final PaymentUserNotificationRepository paymentUserNotificationRepository;
 
@@ -128,8 +127,9 @@ public class NotificationService {
    */
   @Transactional
   public void sendUserAllNotification(User user, AllNotification allNotification) {
+    String title = allNotification.getStore().getStoreName() + "매장의 전체 공지알림";
     String message = allNotification.getStore().getStoreName() + "매장의 전체 공지가 추가되었습니다.";
-    UserAllNotification notification = new UserAllNotification(message, user, allNotification);
+    UserAllNotification notification = new UserAllNotification(title ,message, user, allNotification);
     userAllNotificationRepository.save(notification);
     sendRealTimeUserAllNotification(notification);
   }
@@ -210,7 +210,7 @@ public class NotificationService {
 
   /**
    * 매일 아침 9시 만료 임박 PT권, 회원권 알림 보내기 (SSE)
-   * 
+   *
    */
   public void sendRealTimeUserNotification(UserNotification notification) {
     SseEmitter emitter = userEmitters.get(notification.getUser().getId());
@@ -315,48 +315,82 @@ public class NotificationService {
   }
 
   /**
-   * 유저 알림 조회 - 결제
-   * @param userDetails 로그인한 유저
+   * 유저 알림 조회 - 결제, 알림, 만료
+   * @param userDetails 로그인한 점장
    * @return 유저 알림
    */
-  public List<UserPaymentNotificationResponse> readUserPaymentNotification(UserDetailsImpl userDetails) {
-    List<PaymentUserNotification> userNotificationList = paymentUserNotificationRepository.findByUserId(userDetails.getUser().getId());
+  public List<UserNotificationResponse> readUserNotification(UserDetailsImpl userDetails) {
+    List<UserNotificationResponse> notificationResponseList = new ArrayList<>();
+    
+    // 결제 알림
+    List<PaymentUserNotification> paymentNotificationList = paymentUserNotificationRepository.findByUserId(userDetails.getUser().getId());
 
-    List<UserPaymentNotificationResponse> responseList = userNotificationList.stream()
-      .map(notification -> new UserPaymentNotificationResponse(notification.getTitle(), notification.getMessage()))
-      .toList();
+    notificationResponseList.addAll(paymentNotificationList.stream()
+      .map(notification -> new UserNotificationResponse(notification.getTitle(), notification.getMessage()))
+      .toList());
+    
+    // 만료 알림
+    List<UserNotification> expireNotificationList = userNotificationRepository.findByUserId(userDetails.getUser().getId());
 
-    return responseList;
+    notificationResponseList.addAll(expireNotificationList.stream()
+      .map(notification -> new UserNotificationResponse(notification.getTitle(), notification.getMessage()))
+      .toList());
+
+
+    // 공지 알림
+    List<UserAllNotification> AllNotificationList = userAllNotificationRepository.findByUserId(userDetails.getUser().getId());
+
+    notificationResponseList.addAll(AllNotificationList.stream()
+      .map(notification -> new UserNotificationResponse(notification.getTitle(), notification.getMessage()))
+      .toList());
+
+
+    return notificationResponseList;
   }
 
-  /**
-   * 유저 알림 조회 - 만료
-   * @param userDetails 로그인한 유저
-   * @return 유저 알림
-   */
-  public List<UserExpireNotificationResponse> readUserExpireNotification(UserDetailsImpl userDetails) {
-    List<UserNotification> userNotificationList = userNotificationRepository.findByUserId(userDetails.getUser().getId());
 
-    List<UserExpireNotificationResponse> responseList = userNotificationList.stream()
-      .map(notification -> new UserExpireNotificationResponse(notification.getTitle(), notification.getMessage()))
-      .toList();
 
-    return responseList;
-  }
-  
-  /**
-   * 유저 알림 조회 - 공지
-   * @param userDetails 로그인한 유저
-   * @return 유저 알림
-   */
-  public List<UserAllNotificationResponse> readUserAllNotification(UserDetailsImpl userDetails) {
-    List<UserAllNotification> userAllNotificationList = userAllNotificationRepository.findByUserId(
-      userDetails.getUser().getId());
+//  /**
+//   * 유저 알림 조회 - 결제
+//   * @param userDetails 로그인한 유저
+//   * @return 유저 알림
+//   */
+//  public List<UserPaymentNotificationResponse> readUserPaymentNotification(UserDetailsImpl userDetails) {
+//    List<PaymentUserNotification> userNotificationList = paymentUserNotificationRepository.findByUserId(userDetails.getUser().getId());
+//    List<UserPaymentNotificationResponse> responseList = userNotificationList.stream()
+//      .map(notification -> new UserPaymentNotificationResponse(notification.getTitle(), notification.getMessage()))
+//      .toList();
+//
+//    return responseList;
+//}
 
-    List<UserAllNotificationResponse> responseList = userAllNotificationList.stream()
-      .map(notification -> new UserAllNotificationResponse(notification.getMessage()))
-      .toList();
+///**
+// * 유저 알림 조회 - 만료
+// * @param userDetails 로그인한 유저
+// * @return 유저 알림
+// */
+//public List<UserExpireNotificationResponse> readUserExpireNotification(UserDetailsImpl userDetails) {
+//  List<UserNotification> userNotificationList = userNotificationRepository.findByUserId(userDetails.getUser().getId());
+//
+//  List<UserExpireNotificationResponse> responseList = userNotificationList.stream()
+//    .map(notification -> new UserExpireNotificationResponse(notification.getTitle(), notification.getMessage()))
+//    .toList();
+//
+//  return responseList;
+//}
 
-    return responseList;
-  }
+///**
+// * 유저 알림 조회 - 공지
+// * @param userDetails 로그인한 유저
+// * @return 유저 알림
+// */
+//public List<UserAllNotificationResponse> readUserAllNotification(UserDetailsImpl userDetails) {
+//  List<UserAllNotification> userAllNotificationList = userAllNotificationRepository.findByUserId(userDetails.getUser().getId());
+//
+//  List<UserAllNotificationResponse> responseList = userAllNotificationList.stream()
+//    .map(notification -> new UserAllNotificationResponse(notification.getMessage()))
+//    .toList();
+//
+//  return responseList;
+//}
 }

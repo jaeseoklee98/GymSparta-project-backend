@@ -35,8 +35,8 @@ public class AllNotification extends TimeStamped {
   private List<UserAllNotification> userAllNotificationList;
 
   public AllNotification(createAllNotificationDto request, Store store) {
-    this.title = request.getTitle();
-    this.message = request.getMessage();
+    this.title = request.getNoticeTitle();
+    this.message = request.getNoticeContent();
     this.image = request.getImage();
     this.store = store;
   }
