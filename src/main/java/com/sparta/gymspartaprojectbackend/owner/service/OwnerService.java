@@ -30,7 +30,7 @@ public class OwnerService {
   private final TrainerRepository trainerRepository;
 
   public OwnerService(OwnerRepository ownerRepository, PasswordEncoder passwordEncoder,
-    TrainerRepository trainerRepository) {
+      TrainerRepository trainerRepository) {
     this.ownerRepository = ownerRepository;
     this.passwordEncoder = passwordEncoder;
     this.trainerRepository = trainerRepository;
@@ -215,7 +215,7 @@ public class OwnerService {
     Long ownerId = userDetails.getOwner().getId();
 
     return trainerRepository.findAllTrainersByOwnerId(ownerId).stream()
-      .map(TrainerGetResponse::new)
-      .toList();
+        .map(TrainerGetResponse::new)
+        .toList();
   }
 }

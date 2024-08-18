@@ -1,6 +1,8 @@
 package com.sparta.gymspartaprojectbackend.review.service;
 
 import com.sparta.gymspartaprojectbackend.enums.ErrorType;
+import com.sparta.gymspartaprojectbackend.payment.enums.PaymentStatus;
+import com.sparta.gymspartaprojectbackend.payment.enums.ProductType;
 import com.sparta.gymspartaprojectbackend.payment.repository.PaymentRepository;
 import com.sparta.gymspartaprojectbackend.product.entity.Product;
 import com.sparta.gymspartaprojectbackend.product.repository.ProductRepository;
@@ -8,6 +10,7 @@ import com.sparta.gymspartaprojectbackend.review.dto.ReportRequest;
 import com.sparta.gymspartaprojectbackend.review.dto.ReviewRequest;
 import com.sparta.gymspartaprojectbackend.review.dto.ReviewResponse;
 import com.sparta.gymspartaprojectbackend.review.entity.Review;
+import com.sparta.gymspartaprojectbackend.review.enums.ReviewType;
 import com.sparta.gymspartaprojectbackend.review.exception.ReviewException;
 import com.sparta.gymspartaprojectbackend.review.repository.ReviewRepository;
 import com.sparta.gymspartaprojectbackend.security.UserDetailsImpl;
@@ -48,29 +51,30 @@ public class ReviewService {
   @Transactional
   public ReviewResponse createReview(ReviewRequest reviewRequest, UserDetailsImpl userDetails) {
     User user = userRepository.findById(userDetails.getUser().getId())
-        .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_USER));
+            .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_USER));
+
+    Payment payment = paymentRepository.findByUserId(user.getId())
+            .orElseThrow(() -> new ReviewException(ErrorType.PAYMENT_NOT_FOUND));
+
+    if (!payment.getPaymentStatus().equals(PaymentStatus.COMPLETED)) {
+      throw new ReviewException(ErrorType.PAYMENT_NOT_COMPLETED);
+    }
 
     Store store = null;
     Trainer trainer = null;
-    Product product = null;
 
+    ReviewType reviewType = null;
     if (reviewRequest.getStoreId() != null) {
       store = storeRepository.findById(reviewRequest.getStoreId())
-          .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_STORE));
+              .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_STORE));
+      reviewType = ReviewType.STORE;
     } else if (reviewRequest.getTrainerId() != null) {
       trainer = trainerRepository.findById(reviewRequest.getTrainerId())
-          .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_TRAINER));
+              .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_TRAINER));
+      reviewType = ReviewType.TRAINER;
     }
 
-    if (reviewRequest.getProductId() != null) {
-      product = productRepository.findById(reviewRequest.getProductId())
-          .orElseThrow(() -> new ReviewException(ErrorType.NOT_FOUND_PRODUCT));
-    }
-
-    Payment payment = paymentRepository.findById(reviewRequest.getPaymentId())
-        .orElseThrow(() -> new ReviewException(ErrorType.PAYMENT_NOT_FOUND));
-
-    Review review = new Review(user, store, trainer, payment, product, reviewRequest.getRating(), reviewRequest.getComment(), reviewRequest.getReviewType());
+    Review review = new Review(user, store, trainer, payment, reviewRequest.getRating(), reviewRequest.getComment(), reviewType);
     reviewRepository.save(review);
 
     return new ReviewResponse(review);
@@ -131,6 +135,52 @@ public class ReviewService {
     return reviewRepository.findReportedReviewsByStoreId(store.getId()).stream()
         .map(ReviewResponse::new)
         .collect(Collectors.toList());
+  }
+
+  /**
+   * 매장의 평균 평점 조회
+   *
+   * @param storeId 조회할 매장의 ID
+   * @return 매장의 평균 평점
+   */
+  public Double getAverageRatingByStoreId(Long storeId) {
+    return reviewRepository.findAverageRatingByStoreId(storeId);
+  }
+
+  /**
+   * 트레이너의 평균 평점 조회
+   *
+   * @param trainerId 조회할 트레이너의 ID
+   * @return 트레이너의 평균 평점
+   */
+  public Double getAverageRatingByTrainerId(Long trainerId) {
+    return reviewRepository.findAverageRatingByTrainerId(trainerId);
+  }
+
+  /**
+   * 매장별 리뷰 조회
+   *
+   * @param storeId 조회할 매장의 ID
+   * @return 매장별 리뷰 리스트
+   */
+  @Transactional(readOnly = true)
+  public List<ReviewResponse> getReviewsByStoreId(Long storeId) {
+    return reviewRepository.findReviewsByStoreId(storeId).stream()
+            .map(ReviewResponse::new)
+            .collect(Collectors.toList());
+  }
+
+  /**
+   * 트레이너별 리뷰 조회
+   *
+   * @param trainerId 조회할 트레이너의 ID
+   * @return 트레이너별 리뷰 리스트
+   */
+  @Transactional(readOnly = true)
+  public List<ReviewResponse> getReviewsByTrainerId(Long trainerId) {
+    return reviewRepository.findReviewsByTrainerId(trainerId).stream()
+            .map(ReviewResponse::new)
+            .collect(Collectors.toList());
   }
 
   /**

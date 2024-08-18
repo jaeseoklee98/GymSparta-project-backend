@@ -1,6 +1,9 @@
 package com.sparta.gymspartaprojectbackend.jwtutil;
 
+import com.sparta.gymspartaprojectbackend.enums.ErrorType;
+import com.sparta.gymspartaprojectbackend.exception.CustomException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -86,9 +89,15 @@ public class JwtUtil {
     try {
       Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
       return true;
-    } catch (Exception e) {
+    } catch (ExpiredJwtException e) {
+      throw new CustomException(ErrorType.TOKEN_EXPIRED);
+    } catch (JwtException | IllegalArgumentException e) {
       return false;
     }
+  }
+
+  public long getRefreshTokenValidity() {
+    return refreshTokenValidity;
   }
 
   /**
@@ -96,7 +105,12 @@ public class JwtUtil {
    *
    * @return 리프레시 토큰 유효 기간 (밀리초 단위)
    */
-  public long getRefreshTokenValidity() {
-    return refreshTokenValidity;
+  public String refreshToken(String refreshToken) {
+    if (validateToken(refreshToken)) {
+      String username = getUsername(refreshToken);
+      return generateAccessToken(username);
+    } else {
+      throw new CustomException(ErrorType.INVALID_TOKEN);
+    }
   }
 }
