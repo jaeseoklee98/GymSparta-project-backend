@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://43.202.32.216:3306/fitple_project
+    url: jdbc:mysql://52.78.205.215:3306/fitple_project
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 #    url: jdbc:mysql://localhost:3306/fitple_project
