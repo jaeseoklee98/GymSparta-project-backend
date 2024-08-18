@@ -33,7 +33,7 @@ public class PaymentOwnerNotification extends TimeStamped {
   private Payment payment;
 
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "owner_id")
   private Owner owner;
 
   public PaymentOwnerNotification(String title, String message, Payment payment) {
