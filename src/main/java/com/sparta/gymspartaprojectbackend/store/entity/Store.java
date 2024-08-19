@@ -31,12 +31,6 @@ public class Store extends TimeStamped {
   @Column(nullable = false)
   private String address;
 
-//  @Column(nullable = false)
-//  private String streetAddress;
-//
-//  @Column(nullable = false)
-//  private String postalCode;
-
   @Column(nullable = false)
   private String storeInfo;
 
@@ -58,7 +52,6 @@ public class Store extends TimeStamped {
   @ElementCollection
   private List<String> trainerList;
 
-  // 추가 필드
   @Column
   private String price;
 
@@ -73,7 +66,7 @@ public class Store extends TimeStamped {
   private Owner owner;
 
   public Store(String storeName, String address, String storeInfo, String storeHour, String storeTel,
-    String price, String image, Owner owner) {
+      String price, String image, Owner owner) {
     this.storeName = storeName;
     this.address = address;
     this.storeInfo = storeInfo;
@@ -88,8 +81,6 @@ public class Store extends TimeStamped {
     this.owner = owner;
     this.storeName = request.getStoreName();
     this.address = request.getAddress();
-//    this.streetAddress = request.getStreetAddress();
-//    this.postalCode = request.getPostalCode();
     this.storeInfo = request.getStoreInfo();
     this.storeHour = request.getStoreHour();
     this.storeTel = request.getStoreTel();
@@ -97,16 +88,14 @@ public class Store extends TimeStamped {
     this.memberships = request.getMemberships();
     this.ptConsultations = request.getPtConsultations();
     this.trainerList = request.getTrainerList();
-    this.price = request.getPrice(); // 추가 필드
-    this.image = request.getImage(); // 추가 필드
-    this.reviews = request.getReviews(); // 추가 필드
+    this.price = request.getPrice();
+    this.image = request.getImage();
+    this.reviews = request.getReviews();
   }
 
   public void update(StoreRequest request) {
     this.storeName = request.getStoreName();
     this.address = request.getAddress();
-//    this.streetAddress = request.getStreetAddress();
-//    this.postalCode = request.getPostalCode();
     this.storeInfo = request.getStoreInfo();
     this.storeHour = request.getStoreHour();
     this.storeTel = request.getStoreTel();
@@ -114,8 +103,8 @@ public class Store extends TimeStamped {
     this.memberships = request.getMemberships();
     this.ptConsultations = request.getPtConsultations();
     this.trainerList = request.getTrainerList();
-    this.price = request.getPrice(); // 추가 필드
-    this.image = request.getImage(); // 추가 필드
-    this.reviews = request.getReviews(); // 추가 필드
+    this.price = request.getPrice();
+    this.image = request.getImage();
+    this.reviews = request.getReviews();
   }
 }

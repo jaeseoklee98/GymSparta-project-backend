@@ -3,6 +3,7 @@ package com.sparta.gymspartaprojectbackend.notification.controller;
 import static com.sparta.gymspartaprojectbackend.enums.Role.OWNER;
 import static com.sparta.gymspartaprojectbackend.enums.Role.USER;
 
+import com.sparta.gymspartaprojectbackend.common.CommonResponse;
 import com.sparta.gymspartaprojectbackend.enums.ErrorType;
 import com.sparta.gymspartaprojectbackend.notification.dto.NotificationDetailResponse;
 import com.sparta.gymspartaprojectbackend.notification.dto.NotificationSimpleResponse;
@@ -14,6 +15,7 @@ import com.sparta.gymspartaprojectbackend.notification.service.NotificationServi
 import com.sparta.gymspartaprojectbackend.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,9 +42,10 @@ public class NotificationController {
    * @return 정상적으로 완료 했다는 메세지
    */
   @PostMapping("/{storeId}/allNotification")
-  public ResponseEntity<?> createNotification(@PathVariable Long storeId, @RequestBody createAllNotificationDto request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-  notificationService.createNotification(storeId, userDetails, request);
-  return ResponseEntity.ok("공지 작성 완료");
+  public ResponseEntity<CommonResponse<String>> createNotification(@PathVariable Long storeId, @RequestBody createAllNotificationDto request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    notificationService.createNotification(storeId, userDetails, request);
+    CommonResponse<String> response = new CommonResponse<>( HttpStatus.OK.value(), "공지 작성 완료", "공지 작성이 성공적으로 완료되었습니다.");
+    return ResponseEntity.ok(response);
   }
 
   /**

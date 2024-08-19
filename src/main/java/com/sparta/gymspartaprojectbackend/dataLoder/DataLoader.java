@@ -195,35 +195,36 @@ public class DataLoader implements CommandLineRunner {
 
     // 매장 더미 데이터
     Store store1 = new Store(
-      "아에리가게",
-      "강남",
-      "아에리의메이플가게",
-      "9 AM - 9 PM",
-      "123-456-7890",
-      "$50 - $200",
-      "fitness_hub.jpg",
-      owner1
+        "아에리가게",
+        "강남",
+        "아에리의메이플가게",
+        "9 AM - 9 PM",
+        "123-456-7890",
+        "$50 - $200",
+        "fitness_hub.jpg",
+        owner1
     );
 
     Store store2 = new Store(
-      "이여재가게",
-      "압구정",
-      "이여재의서든가게",
-      "6 AM - 10 PM",
-      "987-654-3210",
-      "$5 - $200",
-      "fitness_hubb.jpg",
-      owner2
+        "이여재가게",
+        "압구정",
+        "이여재의서든가게",
+        "6 AM - 10 PM",
+        "987-654-3210",
+        "$5 - $200",
+        "fitness_hubb.jpg",
+        owner2
     );
 
-    Store store3 = new Store("이재석가개",
-      "홍대",
-      "이재석의코딩가게",
-      "6 AM - 10 PM",
-      "987-654-3210",
-      "$9000 - $10000",
-      "fitness_hubb.jpg",
-      owner3
+    Store store3 = new Store(
+        "이재석가개",
+        "홍대",
+        "이재석의코딩가게",
+        "6 AM - 10 PM",
+        "987-654-3210",
+        "$9000 - $10000",
+        "fitness_hubb.jpg",
+        owner3
     );
 
     storeRepository.save(store1);

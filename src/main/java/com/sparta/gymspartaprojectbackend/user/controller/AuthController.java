@@ -119,6 +119,8 @@ public class AuthController {
       Map<String, String> tokenResponse = new HashMap<>();
       tokenResponse.put("accessToken", accessToken);
       tokenResponse.put("refreshToken", refreshToken);
+      tokenResponse.put("userId", userDetails.getUserId().toString());  // userId 추가
+      tokenResponse.put("role", userDetails.getRole().name());
 
       CommonResponse<Map<String, String>> response = new CommonResponse<>(
         HttpStatus.OK.value(), "로그인 성공", tokenResponse);
