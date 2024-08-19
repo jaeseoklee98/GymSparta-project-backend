@@ -40,12 +40,6 @@ public class Store extends TimeStamped {
   @Column(nullable = false)
   private String storeTel;
 
-  @Column(nullable = false)
-  private Double latitude;  // 위도 필드 추가
-
-  @Column(nullable = false)
-  private Double longitude;  // 경도 필드 추가
-
   @ElementCollection
   private List<String> services;
 
@@ -72,7 +66,7 @@ public class Store extends TimeStamped {
   private Owner owner;
 
   public Store(String storeName, String address, String storeInfo, String storeHour, String storeTel,
-      String price, String image, Owner owner, Double latitude, Double longitude) {
+      String price, String image, Owner owner) {
     this.storeName = storeName;
     this.address = address;
     this.storeInfo = storeInfo;
@@ -81,8 +75,6 @@ public class Store extends TimeStamped {
     this.price = price;
     this.image = image;
     this.owner = owner;
-    this.latitude = latitude;
-    this.longitude = longitude;
   }
 
   public Store(StoreRequest request, Owner owner) {
@@ -99,8 +91,6 @@ public class Store extends TimeStamped {
     this.price = request.getPrice();
     this.image = request.getImage();
     this.reviews = request.getReviews();
-    this.latitude = request.getLatitude();  // 추가 필드
-    this.longitude = request.getLongitude();  // 추가 필드
   }
 
   public void update(StoreRequest request) {
@@ -116,7 +106,5 @@ public class Store extends TimeStamped {
     this.price = request.getPrice();
     this.image = request.getImage();
     this.reviews = request.getReviews();
-    this.latitude = request.getLatitude();  // 추가 필드
-    this.longitude = request.getLongitude();  // 추가 필드
   }
 }
