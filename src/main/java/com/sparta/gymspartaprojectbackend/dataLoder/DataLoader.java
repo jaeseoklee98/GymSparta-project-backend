@@ -202,9 +202,7 @@ public class DataLoader implements CommandLineRunner {
         "123-456-7890",
         "$50 - $200",
         "fitness_hub.jpg",
-        owner1,
-        37.4979, // 위도
-        127.0276  // 경도
+        owner1
     );
 
     Store store2 = new Store(
@@ -215,9 +213,7 @@ public class DataLoader implements CommandLineRunner {
         "987-654-3210",
         "$5 - $200",
         "fitness_hubb.jpg",
-        owner2,
-        37.5275, // 위도
-        127.0286  // 경도
+        owner2
     );
 
     Store store3 = new Store(
@@ -228,9 +224,7 @@ public class DataLoader implements CommandLineRunner {
         "987-654-3210",
         "$9000 - $10000",
         "fitness_hubb.jpg",
-        owner3,
-        37.5563, // 위도
-        126.9223  // 경도
+        owner3
     );
 
     storeRepository.save(store1);
