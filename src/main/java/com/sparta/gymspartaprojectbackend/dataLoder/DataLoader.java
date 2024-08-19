@@ -338,7 +338,7 @@ public class DataLoader implements CommandLineRunner {
     paymentRepository.save(payment1);
 
     System.out.println("결제 더미 데이터 삽입 완료!");
-    
+
     Review review1 = new Review(user1, store1, null, payment1, 5, "Great expe23rience!", ReviewType.STORE);
     Review review2 = new Review(user1, store1, null, payment1, 5, "Great exp1erience!", ReviewType.STORE);
     Review review3 = new Review(user1, store1, null, payment1, 5, "Great exㄴperience!", ReviewType.STORE);
