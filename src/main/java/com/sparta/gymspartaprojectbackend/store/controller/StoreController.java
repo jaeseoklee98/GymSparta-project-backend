@@ -192,23 +192,4 @@ public class StoreController {
         HttpStatus.OK.value(), "점주 매장 상세 조회 완료", storeResponse);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
-
-  @GetMapping("/search")
-  public ResponseEntity<CommonResponse<List<StoreSimpleResponse>>> searchStores(
-      @RequestParam(required = false) String keyword,
-      @RequestParam(required = false) Double latitude,
-      @RequestParam(required = false) Double longitude
-  ) {
-    List<StoreSimpleResponse> stores;
-
-    if (latitude != null && longitude != null) {
-      stores = storeService.findNearbyStores(latitude, longitude, keyword);
-    } else {
-      stores = storeService.searchStoresByKeyword(keyword);
-    }
-
-    CommonResponse<List<StoreSimpleResponse>> response = new CommonResponse<>(
-        HttpStatus.OK.value(), "매장 검색 결과 조회 완료", stores);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
 }
