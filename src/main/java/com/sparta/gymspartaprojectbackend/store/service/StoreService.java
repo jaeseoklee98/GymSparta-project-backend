@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -182,10 +183,12 @@ public class StoreService {
 
       return storeIds.stream()
           .map(storeMap::get)
+          .filter(Objects::nonNull)  // null 값 필터링
           .map(StoreSimpleResponse::new)
           .collect(Collectors.toList());
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException("Error decoding cookie value", e);
     }
   }
+
 }
