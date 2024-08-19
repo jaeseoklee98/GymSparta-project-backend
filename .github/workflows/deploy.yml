@@ -64,7 +64,7 @@ jobs:
 
 
   deploy-to-ec2:
-    needs: build-and-docker-push # 위의 build-and-docker-push 이 끝나고 실행
+    needs: build-and-docker-push # 위의 build-and-docker-push 이 끝나고 실행!
     runs-on: ubuntu-latest
 
     steps:
