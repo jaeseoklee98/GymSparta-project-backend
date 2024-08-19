@@ -8,8 +8,16 @@ import com.sparta.gymspartaprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.gymspartaprojectbackend.store.entity.Store;
 import com.sparta.gymspartaprojectbackend.store.exception.StoreException;
 import com.sparta.gymspartaprojectbackend.store.repository.StoreRepository;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,6 +136,56 @@ public class StoreService {
   private void validateUser(Store store, String accountId) {
     if (!store.getOwner().getAccountId().equals(accountId)) {
       throw new StoreException(ErrorType.INVALID_USER);
+    }
+  }
+
+  public String updateRecentStoresCookie(String recentStores, Long storeId) {
+    List<String> storeList = new ArrayList<>(Arrays.asList(recentStores.split(",")));
+
+    // 중복된 매장 ID 제거
+    storeList.remove(storeId.toString());
+
+    // 최신 매장을 맨 앞에 추가
+    storeList.add(0, storeId.toString());
+
+    // 최근 방문 매장 리스트가 5개를 초과하지 않도록 제한
+    if (storeList.size() > 5) {
+      storeList = storeList.subList(0, 5);
+    }
+
+    // 쿠키 값 인코딩
+    try {
+      return URLEncoder.encode(String.join(",", storeList), StandardCharsets.UTF_8.toString());
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("Error encoding cookie value", e);
+    }
+  }
+
+  public List<StoreSimpleResponse> findStoresByIds(String recentStores) {
+    try {
+      String decodedStores = URLDecoder.decode(recentStores, StandardCharsets.UTF_8.toString());
+
+      List<Long> storeIds = Arrays.stream(decodedStores.split(","))
+          .filter(id -> !id.trim().isEmpty())
+          .map(Long::valueOf)
+          .collect(Collectors.toList());
+
+      if (storeIds.isEmpty()) {
+        return new ArrayList<>();
+      }
+
+      List<Store> storeList = storeRepository.findAllById(storeIds);
+
+      // 매장 목록을 쿠키에 저장된 순서대로 정렬
+      Map<Long, Store> storeMap = storeList.stream()
+          .collect(Collectors.toMap(Store::getId, store -> store));
+
+      return storeIds.stream()
+          .map(storeMap::get)
+          .map(StoreSimpleResponse::new)
+          .collect(Collectors.toList());
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("Error decoding cookie value", e);
     }
   }
 }

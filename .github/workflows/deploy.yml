@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ 105-feat-cicd-deploy ]
+    branches: [ refactor-18-feat-store-crud ]
 
 env:
   DOCKER_IMAGE_TAG_NAME: fitple-project
@@ -37,7 +37,7 @@ jobs:
       #      - name: Login to Docker Hub using Access Token
       #        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       #
-      #      # 이미지 푸시
+      #      # 이미지 푸시1
       #      - name: Push the Docker image
       #        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
 

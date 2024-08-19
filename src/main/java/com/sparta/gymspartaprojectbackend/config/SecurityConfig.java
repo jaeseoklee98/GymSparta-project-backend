@@ -4,6 +4,7 @@ import com.sparta.gymspartaprojectbackend.jwtutil.JwtAuthenticationEntryPoint;
 import com.sparta.gymspartaprojectbackend.jwtutil.JwtAuthenticationFilter;
 import com.sparta.gymspartaprojectbackend.security.CustomSessionExpiredStrategy;
 import com.sparta.gymspartaprojectbackend.security.UserDetailsServiceImpl;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -61,10 +63,11 @@ public class SecurityConfig {
             .requestMatchers("/api/reviews/manage/**").hasRole("OWNER")
             .requestMatchers("/api/notification/**").authenticated()
             .requestMatchers("/api/payments/**").authenticated()
+            .requestMatchers("/healthcheck").permitAll()
             .anyRequest().authenticated());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+    http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
     return http.build();
   }
 
@@ -80,15 +83,15 @@ public class SecurityConfig {
 
   // CORS 설정 추가
   @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:7070")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .allowedHeaders("*")
-            .allowCredentials(true);
-      }
-    };
+  public CorsConfigurationSource corsConfigurationSource() {
+    final CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOriginPatterns(List.of("*"));
+    configuration.addAllowedHeader("*");
+    configuration.addAllowedMethod("*");
+    configuration.setAllowCredentials(true);
+
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 }
