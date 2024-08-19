@@ -112,7 +112,7 @@ public class StoreController {
    */
   @GetMapping("/{storeId}")
   public ResponseEntity<CommonResponse<StoreResponse>> findStore(
-      @PathVariable Long storeId,
+      @PathVariable("storeId") Long storeId,
       HttpServletResponse response,
       @CookieValue(value = "recentStores", defaultValue = "") String recentStores
   ) {
