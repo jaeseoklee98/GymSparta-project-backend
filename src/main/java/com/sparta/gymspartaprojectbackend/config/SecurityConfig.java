@@ -1,9 +1,12 @@
 package com.sparta.gymspartaprojectbackend.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import com.sparta.gymspartaprojectbackend.jwtutil.JwtAuthenticationEntryPoint;
 import com.sparta.gymspartaprojectbackend.jwtutil.JwtAuthenticationFilter;
 import com.sparta.gymspartaprojectbackend.security.CustomSessionExpiredStrategy;
 import com.sparta.gymspartaprojectbackend.security.UserDetailsServiceImpl;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -64,7 +68,7 @@ public class SecurityConfig {
             .anyRequest().authenticated());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+    http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
     return http.build();
   }
 
@@ -78,35 +82,16 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  // CORS 설정 추가
   @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:7070", "https://doqdusu57hgwc.cloudfront.net", "https://www.gymspartatest.shop")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .allowedHeaders("*")
-            .allowCredentials(true);
-      }
-    };
-  }
+  public CorsConfigurationSource corsConfigurationSource() {
+    final CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOriginPatterns(List.of("*"));
+    configuration.addAllowedHeader("*");
+    configuration.addAllowedMethod("*");
+    configuration.setAllowCredentials(true);
 
-  @Bean
-  public CorsFilter corsFilter() {
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowCredentials(true);
-    config.addAllowedOrigin("http://localhost:7070");
-    config.addAllowedOrigin("https://doqdusu57hgwc.cloudfront.net");
-    config.addAllowedOrigin("https://www.gymspartatest.shop");
-    config.addAllowedHeader("*");
-    config.addAllowedMethod("GET");
-    config.addAllowedMethod("POST");
-    config.addAllowedMethod("PUT");
-    config.addAllowedMethod("DELETE");
-    config.addAllowedMethod("OPTIONS");
-    source.registerCorsConfiguration("/**", config);
-    return new CorsFilter(source);
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 }
