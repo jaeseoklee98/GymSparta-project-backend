@@ -21,4 +21,6 @@ public class StoreRequest {
   private String price; // 추가 필드
   private String image; // 추가 필드
   private List<String> reviews; // 추가 필드
+  private Double latitude;  // 위도 필드 추가
+  private Double longitude;  // 경도 필드 추가
 }

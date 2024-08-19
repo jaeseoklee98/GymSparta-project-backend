@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ 105-feat-cicd-deploy ]
+    branches: [ dev ]
 
 env:
   DOCKER_IMAGE_TAG_NAME: fitple-project

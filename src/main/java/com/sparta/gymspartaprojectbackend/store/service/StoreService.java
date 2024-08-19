@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
 
   private final StoreRepository storeRepository;
+  private final static Double DEFAULT_RADIUS = 10.0; // 기본 반경 값 설정 (예: 10km)
 
   /**
    * 매장 등록
@@ -129,5 +130,41 @@ public class StoreService {
     if (!store.getOwner().getAccountId().equals(accountId)) {
       throw new StoreException(ErrorType.INVALID_USER);
     }
+  }
+
+  /**
+   * 사용자의 위치를 기반으로 근처 매장 검색
+   *
+   * @param latitude  사용자의 위도
+   * @param longitude 사용자의 경도
+   * @param keyword   검색어 (옵션)
+   * @return 위치와 검색어에 맞는 매장 목록
+   */
+  public List<StoreSimpleResponse> findNearbyStores(Double latitude, Double longitude, String keyword) {
+    List<Store> stores;
+    Double radius = DEFAULT_RADIUS; // 필요한 경우 반경 값을 추가로 받아올 수 있음
+
+    if (keyword != null && !keyword.isEmpty()) {
+      stores = storeRepository.findByLocationAndKeyword(latitude, longitude, keyword, radius);
+    } else {
+      stores = storeRepository.findByLocation(latitude, longitude, radius);
+    }
+
+    return stores.stream()
+        .map(StoreSimpleResponse::new)
+        .toList();
+  }
+
+  /**
+   * 검색어를 기반으로 매장 검색
+   *
+   * @param keyword 검색어
+   * @return 검색어에 맞는 매장 목록
+   */
+  public List<StoreSimpleResponse> searchStoresByKeyword(String keyword) {
+    List<Store> stores = storeRepository.findByKeyword(keyword);
+    return stores.stream()
+        .map(StoreSimpleResponse::new)
+        .toList();
   }
 }
