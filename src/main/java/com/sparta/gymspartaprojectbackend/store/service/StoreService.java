@@ -8,8 +8,17 @@ import com.sparta.gymspartaprojectbackend.store.dto.StoreSimpleResponse;
 import com.sparta.gymspartaprojectbackend.store.entity.Store;
 import com.sparta.gymspartaprojectbackend.store.exception.StoreException;
 import com.sparta.gymspartaprojectbackend.store.repository.StoreRepository;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
 
   private final StoreRepository storeRepository;
-  private final static Double DEFAULT_RADIUS = 10.0; // 기본 반경 값 설정 (예: 10km)
 
   /**
    * 매장 등록
@@ -132,39 +140,55 @@ public class StoreService {
     }
   }
 
-  /**
-   * 사용자의 위치를 기반으로 근처 매장 검색
-   *
-   * @param latitude  사용자의 위도
-   * @param longitude 사용자의 경도
-   * @param keyword   검색어 (옵션)
-   * @return 위치와 검색어에 맞는 매장 목록
-   */
-  public List<StoreSimpleResponse> findNearbyStores(Double latitude, Double longitude, String keyword) {
-    List<Store> stores;
-    Double radius = DEFAULT_RADIUS; // 필요한 경우 반경 값을 추가로 받아올 수 있음
+  public String updateRecentStoresCookie(String recentStores, Long storeId) {
+    List<String> storeList = new ArrayList<>(Arrays.asList(recentStores.split(",")));
 
-    if (keyword != null && !keyword.isEmpty()) {
-      stores = storeRepository.findByLocationAndKeyword(latitude, longitude, keyword, radius);
-    } else {
-      stores = storeRepository.findByLocation(latitude, longitude, radius);
+    // 중복된 매장 ID 제거
+    storeList.remove(storeId.toString());
+
+    // 최신 매장을 맨 앞에 추가
+    storeList.add(0, storeId.toString());
+
+    // 최근 방문 매장 리스트가 5개를 초과하지 않도록 제한
+    if (storeList.size() > 5) {
+      storeList = storeList.subList(0, 5);
     }
 
-    return stores.stream()
-        .map(StoreSimpleResponse::new)
-        .toList();
+    // 쿠키 값 인코딩
+    try {
+      return URLEncoder.encode(String.join(",", storeList), StandardCharsets.UTF_8.toString());
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("Error encoding cookie value", e);
+    }
   }
 
-  /**
-   * 검색어를 기반으로 매장 검색
-   *
-   * @param keyword 검색어
-   * @return 검색어에 맞는 매장 목록
-   */
-  public List<StoreSimpleResponse> searchStoresByKeyword(String keyword) {
-    List<Store> stores = storeRepository.findByKeyword(keyword);
-    return stores.stream()
-        .map(StoreSimpleResponse::new)
-        .toList();
+  public List<StoreSimpleResponse> findStoresByIds(String recentStores) {
+    try {
+      String decodedStores = URLDecoder.decode(recentStores, StandardCharsets.UTF_8.toString());
+
+      List<Long> storeIds = Arrays.stream(decodedStores.split(","))
+          .filter(id -> !id.trim().isEmpty())
+          .map(Long::valueOf)
+          .collect(Collectors.toList());
+
+      if (storeIds.isEmpty()) {
+        return new ArrayList<>();
+      }
+
+      List<Store> storeList = storeRepository.findAllById(storeIds);
+
+      // 매장 목록을 쿠키에 저장된 순서대로 정렬
+      Map<Long, Store> storeMap = storeList.stream()
+          .collect(Collectors.toMap(Store::getId, store -> store));
+
+      return storeIds.stream()
+          .map(storeMap::get)
+          .filter(Objects::nonNull)  // null 값 필터링
+          .map(StoreSimpleResponse::new)
+          .collect(Collectors.toList());
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("Error decoding cookie value", e);
+    }
   }
+
 }
