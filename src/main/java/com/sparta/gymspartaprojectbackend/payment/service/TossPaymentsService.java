@@ -23,9 +23,9 @@ public class TossPaymentsService {
     RestTemplate restTemplate = new RestTemplate();
 
     // 요청할 데이터 설정
-    Map<String, String> request = new HashMap<>();
+    Map<String, Object> request = new HashMap<>();
     request.put("orderId", orderId);
-    request.put("amount", String.valueOf(amount));
+    request.put("amount", amount);
     request.put("orderName", "Test Order");
 
     // Authorization 헤더 설정
@@ -34,7 +34,7 @@ public class TossPaymentsService {
     headers.set("Content-Type", "application/json");
 
     // 요청 엔터티 구성
-    HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
+    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
 
     // API 호출
     ResponseEntity<String> response = restTemplate.exchange(
@@ -45,9 +45,12 @@ public class TossPaymentsService {
     );
 
     if (response.getStatusCode() == HttpStatus.OK) {
-      return response.getBody(); // 결제 성공 시 응답 처리
+      return response.getBody();
     } else {
-      throw new RuntimeException("결제 요청 실패: " + response.getStatusCode());
+      // Toss API에서 반환된 오류 메시지를 예외로 던지는 대신 로그에 기록하고 반환하는 구조로 변경
+      String errorMessage = "결제 요청 실패: " + response.getStatusCode() + ", 이유: " + response.getBody();
+      System.out.println("Toss API Error: " + errorMessage);
+      return errorMessage;
     }
   }
 }

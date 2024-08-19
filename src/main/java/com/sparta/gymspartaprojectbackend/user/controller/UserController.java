@@ -2,6 +2,7 @@ package com.sparta.gymspartaprojectbackend.user.controller;
 
 import com.sparta.gymspartaprojectbackend.common.CommonResponse;
 import com.sparta.gymspartaprojectbackend.jwtutil.JwtUtil;
+import com.sparta.gymspartaprojectbackend.security.RefreshTokenService;
 import com.sparta.gymspartaprojectbackend.security.UserDetailsImpl;
 import com.sparta.gymspartaprojectbackend.user.dto.UpdatePasswordRequest;
 import com.sparta.gymspartaprojectbackend.user.dto.UpdateUserProfileRequest;
@@ -23,11 +24,14 @@ public class UserController {
 
   private final UserService userService;
   private final JwtUtil jwtUtil;
+  private final RefreshTokenService refreshTokenService;
 
-  public UserController(UserService userService, JwtUtil jwtUtil) {
+  public UserController(UserService userService, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
     this.userService = userService;
     this.jwtUtil = jwtUtil;
+    this.refreshTokenService = refreshTokenService;
   }
+
 
   /**
    * 사용자 회원가입
@@ -122,12 +126,12 @@ public class UserController {
    */
   @PutMapping("/profile/users/password")
   public ResponseEntity<CommonResponse<String>> updateUserPassword(
-    @AuthenticationPrincipal UserDetailsImpl userDetails,
-    @Valid @RequestBody UpdatePasswordRequest userRequest) {
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @Valid @RequestBody UpdatePasswordRequest userRequest) {
 
     userService.updateUserPassword(userRequest, userDetails);
     CommonResponse<String> response = new CommonResponse<>(
-      HttpStatus.OK.value(), "비밀번호 변경 완료", "비밀번호가 성공적으로 변경되었습니다.");
+        HttpStatus.OK.value(), "비밀번호 변경 완료", "비밀번호가 성공적으로 변경되었습니다.");
     return ResponseEntity.ok(response);
   }
 
@@ -139,10 +143,43 @@ public class UserController {
    */
   @GetMapping("/profile/user")
   public ResponseEntity<CommonResponse<ReadUserResponse>> readUserProfile(
-    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
     CommonResponse<ReadUserResponse> response = new CommonResponse<>(
-      HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
+        HttpStatus.OK.value(), "프로필 조회 완료", readUserResponse);
     return ResponseEntity.ok(response);
+  }
+
+  /**
+   * 현재 로그인된 사용자 정보 조회
+   *
+   * @param userDetails 유저 정보
+   * @return 상태코드, 응답 메시지, 사용자 정보
+   */
+  @GetMapping("/user/me")
+  public ResponseEntity<CommonResponse<ReadUserResponse>> getCurrentUser(
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    if (userDetails == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(new CommonResponse<>(HttpStatus.UNAUTHORIZED.value(), "인증되지 않은 사용자입니다.", null));
+    }
+
+    // 디버깅 로그 추가
+    System.out.println("UserDetails: " + userDetails.getUsername() + ", Role: " + userDetails.getRole());
+
+    ReadUserResponse readUserResponse = userService.readUserProfile(userDetails);
+    return ResponseEntity.ok(new CommonResponse<>(HttpStatus.OK.value(), "사용자 정보 조회 성공", readUserResponse));
+  }
+
+  @PostMapping("/refresh-token")
+  public ResponseEntity<CommonResponse<String>> refreshToken(HttpServletRequest request) {
+    String refreshToken = request.getHeader("Authorization").substring(7);
+    if (refreshTokenService.isRefreshTokenValid(refreshToken)) {
+      String newAccessToken = jwtUtil.generateAccessToken(jwtUtil.getUsername(refreshToken));
+      return ResponseEntity.ok(new CommonResponse<>(HttpStatus.OK.value(), "토큰 재발급 성공", newAccessToken));
+    } else {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new CommonResponse<>(HttpStatus.UNAUTHORIZED.value(), "토큰 재발급 실패", null));
+    }
   }
 }

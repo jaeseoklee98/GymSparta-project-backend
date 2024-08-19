@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class ReviewController {
    * @param userDetails 현재 인증된 사용자 정보
    * @return 생성된 리뷰의 응답 DTO
    */
+  @PreAuthorize("hasRole('USER')")
   @PostMapping
   public ResponseEntity<CommonResponse<ReviewResponse>> createReview(
       @RequestBody ReviewRequest reviewRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -78,6 +80,62 @@ public class ReviewController {
     List<ReviewResponse> responses = reviewService.getReportedReviewsForOwner(userDetails);
     CommonResponse<List<ReviewResponse>> commonResponse = new CommonResponse<>(
         HttpStatus.OK.value(), "신고된 리뷰 조회 완료", responses);
+    return new ResponseEntity<>(commonResponse, HttpStatus.OK);
+  }
+
+  /**
+   * 매장별 평균 리뷰 평점 조회
+   *
+   * @param storeId 조회할 매장의 ID
+   * @return 매장별 평균 리뷰 평점
+   */
+  @GetMapping("/store/{storeId}/average-rating")
+  public ResponseEntity<CommonResponse<Double>> getAverageRatingByStoreId(@PathVariable Long storeId) {
+    Double averageRating = reviewService.getAverageRatingByStoreId(storeId);
+    CommonResponse<Double> commonResponse = new CommonResponse<>(
+            HttpStatus.OK.value(), "매장별 평균 리뷰 평점 조회 완료", averageRating);
+    return new ResponseEntity<>(commonResponse, HttpStatus.OK);
+  }
+
+  /**
+   * 트레이너별 평균 리뷰 평점 조회
+   *
+   * @param trainerId 조회할 트레이너의 ID
+   * @return 트레이너별 평균 리뷰 평점
+   */
+  @GetMapping("/trainer/{trainerId}/average-rating")
+  public ResponseEntity<CommonResponse<Double>> getAverageRatingByTrainerId(@PathVariable Long trainerId) {
+    Double averageRating = reviewService.getAverageRatingByTrainerId(trainerId);
+    CommonResponse<Double> commonResponse = new CommonResponse<>(
+            HttpStatus.OK.value(), "트레이너별 평균 리뷰 평점 조회 완료", averageRating);
+    return new ResponseEntity<>(commonResponse, HttpStatus.OK);
+  }
+
+  /**
+   * 매장별 리뷰 조회
+   *
+   * @param storeId 조회할 매장의 ID
+   * @return 매장별 리뷰 리스트
+   */
+  @GetMapping("/store/{storeId}/reviews")
+  public ResponseEntity<CommonResponse<List<ReviewResponse>>> getReviewsByStoreId(@PathVariable Long storeId) {
+    List<ReviewResponse> reviews = reviewService.getReviewsByStoreId(storeId);
+    CommonResponse<List<ReviewResponse>> commonResponse = new CommonResponse<>(
+            HttpStatus.OK.value(), "매장 리뷰 조회 완료", reviews);
+    return new ResponseEntity<>(commonResponse, HttpStatus.OK);
+  }
+
+    /**
+   * 트레이너별 리뷰 조회
+   *
+   * @param trainerId 조회할 트레이너의 ID
+   * @return 트레이너별 리뷰 리스트
+     */
+  @GetMapping("/trainer/{trainerId}/reviews")
+  public ResponseEntity<CommonResponse<List<ReviewResponse>>> getReviewsByTrainerId(@PathVariable Long trainerId) {
+    List<ReviewResponse> reviews = reviewService.getReviewsByTrainerId(trainerId);
+    CommonResponse<List<ReviewResponse>> commonResponse = new CommonResponse<>(
+            HttpStatus.OK.value(), "트레이너 리뷰 조회 완료", reviews);
     return new ResponseEntity<>(commonResponse, HttpStatus.OK);
   }
 

@@ -2,6 +2,8 @@ package com.sparta.gymspartaprojectbackend.owner.entity;
 
 import com.sparta.gymspartaprojectbackend.common.TimeStamped;
 import com.sparta.gymspartaprojectbackend.enums.Role;
+import com.sparta.gymspartaprojectbackend.notification.entity.PaymentOwnerNotification;
+import com.sparta.gymspartaprojectbackend.notification.entity.PaymentUserNotification;
 import com.sparta.gymspartaprojectbackend.owner.dto.UpdateOwnerProfileRequest;
 import com.sparta.gymspartaprojectbackend.store.entity.Store;
 import jakarta.persistence.*;
@@ -78,6 +80,9 @@ public class Owner extends TimeStamped {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
   private List<Store> stores;
+
+  @OneToMany(mappedBy = "owner")
+  private List<PaymentOwnerNotification> paymentOwnerNotificationList;
 
 
   public Owner() {

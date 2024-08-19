@@ -15,6 +15,8 @@ public class UserAllNotification extends TimeStamped {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  private String title;
+
   private String message;
 
   private boolean deleted = false;
@@ -27,7 +29,8 @@ public class UserAllNotification extends TimeStamped {
   @JoinColumn(name = "user_id")
   private User user;
 
-  public UserAllNotification(String message,  User user, AllNotification allNotification) {
+  public UserAllNotification(String title, String message,  User user, AllNotification allNotification) {
+    this.title = title;
     this.message = message;
     this.allNotification = allNotification;
     this.user = user;

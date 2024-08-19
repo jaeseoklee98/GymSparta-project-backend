@@ -24,20 +24,11 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
-
   public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
   }
 
-
-  /**
-   * 사용자 회원가입
-   *
-   * @param request 회원가입에 필요한 정보가 담긴 요청 객체
-   * @return 등록된 사용자 객체
-   * @throws CustomException 중복된 사용자 정보가 있을 경우 발생
-   */
   public User signup(UserSignupRequest request) {
     Optional<User> existingUserByUsername = userRepository.findByAccountIdAndStatus(
         request.getAccountId(), "ACTIVE");
@@ -61,8 +52,8 @@ public class UserService {
     if (deletedUserByUsername.isPresent()) {
       User user = deletedUserByUsername.get();
       User updatedUser = new User(
+
           user.getUserName(),
-          user.getBalance(),
           user.getResidentRegistrationNumber(),
           user.getForeignerRegistrationNumber(),
           user.getIsForeigner(),
@@ -85,7 +76,6 @@ public class UserService {
 
     User newUser = new User(
         request.getUserName(),
-        request.getBalance(),
         request.getResidentRegistrationNumber(),
         request.getForeignerRegistrationNumber(),
         false,
@@ -107,19 +97,12 @@ public class UserService {
     return userRepository.save(newUser);
   }
 
-  /**
-   * 사용자 탈퇴
-   *
-   * @param username 탈퇴 사용자 계정 ID
-   * @throws UserException 사용자를 찾을 수 없는 경우 발생
-   */
   public void deleteUser(String username) {
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(username, "ACTIVE");
     User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
 
     User updatedUser = new User(
         user.getUserName(),
-        user.getBalance(),
         user.getResidentRegistrationNumber(),
         user.getForeignerRegistrationNumber(),
         user.getIsForeigner(),
@@ -141,13 +124,6 @@ public class UserService {
     userRepository.save(updatedUser);
   }
 
-  /**
-   * 유저 프로필 변경
-   *
-   * @param userDetails 유저 정보
-   * @param userRequest 새 프로필 정보
-   * @throws UserException 유저를 찾을 수 없는 경우 발생
-   */
   @Transactional
   public void updateUserProfile(UpdateUserProfileRequest userRequest, UserDetailsImpl userDetails) {
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(),
@@ -161,13 +137,6 @@ public class UserService {
     user.updateUserProfile(userRequest);
   }
 
-  /**
-   * 유저 비밀번호 변경
-   *
-   * @param userDetails 유저 정보
-   * @param userRequest 구, 새 비밀번호 정보
-   * @throws UserException 유저를 찾을 수 없는 경우 발생
-   */
   @Transactional
   public void updateUserPassword(UpdatePasswordRequest userRequest, UserDetailsImpl userDetails) {
     Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(),
@@ -181,15 +150,15 @@ public class UserService {
     user.updatePassword(passwordEncoder.encode(userRequest.getNewPassword()));
   }
 
-  /**
-   * 유저 프로필 조회
-   *
-   * @param userDetails 유저 정보
-   */
   public ReadUserResponse readUserProfile(UserDetailsImpl userDetails) {
-    Optional<User> userOptional = userRepository.findByAccountIdAndStatus(userDetails.getUsername(),
-        "ACTIVE");
-    User user = userOptional.orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_USER));
-    return new ReadUserResponse(user);
+    if (userDetails.getUser() != null) {
+      return new ReadUserResponse(userDetails.getUser());
+    } else if (userDetails.getOwner() != null) {
+      return new ReadUserResponse(userDetails.getOwner());
+    } else if (userDetails.getTrainer() != null) {
+      return new ReadUserResponse(userDetails.getTrainer());
+    } else {
+      throw new UserException(ErrorType.NOT_FOUND_USER);
+    }
   }
 }

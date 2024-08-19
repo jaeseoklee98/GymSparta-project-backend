@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class createAllNotificationDto {
-  private String title;
-  private String message;
+  private String noticeTitle;
+  private String noticeContent;
   private String image;
 }

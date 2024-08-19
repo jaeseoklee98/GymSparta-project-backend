@@ -2,6 +2,8 @@ package com.sparta.gymspartaprojectbackend.payment.service;
 
 import com.sparta.gymspartaprojectbackend.enums.ErrorType;
 import com.sparta.gymspartaprojectbackend.exception.CustomException;
+import com.sparta.gymspartaprojectbackend.notification.service.NotificationService;
+import com.sparta.gymspartaprojectbackend.payment.dto.PaymentCancelRequest;
 import com.sparta.gymspartaprojectbackend.payment.dto.PaymentRequest;
 import com.sparta.gymspartaprojectbackend.payment.dto.PaymentResponse;
 import com.sparta.gymspartaprojectbackend.payment.dto.PaymentUpdateRequest;
@@ -14,7 +16,8 @@ import com.sparta.gymspartaprojectbackend.trainer.entity.Trainer;
 import com.sparta.gymspartaprojectbackend.trainer.repository.TrainerRepository;
 import com.sparta.gymspartaprojectbackend.user.entity.User;
 import com.sparta.gymspartaprojectbackend.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.UnexpectedRollbackException;
 
 @Service
 public class PaymentService {
@@ -31,11 +35,14 @@ public class PaymentService {
   private final PaymentRepository paymentRepository;
   private final TrainerRepository trainerRepository;
   private final UserRepository userRepository;
+  private final NotificationService notificationService;
 
-  public PaymentService(PaymentRepository paymentRepository, TrainerRepository trainerRepository, UserRepository userRepository) {
+  public PaymentService(PaymentRepository paymentRepository, TrainerRepository trainerRepository, UserRepository userRepository,
+      NotificationService notificationService) {
     this.paymentRepository = paymentRepository;
     this.trainerRepository = trainerRepository;
     this.userRepository = userRepository;
+    this.notificationService = notificationService;
   }
 
   /**
@@ -45,10 +52,10 @@ public class PaymentService {
    * @param userId    유저 ID
    * @throws CustomException 트레이너 또는 유저가 존재하지 않는 경우
    */
-  public void validateTrainerAndUser(Long trainerId, Long userId) {
+  public void validateTrainerAndUser(Long trainerId, String userId) {
     Trainer trainer = trainerRepository.findById(trainerId)
         .orElseThrow(() -> new CustomException(ErrorType.TRAINER_NOT_FOUND));
-    User user = userRepository.findById(userId)
+    User user = userRepository.findByAccountId(userId)  // accountId로 조회
         .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
   }
 
@@ -58,45 +65,50 @@ public class PaymentService {
    * @param request 결제 요청 정보
    * @return 저장된 결제 정보
    */
-  @Transactional
+  @Transactional(rollbackFor = Exception.class, noRollbackFor = CustomException.class)
   public Payment savePayment(PaymentRequest request) {
-    validateTrainerAndUser(request.getTrainerId(), request.getUserId());
+    try {
+      logger.debug("Saving payment for userId: {}", request.getUserId()); // 디버그 메시지 추가
+      if (Objects.equals(request.getTrainerId(), null)) {
+        throw new CustomException(ErrorType.TRAINER_ID_IS_NULL);
+      }
 
-    Trainer trainer = trainerRepository.findById(request.getTrainerId())
-        .orElseThrow(() -> new CustomException(ErrorType.TRAINER_NOT_FOUND));
-    User user = userRepository.findById(request.getUserId())
-        .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+      if (request.getUserId() == null) {
+        throw new CustomException(ErrorType.USER_NOT_FOUND);
+      }
 
-    PtTimes ptTimes = request.getPtTimes() != null ? request.getPtTimes() : PtTimes.TEN_TIMES;
+      // 유저 조회
+      User user = userRepository.findByAccountId(request.getUserId())
+          .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-    // ProductType에 따른 결제 로직
-    Payment payment;
-    switch (request.getProductType()) {
-      case PT_SESSION:
-        payment = new Payment(trainer, user, null, ptTimes, request.getProductType(),
-            request.getPaymentType(), request.getAmount(),
-            PaymentStatus.PENDING, LocalDateTime.now(),
-            LocalDateTime.now().plusDays(ptTimes.getTimes() / 30),
-            request.isMembership());
-        // PT 세션 결제에 대한 추가 처리
-        logger.info("PT 세션 결제가 저장되었습니다: " + payment.getAmount());
-        sendNotification(user, "PT 세션 결제가 완료되었습니다.");
-        break;
-      case MEMBERSHIP:
-        payment = new Payment(trainer, user, null, null, request.getProductType(),
-            request.getPaymentType(), request.getAmount(),
-            PaymentStatus.PENDING, LocalDateTime.now(),
-            LocalDateTime.now().plusYears(1), // 멤버십은 1년 기간
-            request.isMembership());
-        // 멤버십 결제에 대한 추가 처리
-        logger.info("멤버십 결제가 저장되었습니다: " + payment.getAmount());
-        sendNotification(user, "멤버십 결제가 완료되었습니다.");
-        break;
-      default:
-        throw new CustomException(ErrorType.INVALID_PRODUCT_TYPE);
+      logger.debug("User found: {}", user.getAccountId()); // 유저 조회 결과 로그
+
+      // 결제 정보 생성 로직
+      Payment payment = new Payment(
+          trainerRepository.findById(request.getTrainerId())
+              .orElseThrow(() -> new CustomException(ErrorType.TRAINER_NOT_FOUND)),
+          user,
+          request.getPtTimes(),
+          request.getProductType(),
+          request.getPaymentType(),
+          request.getAmount(),
+          PaymentStatus.PENDING,
+          LocalDateTime.now(),
+          LocalDateTime.now().plusYears(1),
+          request.isMembership()
+      );
+
+      payment = paymentRepository.save(payment);
+      logger.debug("Payment saved successfully with ID: {}", payment.getPaymentId());
+
+      return payment;
+    } catch (CustomException e) {
+      logger.error("CustomException occurred: {}", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      logger.error("Unexpected exception occurred: {}", e.getMessage());
+      throw new CustomException(ErrorType.SOME_ERROR);
     }
-
-    return paymentRepository.save(payment);
   }
 
   /**
@@ -347,6 +359,7 @@ public class PaymentService {
 
     // 결제 상태를 완료로 업데이트
     payment.setPaymentStatus(PaymentStatus.COMPLETED);
+    notificationService.sendPaymentNotification(payment);
     return paymentRepository.save(payment);
   }
 
@@ -373,6 +386,15 @@ public class PaymentService {
         .collect(Collectors.toList());
   }
 
+  public Payment processPayment(PaymentRequest request) {
+    Payment payment = new Payment();
+    payment.setAmount(request.getAmount());
+    payment.setPaymentType(request.getPaymentType());  // 수정된 메서드 사용
+    payment.setPaymentStatus(PaymentStatus.APPROVED);
+    payment.setPaymentDate(LocalDateTime.now());
+    return payment;
+  }
+
   private boolean refundPaymentProvider(Payment payment) {
     // 결제 제공자의 실제 환불 로직 구현
     return true; // 예시로 환불이 성공했다고 가정
@@ -396,5 +418,27 @@ public class PaymentService {
   private void cancelMembershipReservations(User user) {
     // 유저의 멤버십과 관련된 모든 예약을 취소하는 로직
     logger.info("유저 {}의 멤버십 예약이 취소되었습니다.", user.getUserName());
+  }
+
+  @Transactional
+  public void cancelPayment(PaymentCancelRequest request) {
+    Payment payment = paymentRepository.findById(request.getPaymentId())
+        .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
+
+    if (payment.getPaymentStatus() == PaymentStatus.CANCELED) {
+      throw new CustomException(ErrorType.PAYMENT_ALREADY_CANCELED);
+    }
+
+    // 환불 처리 로직 호출
+    processRefund(request.getPaymentId());
+  }
+
+  public Payment getPaymentById(Long paymentId) {
+    return paymentRepository.findById(paymentId)
+        .orElseThrow(() -> new CustomException(ErrorType.PAYMENT_NOT_FOUND));
+  }
+
+  public List<Payment> getPaymentsByUser(Long userId) {
+    return paymentRepository.findAllByUser_Id(userId);
   }
 }
