@@ -119,6 +119,10 @@ public class AuthController {
       Map<String, String> tokenResponse = new HashMap<>();
       tokenResponse.put("accessToken", accessToken);
       tokenResponse.put("refreshToken", refreshToken);
+      // 임시 - 권한을 로컬스토리지에 저장하기
+      tokenResponse.put("role", String.valueOf(userDetails.getRole()));
+      tokenResponse.put("userId", userDetails.getUserId().toString());
+
 
       CommonResponse<Map<String, String>> response = new CommonResponse<>(
         HttpStatus.OK.value(), "로그인 성공", tokenResponse);
