@@ -62,7 +62,7 @@ public class StoreController {
   @PreAuthorize("hasAnyAuthority('OWNER')")
   @PutMapping("/owners/{storeId}")
   public ResponseEntity<CommonResponse<StoreResponse>> updateStore(
-      @PathVariable Long storeId,
+      @PathVariable("storeId") Long storeId,
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @Valid @RequestBody StoreRequest request
   ) {
@@ -84,7 +84,7 @@ public class StoreController {
   @DeleteMapping("/owners/{storeId}")
   public ResponseEntity<CommonResponse<StoreResponse>> deleteStore(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @PathVariable Long storeId
+      @PathVariable("storeId") Long storeId
   ) {
     storeService.deleteStore(storeId, userDetails.getOwner().getAccountId());
     return new ResponseEntity<>(HttpStatus.OK);
@@ -182,7 +182,7 @@ public class StoreController {
   @GetMapping("/owners/{storeId}")
   public ResponseEntity<CommonResponse<StoreResponse>> findAdminStore(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @PathVariable Long storeId
+      @PathVariable("storeId") Long storeId
   ) {
     StoreResponse storeResponse = storeService.findAdminById(
         userDetails.getOwner().getAccountId(), storeId);

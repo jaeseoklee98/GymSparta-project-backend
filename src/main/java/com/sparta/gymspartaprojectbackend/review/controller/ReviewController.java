@@ -48,7 +48,7 @@ public class ReviewController {
    */
   @PutMapping("/{reviewId}")
   public ResponseEntity<CommonResponse<ReviewResponse>> updateReview(
-      @PathVariable Long reviewId, @RequestBody ReviewRequest reviewRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+      @PathVariable("reviewId") Long reviewId, @RequestBody ReviewRequest reviewRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
     ReviewResponse response = reviewService.updateReview(reviewId, reviewRequest, userDetails);
     CommonResponse<ReviewResponse> commonResponse = new CommonResponse<>(
         HttpStatus.OK.value(), "리뷰 수정 완료", response);
@@ -90,7 +90,7 @@ public class ReviewController {
    * @return 매장별 평균 리뷰 평점
    */
   @GetMapping("/store/{storeId}/average-rating")
-  public ResponseEntity<CommonResponse<Double>> getAverageRatingByStoreId(@PathVariable Long storeId) {
+  public ResponseEntity<CommonResponse<Double>> getAverageRatingByStoreId(@PathVariable("storeId") Long storeId) {
     Double averageRating = reviewService.getAverageRatingByStoreId(storeId);
     CommonResponse<Double> commonResponse = new CommonResponse<>(
             HttpStatus.OK.value(), "매장별 평균 리뷰 평점 조회 완료", averageRating);
@@ -104,7 +104,7 @@ public class ReviewController {
    * @return 트레이너별 평균 리뷰 평점
    */
   @GetMapping("/trainer/{trainerId}/average-rating")
-  public ResponseEntity<CommonResponse<Double>> getAverageRatingByTrainerId(@PathVariable Long trainerId) {
+  public ResponseEntity<CommonResponse<Double>> getAverageRatingByTrainerId(@PathVariable("trainerId") Long trainerId) {
     Double averageRating = reviewService.getAverageRatingByTrainerId(trainerId);
     CommonResponse<Double> commonResponse = new CommonResponse<>(
             HttpStatus.OK.value(), "트레이너별 평균 리뷰 평점 조회 완료", averageRating);
@@ -118,7 +118,7 @@ public class ReviewController {
    * @return 매장별 리뷰 리스트
    */
   @GetMapping("/store/{storeId}/reviews")
-  public ResponseEntity<CommonResponse<List<ReviewResponse>>> getReviewsByStoreId(@PathVariable Long storeId) {
+  public ResponseEntity<CommonResponse<List<ReviewResponse>>> getReviewsByStoreId(@PathVariable("storeId") Long storeId) {
     List<ReviewResponse> reviews = reviewService.getReviewsByStoreId(storeId);
     CommonResponse<List<ReviewResponse>> commonResponse = new CommonResponse<>(
             HttpStatus.OK.value(), "매장 리뷰 조회 완료", reviews);
@@ -132,7 +132,7 @@ public class ReviewController {
    * @return 트레이너별 리뷰 리스트
      */
   @GetMapping("/trainer/{trainerId}/reviews")
-  public ResponseEntity<CommonResponse<List<ReviewResponse>>> getReviewsByTrainerId(@PathVariable Long trainerId) {
+  public ResponseEntity<CommonResponse<List<ReviewResponse>>> getReviewsByTrainerId(@PathVariable("trainerId") Long trainerId) {
     List<ReviewResponse> reviews = reviewService.getReviewsByTrainerId(trainerId);
     CommonResponse<List<ReviewResponse>> commonResponse = new CommonResponse<>(
             HttpStatus.OK.value(), "트레이너 리뷰 조회 완료", reviews);
@@ -147,7 +147,7 @@ public class ReviewController {
    * @return 리뷰 삭제 결과 메시지
    */
   @DeleteMapping("/{reviewId}")
-  public ResponseEntity<CommonResponse<String>> deleteReportedReview(@PathVariable Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<CommonResponse<String>> deleteReportedReview(@PathVariable("reviewId") Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
     reviewService.deleteReportedReview(reviewId, userDetails);
     CommonResponse<String> commonResponse = new CommonResponse<>(
         HttpStatus.OK.value(), "리뷰 삭제 완료", "신고된 리뷰가 삭제되었습니다.");
@@ -162,7 +162,7 @@ public class ReviewController {
    * @return 리뷰 신고 결과 메시지
    */
   @PostMapping("/{reviewId}/report")
-  public ResponseEntity<CommonResponse<String>> reportReview(@PathVariable Long reviewId, @RequestBody ReportRequest reportRequest) {
+  public ResponseEntity<CommonResponse<String>> reportReview(@PathVariable("reviewId") Long reviewId, @RequestBody ReportRequest reportRequest) {
     reviewService.reportReview(reviewId, reportRequest);
     CommonResponse<String> commonResponse = new CommonResponse<>(
         HttpStatus.OK.value(), "리뷰 신고 완료", "리뷰가 신고되었습니다.");
