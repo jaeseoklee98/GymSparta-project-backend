@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ dev ]
+    branches: [ refactor-18-feat-store-crud ]
 
 env:
   DOCKER_IMAGE_TAG_NAME: fitple-project
