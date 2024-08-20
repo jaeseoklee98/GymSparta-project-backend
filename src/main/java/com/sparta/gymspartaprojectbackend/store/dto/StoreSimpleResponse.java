@@ -14,6 +14,8 @@ public class StoreSimpleResponse {
 
   private String storePrice;
 
+  private String image;
+
 
   /**
    * Store 엔티티를 기반으로 StoreResponse 객체를 생성.
@@ -25,5 +27,6 @@ public class StoreSimpleResponse {
     this.storeName = store.getStoreName();
     this.storeAddress = store.getAddress();
     this.storePrice = store.getPrice();
+    this.image = store.getImage();
   }
 }
