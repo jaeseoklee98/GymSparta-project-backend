@@ -41,7 +41,7 @@ cors:
 cloud:
   aws:
     s3:
-      bucket: gymsparta-test
+      bucket: fitple
     stack.auto: false
     region.static: ap-northeast-2
     credentials:
