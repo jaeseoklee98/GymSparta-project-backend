@@ -18,7 +18,7 @@ public class StoreSimpleResponse {
 
 
   /**
-   * Store 엔티티를 기반으로 StoreResponse 객체를 생성.
+   * Store 엔티티를 기반으로 StoreResponse 객체를 생성
    *
    * @param store Store 엔티티
    */
