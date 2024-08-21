@@ -5,7 +5,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxcXExMTExMTEiLCJpYXQiOjE3M
 
 {
   "trainerId": 1,
-  "userId": 1,
+  "userId": 2,
   "ptTimes": "TEN_TIMES",
   "paymentType": "CREDIT_CARD",
   "amount": 100.0,
