@@ -1,0 +1,40 @@
+### 리뷰 작성
+POST http://localhost:8080/api/reviews
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxcXExMTExMTEiLCJpYXQiOjE3MjM4MTA2MTksImV4cCI6MTcyMzgxMjQxOX0.anEUTm7Ay-bqrpXaHHknyqXI6cR4eXIj41lucKk4_9s
+Content-Type: application/json
+
+{
+  "storeId": 1,
+  "rating": 5,
+  "comment": "Excellent service!"
+}
+
+### 리뷰 수정
+PUT http://localhost:8080/api/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "Good service, but room for improvement."
+}
+
+### 리뷰 조회
+GET http://localhost:8080/api/reviews/user
+
+### 점주 리뷰 조회
+GET http://localhost:8080/api/reviews/reported
+
+### 점주 리뷰 삭제
+DELETE http://localhost:8080/api/reviews/1
+
+### 필터링된 리뷰 조회
+### 리뷰를 필터링하고 정렬할 수 있는 기능 (예: 리뷰 점수, 작성 날짜 등).
+GET http://localhost:8080/api/store/1/reviews?sort=rating&order=desc
+
+### 리뷰 신고
+POST http://localhost:8080/api/reviews/1/report
+Content-Type: application/json
+
+{
+  "reason": "Inappropriate content"
+}
