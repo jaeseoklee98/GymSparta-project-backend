@@ -1,0 +1,40 @@
+### 결제 요청
+POST http://localhost:8080/api/payments/process
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxcXExMTExMTEiLCJpYXQiOjE3MjM2NDkwMTMsImV4cCI6MTcyMzY1MDgxM30.JeSM1DdCUjxqqdX_tOSyDGS1FtHoiBtL88rItkgR9Ng
+
+{
+  "trainerId": 1,
+  "userId": 1,
+  "ptTimes": "TEN_TIMES",
+  "paymentType": "CREDIT_CARD",
+  "amount": 100.0,
+  "isMembership": true
+}
+
+### PT 횟수 선택 및 총액 계산
+POST http://localhost:8080/api/payments/select-PtTimes
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxcXExMTExMTEiLCJpYXQiOjE3MjM2NDkwMTMsImV4cCI6MTcyMzY1MDgxM30.JeSM1DdCUjxqqdX_tOSyDGS1FtHoiBtL88rItkgR9Ng
+
+{
+"selectedTimes": "TEN_TIMES",
+"trainerPrice": 50.0
+}
+
+### 결제 내역 조회
+GET http://localhost:8080/api/payments/history/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxcXExMTExMTEiLCJpYXQiOjE3MjM2NDkwMTMsImV4cCI6MTcyMzY1MDgxM30.JeSM1DdCUjxqqdX_tOSyDGS1FtHoiBtL88rItkgR9Ng
+
+### 결제 승인
+PUT http://localhost:8080/api/payments/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxcXExMTExMTEiLCJpYXQiOjE3MjM2NDkwMTMsImV4cCI6MTcyMzY1MDgxM30.JeSM1DdCUjxqqdX_tOSyDGS1FtHoiBtL88rItkgR9Ng
+
+{
+  "paymentType": "CREDIT_CARD"
+}
+
+### 결제 상태 조회
+GET http://localhost:8080/api/payments/status/1
+Authorization: Bearer {{accessToken}}
